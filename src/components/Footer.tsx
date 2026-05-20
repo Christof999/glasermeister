@@ -1,0 +1,57 @@
+import { Link } from 'react-router-dom';
+import { services } from '../data/services';
+import './Footer.css';
+
+export function Footer() {
+  return (
+    <footer className="site-footer">
+      <div className="container">
+        <div className="site-footer__grid">
+          <div>
+            <div className="site-footer__logo">der-glasermeister</div>
+            <p className="site-footer__claim">
+              Individuelle Glaslösungen aus Meisterhand – geplant und ausgeführt von
+              Patrick Stettner.
+            </p>
+          </div>
+
+          <div>
+            <h3 className="site-footer__heading">Leistungen</h3>
+            <ul>
+              {services.map((s) => (
+                <li key={s.slug}>
+                  <Link to={`/leistungen/${s.slug}`}>{s.title}</Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <div>
+            <h3 className="site-footer__heading">Kontakt</h3>
+            <address>
+              <strong>der-glasermeister</strong><br />
+              Patrick Stettner<br />
+              Schulstr. 20<br />
+              91732 Merkendorf<br />
+              <a href="tel:+491752533137">0175 2533137</a><br />
+              <a href="mailto:info@der-glasermeister.de">info@der-glasermeister.de</a>
+            </address>
+          </div>
+
+          <div>
+            <h3 className="site-footer__heading">Rechtliches</h3>
+            <ul>
+              <li><Link to="/impressum">Impressum</Link></li>
+              <li><Link to="/datenschutz">Datenschutz</Link></li>
+            </ul>
+          </div>
+        </div>
+
+        <div className="site-footer__bottom">
+          <p>© {new Date().getFullYear()} der-glasermeister · Patrick Stettner</p>
+          <p>Glasermeister · Merkendorf · Mittelfranken</p>
+        </div>
+      </div>
+    </footer>
+  );
+}

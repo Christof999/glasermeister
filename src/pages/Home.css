@@ -1,0 +1,117 @@
+.hero {
+  position: relative;
+  isolation: isolate;
+  min-height: min(720px, 92vh);
+  display: flex;
+  align-items: center;
+  padding: clamp(80px, 14vw, 160px) 0 clamp(64px, 10vw, 120px);
+  overflow: hidden;
+}
+
+.hero__media {
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+}
+.hero__media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: grayscale(0.15) brightness(0.55);
+}
+
+.hero__veil {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background-color: rgba(10, 10, 10, 0.78);
+}
+
+.hero__content { max-width: 880px; }
+
+.hero h1 { margin: 8px 0 24px; }
+.hero__accent { color: var(--accent); }
+
+.hero__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  margin-top: 32px;
+}
+
+.hero__meta {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 18px;
+  margin-top: 56px;
+  padding-top: 32px;
+  border-top: 1px solid var(--border);
+  max-width: 720px;
+}
+@media (min-width: 640px) {
+  .hero__meta { grid-template-columns: repeat(3, 1fr); }
+}
+.hero__meta strong {
+  display: block;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 4px;
+}
+.hero__meta span {
+  display: block;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.services-grid {
+  grid-template-columns: 1fr;
+  margin-top: 48px;
+}
+@media (min-width: 640px) {
+  .services-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (min-width: 960px) {
+  .services-grid { grid-template-columns: repeat(3, 1fr); }
+}
+
+.process {
+  background: var(--bg-elev);
+  border-block: 1px solid var(--border);
+}
+.process__steps {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 28px;
+  margin-top: 48px;
+}
+@media (min-width: 640px) {
+  .process__steps { grid-template-columns: repeat(2, 1fr); }
+}
+@media (min-width: 1024px) {
+  .process__steps { grid-template-columns: repeat(4, 1fr); }
+}
+.process__step {
+  padding: 28px 24px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  height: 100%;
+}
+.process__num {
+  display: inline-block;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--accent);
+  letter-spacing: 0.12em;
+  margin-bottom: 12px;
+}
+.process__step h3 {
+  font-size: 1.15rem;
+  margin: 0 0 8px;
+}
+.process__step p { color: var(--text-dim); margin: 0; font-size: 0.95rem; }
+
+.cta-section { text-align: center; }
+.cta-section__inner { max-width: 720px; margin: 0 auto; }
+.cta-section .hero__actions { justify-content: center; }
