@@ -1,9 +1,11 @@
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { services } from '../data/services';
-import { Seo, localBusinessJsonLd } from '../lib/seo';
+import { Seo, localBusinessWithReviewsJsonLd } from '../lib/seo';
 import { PageMotion, Reveal } from '../components/PageMotion';
 import { ServiceCard } from '../components/ServiceCard';
+import { Reviews } from '../components/Reviews';
+import { WeitereLeistungen } from '../components/WeitereLeistungen';
 import './Home.css';
 
 export function Home() {
@@ -13,7 +15,7 @@ export function Home() {
         title="der-glasermeister – Patrick Stettner | Glaserei in Merkendorf"
         description="Glasermeister Patrick Stettner aus Merkendorf. Duschkabinen, Glastüren, Vordächer, Treppengeländer und Restaurierung antiker Fenster – aus Meisterhand."
         path="/"
-        jsonLd={localBusinessJsonLd}
+        jsonLd={localBusinessWithReviewsJsonLd}
       />
 
       {/* Hero */}
@@ -112,6 +114,12 @@ export function Home() {
           </div>
         </div>
       </section>
+
+      {/* Weitere Leistungen / Sonderkonstruktionen */}
+      <WeitereLeistungen />
+
+      {/* Bewertungen */}
+      <Reviews />
 
       {/* Process */}
       <section className="section process" aria-labelledby="ablauf-h">

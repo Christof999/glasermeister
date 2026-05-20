@@ -22,9 +22,11 @@ export const services: Service[] = [
     ],
     bullets: [
       'Walk-in, Eck- oder U-Lösungen',
-      'Rahmenlose Optik mit Edelstahl- oder schwarzen Beschlägen',
+      'Echtglasduschen – rahmenlos, vollverklebt',
       'Klar, satiniert, getönt oder mit Klarlackbeschichtung',
+      'Edelstahl- oder schwarze Beschläge',
       'Sicherheits-Einscheibenglas (ESG) nach DIN EN 12150',
+      'Ersatzscheiben für bestehende Duschtüren',
     ],
     hero: '/images/IMG_0301.jpeg',
     gallery: ['/images/IMG_0301.jpeg', '/images/IMG_0303.jpeg', '/images/IMG_0295.jpeg'],
@@ -41,6 +43,9 @@ export const services: Service[] = [
     ],
     bullets: [
       'Schwing- und Pendeltüren mit hochwertigen Beschlägen',
+      'Ganzglastüren inkl. Setzen einer Holz- oder Aluminiumzarge',
+      'Glas-Schiebetüren mit Decken- oder Wandlaufschiene',
+      'Ganzglasanlagen für Büros, Praxen und Geschäfte',
       'Raumhohe Festverglasungen und Trennwände',
       'Klar, satiniert oder mit individuellen Motiven',
       'ESG / VSG nach statischer Anforderung',
@@ -60,6 +65,7 @@ export const services: Service[] = [
     ],
     bullets: [
       'Haustür-Vordächer in jeder Breite',
+      'Terrassen- und Eingangsüberdachungen in Echtglas oder Acrylglas',
       'Pulverbeschichtetes Stahltragwerk',
       'Verbund-Sicherheitsglas (VSG) klar oder satiniert',
       'Inklusive Statik, Befestigung und Entwässerung',
@@ -79,6 +85,8 @@ export const services: Service[] = [
     ],
     bullets: [
       'Ganzglasgeländer mit Punktbefestigung',
+      'Französische Balkone als filigrane Glaslösung',
+      'Brüstungsverglasungen für Galerien und Treppenhäuser',
       'Seitliche Klemmprofil-Lösungen',
       'Holzhandlauf optional (Eiche, Buche, Nuss)',
       'Statisch nachgewiesen nach DIN 18008',

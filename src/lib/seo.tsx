@@ -1,4 +1,5 @@
 import { Helmet } from 'react-helmet-async';
+import { reviews, reviewStats } from '../data/reviews';
 
 const SITE_URL = 'https://www.der-glasermeister.de';
 const SITE_NAME = 'der-glasermeister';
@@ -57,4 +58,26 @@ export const localBusinessJsonLd = {
   areaServed: 'Bayern',
   founder: { '@type': 'Person', name: 'Patrick Stettner', jobTitle: 'Glasermeister' },
   vatID: 'DE357501503',
+};
+
+export const localBusinessWithReviewsJsonLd = {
+  ...localBusinessJsonLd,
+  aggregateRating: {
+    '@type': 'AggregateRating',
+    ratingValue: reviewStats.ratingValue.toFixed(1),
+    reviewCount: reviewStats.reviewCount,
+    bestRating: '5',
+    worstRating: '1',
+  },
+  review: reviews.map((r) => ({
+    '@type': 'Review',
+    author: { '@type': 'Person', name: r.author },
+    reviewRating: {
+      '@type': 'Rating',
+      ratingValue: r.rating,
+      bestRating: '5',
+      worstRating: '1',
+    },
+    reviewBody: r.text,
+  })),
 };
