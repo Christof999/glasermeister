@@ -1,5 +1,5 @@
-import { useState, type FormEvent } from 'react';
-import { motion } from 'framer-motion';
+import { useLayoutEffect, useRef, useState, type FormEvent } from 'react';
+import { AnimatePresence, motion } from 'framer-motion';
 import './ContactForm.css';
 
 type Status = 'idle' | 'submitting' | 'success' | 'error';
@@ -8,30 +8,77 @@ type FormState = {
   name: string;
   email: string;
   phone: string;
-  subject: string;
+  category: string;
+  budgetMin: number;
+  budgetMax: number;
   message: string;
   consent: boolean;
   /** Honeypot – must remain empty */
   website: string;
 };
 
+/** Budget slider bounds (in €) */
+const BUDGET_MIN = 800;
+const BUDGET_MAX = 4000;
+const BUDGET_STEP = 100;
+/** Minimum distance the two thumbs keep between each other */
+const BUDGET_GAP = 100;
+
 const initial: FormState = {
   name: '',
   email: '',
   phone: '',
-  subject: '',
+  category: '',
+  budgetMin: BUDGET_MIN,
+  budgetMax: BUDGET_MAX,
   message: '',
   consent: false,
   website: '',
 };
 
+/** Selectable services. `sonderwunsch` gets its own description heading. */
+const categories: { value: string; label: string }[] = [
+  { value: 'duschkabinen', label: 'Duschkabine' },
+  { value: 'glastueren', label: 'Glastüren & Trennwände' },
+  { value: 'vordaecher', label: 'Vordächer' },
+  { value: 'treppengelaender', label: 'Treppengeländer' },
+  { value: 'antike-fenster', label: 'Antike Fenster' },
+  { value: 'sonderwunsch', label: 'Sonderwunsch' },
+];
+
+const fmtEuro = (n: number) => `${n.toLocaleString('de-DE')} €`;
+const pct = (v: number) => ((v - BUDGET_MIN) / (BUDGET_MAX - BUDGET_MIN)) * 100;
+
 export function ContactForm() {
   const [data, setData] = useState<FormState>(initial);
   const [status, setStatus] = useState<Status>('idle');
   const [errorMsg, setErrorMsg] = useState<string>('');
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const update = <K extends keyof FormState>(key: K, value: FormState[K]) =>
     setData((d) => ({ ...d, [key]: value }));
+
+  const isSonderwunsch = data.category === 'sonderwunsch';
+  const hasCategory = data.category !== '';
+  const categoryLabel =
+    categories.find((c) => c.value === data.category)?.label ?? '';
+
+  const setBudgetMin = (v: number) =>
+    update('budgetMin', Math.min(v, data.budgetMax - BUDGET_GAP));
+  const setBudgetMax = (v: number) =>
+    update('budgetMax', Math.max(v, data.budgetMin + BUDGET_GAP));
+
+  /** Grow the description textarea to fit its content. */
+  const autoGrow = (el: HTMLTextAreaElement | null) => {
+    if (!el) return;
+    el.style.height = 'auto';
+    el.style.height = `${el.scrollHeight}px`;
+  };
+
+  // Re-fit when the field appears or its heading (and thus value) changes.
+  useLayoutEffect(() => {
+    autoGrow(textareaRef.current);
+  }, [hasCategory, data.message]);
 
   const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -43,6 +90,18 @@ export function ContactForm() {
       return;
     }
 
+    if (!data.category) {
+      setStatus('error');
+      setErrorMsg('Bitte wählen Sie aus, worum es geht.');
+      return;
+    }
+
+    if (isSonderwunsch && !data.message.trim()) {
+      setStatus('error');
+      setErrorMsg('Bitte beschreiben Sie Ihren Sonderwunsch kurz.');
+      return;
+    }
+
     if (!data.consent) {
       setStatus('error');
       setErrorMsg('Bitte stimmen Sie der Datenschutzerklärung zu.');
@@ -50,6 +109,9 @@ export function ContactForm() {
     }
 
     setStatus('submitting');
+
+    const budgetText = `${fmtEuro(data.budgetMin)} – ${fmtEuro(data.budgetMax)}`;
+    const subject = `${categoryLabel} – Anfrage über die Website`;
 
     // Optional EmailJS hookup via env – sends only when configured.
     // See README for setup. Falls back to mailto otherwise.
@@ -70,7 +132,9 @@ export function ContactForm() {
               from_name: data.name,
               reply_to: data.email,
               phone: data.phone,
-              subject: data.subject || 'Anfrage über die Website',
+              subject,
+              category: categoryLabel,
+              budget: budgetText,
               message: data.message,
             },
           }),
@@ -88,10 +152,12 @@ export function ContactForm() {
 
     // Fallback: open user's mail client
     const body = encodeURIComponent(
-      `Name: ${data.name}\nE-Mail: ${data.email}\nTelefon: ${data.phone}\n\n${data.message}\n`,
+      `Name: ${data.name}\nE-Mail: ${data.email}\nTelefon: ${data.phone}\n` +
+        `Leistung: ${categoryLabel}\nBudget: ${budgetText}\n\n${data.message}\n`,
     );
-    const subject = encodeURIComponent(data.subject || 'Anfrage über die Website');
-    window.location.href = `mailto:info@der-glasermeister.de?subject=${subject}&body=${body}`;
+    window.location.href = `mailto:info@der-glasermeister.de?subject=${encodeURIComponent(
+      subject,
+    )}&body=${body}`;
     setStatus('success');
     setData(initial);
   };
@@ -156,27 +222,117 @@ export function ContactForm() {
             onChange={(e) => update('phone', e.target.value)}
           />
         </div>
-        <div className="field">
-          <label htmlFor="cf-subject">Betreff</label>
-          <input
-            id="cf-subject"
-            type="text"
-            value={data.subject}
-            onChange={(e) => update('subject', e.target.value)}
-          />
-        </div>
       </div>
 
-      <div className="field">
-        <label htmlFor="cf-message">Ihre Nachricht <span aria-hidden="true">*</span></label>
-        <textarea
-          id="cf-message"
-          rows={6}
-          required
-          value={data.message}
-          onChange={(e) => update('message', e.target.value)}
-        />
-      </div>
+      {/* Service selection */}
+      <fieldset className="field cat-field">
+        <legend>Worum geht es? <span aria-hidden="true">*</span></legend>
+        <div className="cat-group" role="radiogroup" aria-label="Gewünschte Leistung">
+          {categories.map((c) => (
+            <label key={c.value} className="cat-chip">
+              <input
+                type="radio"
+                name="category"
+                value={c.value}
+                checked={data.category === c.value}
+                onChange={() => update('category', c.value)}
+              />
+              <span>{c.label}</span>
+            </label>
+          ))}
+        </div>
+      </fieldset>
+
+      <AnimatePresence initial={false}>
+        {hasCategory && (
+          <motion.div
+            key="details"
+            className="contact-form__reveal"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 6 }}
+            transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+          >
+            {/* Budget range slider */}
+            <div className="field budget">
+              <div className="budget__head">
+                <label id="cf-budget-label">Budgetrahmen</label>
+                <span className="budget__readout" aria-hidden="true">
+                  {fmtEuro(data.budgetMin)} – {fmtEuro(data.budgetMax)}
+                </span>
+              </div>
+
+              <div className="range">
+                <div className="range__track">
+                  <div
+                    className="range__fill"
+                    style={{ left: `${pct(data.budgetMin)}%`, right: `${100 - pct(data.budgetMax)}%` }}
+                  />
+                </div>
+
+                <input
+                  type="range"
+                  className="range__input range__input--min"
+                  min={BUDGET_MIN}
+                  max={BUDGET_MAX}
+                  step={BUDGET_STEP}
+                  value={data.budgetMin}
+                  aria-labelledby="cf-budget-label"
+                  aria-valuetext={fmtEuro(data.budgetMin)}
+                  onChange={(e) => setBudgetMin(Number(e.target.value))}
+                />
+                <input
+                  type="range"
+                  className="range__input range__input--max"
+                  min={BUDGET_MIN}
+                  max={BUDGET_MAX}
+                  step={BUDGET_STEP}
+                  value={data.budgetMax}
+                  aria-labelledby="cf-budget-label"
+                  aria-valuetext={fmtEuro(data.budgetMax)}
+                  onChange={(e) => setBudgetMax(Number(e.target.value))}
+                />
+
+                <output className="range__bubble" style={{ left: `${pct(data.budgetMin)}%` }}>
+                  {fmtEuro(data.budgetMin)}
+                </output>
+                <output className="range__bubble" style={{ left: `${pct(data.budgetMax)}%` }}>
+                  {fmtEuro(data.budgetMax)}
+                </output>
+              </div>
+
+              <div className="budget__scale" aria-hidden="true">
+                <span>{fmtEuro(BUDGET_MIN)}</span>
+                <span>{fmtEuro(BUDGET_MAX)}</span>
+              </div>
+            </div>
+
+            {/* Conditional description field */}
+            <div className="field">
+              <label htmlFor="cf-message">
+                {isSonderwunsch
+                  ? 'Erzähl mir was darüber'
+                  : 'Noch etwas, dass ich wissen sollte?'}
+                {isSonderwunsch && <span aria-hidden="true"> *</span>}
+              </label>
+              <textarea
+                id="cf-message"
+                ref={textareaRef}
+                className="textarea--grow"
+                rows={isSonderwunsch ? 4 : 3}
+                required={isSonderwunsch}
+                value={data.message}
+                placeholder={
+                  isSonderwunsch
+                    ? 'Beschreiben Sie Ihre Idee – Maße, Glasart, Einsatzort, alles hilft.'
+                    : 'Optional – z. B. Maße, Wunschtermin oder besondere Anforderungen.'
+                }
+                onChange={(e) => update('message', e.target.value)}
+              />
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Honeypot – not announced */}
       <div className="hp" aria-hidden="true">
