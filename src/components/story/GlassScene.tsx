@@ -69,6 +69,15 @@ const CAM_Y = 0.18;
 const CAM_Z = 3.4;
 const CAM_FOV = 32;
 
+/**
+ * Das Vorher-Foto ist schräg aufgenommen: Die Tassenvorderkante läuft im
+ * Bild von links oben (252,727 im 600×800-Raster) nach rechts unten
+ * (510,786). Beide Scheiben stehen in einer Ebene auf dieser Kante
+ * (die Stufe im Seitenteil folgt der Sitzbank) – daher bekommen sie
+ * einen Gier-Winkel, der diese Perspektive nachbildet.
+ */
+const PANE_YAW = -0.38;
+
 type PaneSpec = {
   geometry: THREE.ExtrudeGeometry;
   from: { pos: THREE.Vector3; rot: THREE.Euler };
@@ -105,17 +114,17 @@ function frameLayout(vw: number, vh: number, frameEl: HTMLElement | null) {
   // Weltkoordinaten pro Pixel in der z=0-Ebene
   const wpp = (2 * CAM_Z * Math.tan(((CAM_FOV / 2) * Math.PI) / 180)) / vh;
 
-  // Türblatt: rechte Hälfte der Nische, Unterkante knapp über Rahmenunterkante
-  const paneScale = (frameH * 0.62 * wpp) / 1.455;
-  const bottomY = CAM_Y - frameBottomPx * wpp + frameH * 0.03 * wpp;
-  const doorX = (frameCxPx + frameW * 0.17) * wpp;
-  // Seitenteil: links davor, im 90°-Anschluss zur Tür
-  const panelX = (frameCxPx - frameW * 0.21) * wpp;
-  const panelZ = 0.705 * paneScale * 0.42;
-  // Gleiche Bodenlinie im Bild trotz Kameranähe (Strahlensatz)
-  const panelY = CAM_Y - ((CAM_Y - bottomY) * (CAM_Z - panelZ)) / CAM_Z;
+  // Türblatt: Quad der Foto-Skizze (Raster 600×800) –
+  // Mitte bei x ≈ 381/600, Unterkante bei y ≈ 757/800, Höhe ≈ 0.6 · frameH
+  const paneScale = (frameH * 0.6 * wpp) / 1.455;
+  const bottomY = CAM_Y - (frameBottomPx - frameH * 0.055) * wpp;
+  const doorX = (frameCxPx + frameW * 0.135) * wpp;
+  // Seitenteil: schließt in derselben Ebene links an (Stoßfuge)
+  const joint = (0.753 / 2 + 0.705 / 2 + 0.006) * paneScale;
+  const panelX = doorX - joint * Math.cos(PANE_YAW);
+  const panelZ = joint * Math.sin(PANE_YAW); // negativ → weiter hinten
 
-  return { paneScale, bottomY, doorX, panelX, panelY, panelZ };
+  return { paneScale, bottomY, doorX, panelX, panelZ };
 }
 
 type PanesProps = {
@@ -166,7 +175,7 @@ function Panes({ progressRef, frameRef }: PanesProps) {
   const panes = useMemo<PaneSpec[]>(
     () => [
       {
-        // Duschtüre – fliegt von rechts ein, stellt sich frontal in die Nische
+        // Duschtüre – fliegt von rechts ein, stellt sich auf die Tassenkante
         geometry: paneGeometry(doorShape(), 8),
         from: {
           pos: new THREE.Vector3(3.4, 1.6, -2.6),
@@ -174,20 +183,20 @@ function Panes({ progressRef, frameRef }: PanesProps) {
         },
         to: {
           pos: new THREE.Vector3(layout.doorX, layout.bottomY, 0),
-          rot: new THREE.Euler(0, 0, 0),
+          rot: new THREE.Euler(0, PANE_YAW, 0),
         },
         range: [0.08, 0.6],
       },
       {
-        // Seitenteil – von links, dreht sich in den 90°-Anschluss davor
+        // Seitenteil – von links, schließt in derselben Ebene an
         geometry: paneGeometry(panelShape(), 10),
         from: {
           pos: new THREE.Vector3(-3.6, 2.0, -2.2),
           rot: new THREE.Euler(-0.9, 1.4, -0.6),
         },
         to: {
-          pos: new THREE.Vector3(layout.panelX, layout.panelY, layout.panelZ),
-          rot: new THREE.Euler(0, Math.PI / 2.45, 0),
+          pos: new THREE.Vector3(layout.panelX, layout.bottomY, layout.panelZ),
+          rot: new THREE.Euler(0, PANE_YAW, 0),
         },
         range: [0.34, 0.88],
       },
