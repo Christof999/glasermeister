@@ -69,16 +69,6 @@ const CAM_Y = 0.18;
 const CAM_Z = 3.4;
 const CAM_FOV = 32;
 
-/**
- * Das Vorher-Foto ist schräg aufgenommen: Die Tassenvorderkante läuft im
- * Bild von links oben (252,727 im 600×800-Raster) nach rechts unten
- * (510,786). Die Tür steht auf dieser Kante (Gier-Winkel bildet die
- * Perspektive nach). Das Seitenteil schließt an der linken Türkante im
- * 90°-Winkel an und läuft nach hinten über Duschtasse und Sitzbank –
- * deshalb die Stufe in seinem Zuschnitt.
- */
-const PANE_YAW = -0.38;
-
 type PaneSpec = {
   geometry: THREE.ExtrudeGeometry;
   from: { pos: THREE.Vector3; rot: THREE.Euler };
@@ -87,11 +77,9 @@ type PaneSpec = {
 };
 
 /**
- * Endpositionen relativ zum Foto-Rahmen der Story berechnen, damit die
- * Scheiben exakt „in" der Duschnische landen – unabhängig von der
- * Viewport-Größe. Der Rahmen wird direkt im DOM vermessen (offset-Werte,
- * unbeeinflusst von Transforms); fällt nur ohne Element auf eine
- * Näherung der CSS-Regeln zurück.
+ * Frontale Entwurfsansicht: Die zwei Zuschnitte stehen bewusst getrennt
+ * nebeneinander auf der schwarzen Story-Fläche, nicht mehr perspektivisch
+ * auf dem Foto oder im 90°-Winkel zueinander.
  */
 function frameLayout(vw: number, vh: number, frameEl: HTMLElement | null) {
   let frameW: number;
@@ -115,25 +103,12 @@ function frameLayout(vw: number, vh: number, frameEl: HTMLElement | null) {
   // Weltkoordinaten pro Pixel in der z=0-Ebene
   const wpp = (2 * CAM_Z * Math.tan(((CAM_FOV / 2) * Math.PI) / 180)) / vh;
 
-  // Türblatt: Quad der Foto-Skizze (Raster 600×800) –
-  // Mitte bei x ≈ 381/600, Unterkante bei y ≈ 757/800, Höhe ≈ 0.6 · frameH
-  const paneScale = (frameH * 0.6 * wpp) / 1.455;
-  const bottomY = CAM_Y - (frameBottomPx - frameH * 0.055) * wpp;
-  const doorX = (frameCxPx + frameW * 0.135) * wpp;
+  const paneScale = (frameH * 0.52 * wpp) / 1.455;
+  const bottomY = CAM_Y - (frameBottomPx - frameH * 0.12) * wpp;
+  const doorX = (frameCxPx + frameW * 0.34) * wpp;
+  const panelX = (frameCxPx - frameW * 0.04) * wpp;
 
-  // Stoßfuge = linke Türkante; von dort läuft das Seitenteil senkrecht
-  // nach hinten ins Rauminnere (über die Sitzbank)
-  const halfDoorW = (0.753 / 2) * paneScale;
-  const halfPanelW = (0.705 / 2) * paneScale;
-  const jointX = doorX - halfDoorW * Math.cos(PANE_YAW);
-  const jointZ = -halfDoorW * -Math.sin(PANE_YAW);
-  const backX = -Math.sin(PANE_YAW);
-  const backZ = -Math.cos(PANE_YAW);
-  const panelX = jointX + halfPanelW * backX;
-  const panelZ = jointZ + halfPanelW * backZ;
-  const panelYaw = PANE_YAW - Math.PI / 2;
-
-  return { paneScale, bottomY, doorX, panelX, panelZ, panelYaw };
+  return { paneScale, bottomY, doorX, panelX };
 }
 
 type PanesProps = {
@@ -168,14 +143,14 @@ function Panes({ progressRef, frameRef }: PanesProps) {
   const material = useMemo(
     () =>
       new THREE.MeshPhysicalMaterial({
-        color: new THREE.Color('#3d4644'), // Parsol grau, getönt
+        color: new THREE.Color('#6f817d'), // Parsol grau, getönt
         metalness: 0,
         roughness: 0.04,
         transparent: true,
-        opacity: 0.38,
+        opacity: 0.58,
         clearcoat: 1,
         clearcoatRoughness: 0.06,
-        envMapIntensity: 0.65,
+        envMapIntensity: 0.85,
         side: THREE.DoubleSide,
       }),
     []
@@ -184,31 +159,30 @@ function Panes({ progressRef, frameRef }: PanesProps) {
   const panes = useMemo<PaneSpec[]>(
     () => [
       {
-        // Duschtüre – fliegt von rechts ein, stellt sich auf die Tassenkante
+        // Große Duschtür – frontal von rechts in die Entwurfsfläche
         geometry: paneGeometry(doorShape(), 8),
         from: {
-          pos: new THREE.Vector3(3.4, 1.6, -2.6),
-          rot: new THREE.Euler(0.7, -1.5, 0.55),
+          pos: new THREE.Vector3(layout.doorX + 1.8, layout.bottomY, 0),
+          rot: new THREE.Euler(0, 0, 0),
         },
         to: {
           pos: new THREE.Vector3(layout.doorX, layout.bottomY, 0),
-          rot: new THREE.Euler(0, PANE_YAW, 0),
+          rot: new THREE.Euler(0, 0, 0),
         },
-        range: [0.08, 0.6],
+        range: [0.02, 0.42],
       },
       {
-        // Seitenteil – von links, dreht sich in den 90°-Anschluss
-        // und läuft nach hinten über die Sitzbank
+        // Kleineres Seitenteil – frontal von links, als eigenes Teil
         geometry: paneGeometry(panelShape(), 10),
         from: {
-          pos: new THREE.Vector3(-3.6, 2.0, -2.2),
-          rot: new THREE.Euler(-0.9, -0.5, -0.6),
+          pos: new THREE.Vector3(layout.panelX - 1.8, layout.bottomY, 0),
+          rot: new THREE.Euler(0, 0, 0),
         },
         to: {
-          pos: new THREE.Vector3(layout.panelX, layout.bottomY, layout.panelZ),
-          rot: new THREE.Euler(0, layout.panelYaw, 0),
+          pos: new THREE.Vector3(layout.panelX, layout.bottomY, 0),
+          rot: new THREE.Euler(0, 0, 0),
         },
-        range: [0.34, 0.88],
+        range: [0.12, 0.52],
       },
     ],
     [layout]
@@ -222,7 +196,7 @@ function Panes({ progressRef, frameRef }: PanesProps) {
     [panes, material]
   );
 
-  useFrame(({ pointer }) => {
+  useFrame(() => {
     const p = progressRef.current;
     const refs = [doorRef.current, panelRef.current];
     panes.forEach((spec, i) => {
@@ -240,14 +214,6 @@ function Panes({ progressRef, frameRef }: PanesProps) {
       const hover = (1 - t) * 0.04;
       mesh.position.y += Math.sin(performance.now() / 600 + i * 2) * hover;
     });
-    if (groupRef.current) {
-      // Sehr dezente Parallaxe zur Mausposition – darf die Endposition
-      // im Foto-Rahmen nur minimal verschieben
-      groupRef.current.rotation.y +=
-        (pointer.x * 0.045 - groupRef.current.rotation.y) * 0.06;
-      groupRef.current.rotation.x +=
-        (-pointer.y * 0.02 - groupRef.current.rotation.x) * 0.06;
-    }
   });
 
   return (

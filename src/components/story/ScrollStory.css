@@ -67,12 +67,29 @@
   100% { transform: scaleY(1) translateY(24px); opacity: 0; }
 }
 
-/* Foto-Bühne */
+/* Foto- und Entwurfs-Bühnen */
+.story__photo-stage,
+.story__draft-stage {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  pointer-events: none;
+  transform-origin: center;
+}
+
+.story__photo-stage {
+  z-index: 1;
+}
+
+.story__draft-stage {
+  z-index: 3;
+}
+
 .story__frame {
   position: relative;
   margin: 0;
-  /* Breite steuert, Höhe folgt der 3:4-Ratio – so bleibt das Seitenverhältnis
-     immer exakt und die Aufmaß-Skizze deckungsgleich mit dem Foto */
+  /* Breite steuert, Höhe folgt der 3:4-Ratio. */
   width: min(calc(0.75 * 80svh), calc(100vw - 2 * var(--gutter)));
   height: auto;
   aspect-ratio: 3 / 4;
@@ -80,7 +97,15 @@
   border-radius: var(--radius-lg);
   overflow: hidden;
   box-shadow: 0 40px 120px rgba(0, 0, 0, 0.8);
-  z-index: 1;
+  z-index: 2;
+}
+
+.story__frame--draft {
+  background: transparent;
+  border-color: transparent;
+  border-radius: 0;
+  box-shadow: none;
+  overflow: visible;
 }
 
 .story__frame img {
@@ -123,6 +148,11 @@
   height: 100%;
   z-index: 3;
   mix-blend-mode: screen;
+}
+
+.story__anno-drawing {
+  transform-box: fill-box;
+  transform-origin: center;
 }
 
 .anno-line {
