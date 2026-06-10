@@ -44,7 +44,7 @@ function Caption({ progress, range, index, title, children }: CaptionProps) {
 
 export function ScrollStory() {
   const containerRef = useRef<HTMLDivElement>(null);
-  const frameRef = useRef<HTMLElement | null>(null);
+  const draftRef = useRef<HTMLElement | null>(null);
   const sceneProgress = useRef(0);
   const reduced = useReducedMotion();
   const inView = useInView(containerRef, { margin: '400px 0px 400px 0px' });
@@ -55,42 +55,43 @@ export function ScrollStory() {
   });
 
   useMotionValueEvent(p, 'change', (v) => {
-    sceneProgress.current = clamp01((v - 0.5) / (0.78 - 0.5));
+    sceneProgress.current = clamp01((v - 0.55) / (0.76 - 0.55));
   });
 
   // Intro
   const introOpacity = useTransform(p, [0, 0.07, 0.11], [1, 1, 0]);
   const introY = useTransform(p, [0, 0.11], [0, -60]);
 
-  // Gemeinsame Bühne: Vorherfoto wird kleiner und wandert nach links,
-  // Skizze und 3D-Canvas bleiben dadurch sauber daran gekoppelt.
-  const frameOpacity = useTransform(p, [0.03, 0.09], [0, 1]);
-  const stageScale = useTransform(p, [0.03, 0.13, 0.28], [1.06, 1, 0.78]);
-  const stageX = useTransform(p, [0.13, 0.28], ['0vw', '-14vw']);
-  const stageY = useTransform(p, [0.13, 0.28], ['0vh', '-4vh']);
+  // Foto-Ebene: Vorherbild startet groß, fährt zur Seite und kommt am Ende
+  // wieder in die Mitte zurück; dabei fadet es zum echten Nachherbild.
+  const photoOpacity = useTransform(p, [0.03, 0.09], [0, 1]);
+  const photoScale = useTransform(p, [0.03, 0.13, 0.28, 0.78, 0.94], [1.06, 1, 0.52, 0.52, 1]);
+  const photoX = useTransform(p, [0.13, 0.28, 0.78, 0.94], ['0vw', '-38vw', '-38vw', '0vw']);
+  const photoY = useTransform(p, [0.13, 0.28, 0.78, 0.94], ['0vh', '-5vh', '-5vh', '0vh']);
   const vorherFilter = useTransform(
     p,
-    [0.44, 0.54, 0.82, 0.92],
-    ['brightness(1)', 'brightness(0.48)', 'brightness(0.48)', 'brightness(1)']
+    [0.26, 0.36, 0.82, 0.94],
+    ['brightness(1)', 'brightness(0.58)', 'brightness(0.58)', 'brightness(1)']
   );
   const nachherOpacity = useTransform(p, [0.82, 0.94], [0, 1]);
-  const tagVorher = useTransform(p, [0.08, 0.12, 0.34, 0.38], [0, 1, 1, 0]);
+  const tagVorher = useTransform(p, [0.08, 0.12, 0.78, 0.84], [0, 1, 1, 0]);
   const tagNachher = useTransform(p, [0.86, 0.94], [0, 1]);
 
-  // Bleistift-Annotationen (Fenster im Scrollverlauf)
-  const sketch = useTransform(p, [0.24, 0.34], [0, 1]);
-  const sketchPanel = useTransform(p, [0.3, 0.4], [0, 1]);
-  const dimH = useTransform(p, [0.34, 0.42], [0, 1]);
-  const dimW = useTransform(p, [0.38, 0.46], [0, 1]);
-  const bevel = useTransform(p, [0.42, 0.48], [0, 1]);
-  const radius = useTransform(p, [0.46, 0.52], [0, 1]);
-  const note = useTransform(p, [0.5, 0.58], [0, 1]);
-  const hinge = useTransform(p, [0.54, 0.62], [0, 1]);
-  const angle = useTransform(p, [0.58, 0.66], [0, 1]);
-  const annoOut = useTransform(p, [0.8, 0.9], [1, 0]);
+  // Schwarze Entwurfs-Ebene: Skizze und 3D-Glas entstehen unabhängig vom Foto.
+  const draftOpacity = useTransform(p, [0.24, 0.3, 0.78, 0.88], [0, 1, 1, 0]);
+  const sketch = useTransform(p, [0.3, 0.4], [0, 1]);
+  const sketchPanel = useTransform(p, [0.36, 0.46], [0, 1]);
+  const dimH = useTransform(p, [0.4, 0.48], [0, 1]);
+  const dimW = useTransform(p, [0.44, 0.52], [0, 1]);
+  const bevel = useTransform(p, [0.48, 0.54], [0, 1]);
+  const radius = useTransform(p, [0.52, 0.58], [0, 1]);
+  const note = useTransform(p, [0.56, 0.62], [0, 1]);
+  const hinge = useTransform(p, [0.6, 0.68], [0, 1]);
+  const angle = useTransform(p, [0.64, 0.72], [0, 1]);
+  const annoOut = useTransform(p, [0.78, 0.88], [1, 0]);
 
   // 3D-Scheiben kommen erst nach fertig gezeichneter Skizze dazu.
-  const canvasOpacity = useTransform(p, [0.5, 0.58, 0.8, 0.9], [0, 1, 1, 0]);
+  const canvasOpacity = useTransform(p, [0.55, 0.62, 0.78, 0.88], [0, 1, 1, 0]);
   const showCanvas = inView && !reduced;
 
   return (
@@ -115,12 +116,12 @@ export function ScrollStory() {
           </div>
         </motion.div>
 
-        {/* Foto-, Skizzen- und Glas-Bühne */}
+        {/* Foto-Ebene: fährt zur Seite und kommt für den Nachher-Fade zurück */}
         <motion.div
-          className="story__stage"
-          style={{ opacity: frameOpacity, x: stageX, y: stageY, scale: stageScale }}
+          className="story__photo-stage"
+          style={{ opacity: photoOpacity, x: photoX, y: photoY, scale: photoScale }}
         >
-          <motion.figure className="story__frame" ref={frameRef}>
+          <motion.figure className="story__frame story__frame--photo">
             <motion.img
               src="/images/schulstrasse/img_1537.jpg"
               alt="Geflieste Duschnische unter der Dachschräge, noch ohne Glas"
@@ -147,7 +148,12 @@ export function ScrollStory() {
             <motion.span className="story__tag story__tag--after" style={{ opacity: tagNachher }}>
               Nachher
             </motion.span>
+          </motion.figure>
+        </motion.div>
 
+        {/* Entwurfs-Ebene: Skizze und 3D-Glas auf schwarzem Hintergrund */}
+        <motion.div className="story__draft-stage" style={{ opacity: draftOpacity }}>
+          <motion.figure className="story__frame story__frame--draft" ref={draftRef}>
             {/* Bleistift-Aufmaß */}
             <motion.svg
               className="story__anno"
@@ -156,8 +162,7 @@ export function ScrollStory() {
               aria-hidden="true"
               style={{ opacity: annoOut }}
             >
-            {/* Aufmaß-Skizze im Vorherfoto: bewusst als Zeichnung, nicht als
-               künstliche Ersatzscheibe. Das echte Ergebnis folgt im Foto-Fade. */}
+            {/* Aufmaß-Skizze auf der schwarzen Entwurfsfläche. */}
             <motion.path
               className="anno-line anno-line--dashed"
               d="M 514 290 L 512 782 L 252 728 L 258 356 L 318 286 Z"
@@ -255,7 +260,7 @@ export function ScrollStory() {
           <motion.div className="story__canvas" style={{ opacity: canvasOpacity }}>
             {showCanvas && (
               <Suspense fallback={null}>
-                <GlassScene progressRef={sceneProgress} frameRef={frameRef} />
+                <GlassScene progressRef={sceneProgress} frameRef={draftRef} />
               </Suspense>
             )}
           </motion.div>
@@ -263,19 +268,19 @@ export function ScrollStory() {
 
         {/* Kapitel */}
         <div className="story__captions">
-          <Caption progress={p} range={[0.09, 0.18]} index="01" title="Vorher">
+          <Caption progress={p} range={[0.09, 0.24]} index="01" title="Vorher">
             Ein Bad unterm Dach, fertig gefliest – nur die Dusche ist noch offen.
             Der Balken von 1780 bleibt, das Glas muss sich fügen.
           </Caption>
-          <Caption progress={p} range={[0.18, 0.46]} index="02" title="Das Aufmaß">
+          <Caption progress={p} range={[0.26, 0.55]} index="02" title="Das Aufmaß">
             Jede Kante wird vor Ort auf den Millimeter aufgenommen und in die
             Zeichnung übertragen – hier ist kein Winkel ein rechter.
           </Caption>
-          <Caption progress={p} range={[0.48, 0.85]} index="03" title="Das Glas">
+          <Caption progress={p} range={[0.55, 0.84]} index="03" title="Das Glas">
             Türblatt und Seitenteil aus grau getöntem Sicherheitsglas, Kanten
             feingeschliffen. Gefertigt nach Zeichnung – passend beim ersten Einsetzen.
           </Caption>
-          <Caption progress={p} range={[0.89, 1]} index="04" title="Nachher">
+          <Caption progress={p} range={[0.86, 1]} index="04" title="Nachher">
             Als wäre es immer da gewesen. Maßarbeit sieht man ihr nicht an –
             genau das ist der Punkt.
           </Caption>

@@ -67,22 +67,29 @@
   100% { transform: scaleY(1) translateY(24px); opacity: 0; }
 }
 
-/* Foto-, Skizzen- und Glas-Bühne */
-.story__stage {
+/* Foto- und Entwurfs-Bühnen */
+.story__photo-stage,
+.story__draft-stage {
   position: absolute;
   inset: 0;
   display: grid;
   place-items: center;
   pointer-events: none;
   transform-origin: center;
+}
+
+.story__photo-stage {
   z-index: 1;
+}
+
+.story__draft-stage {
+  z-index: 3;
 }
 
 .story__frame {
   position: relative;
   margin: 0;
-  /* Breite steuert, Höhe folgt der 3:4-Ratio – so bleibt das Seitenverhältnis
-     immer exakt und Skizze/3D-Canvas bleiben deckungsgleich mit dem Foto. */
+  /* Breite steuert, Höhe folgt der 3:4-Ratio. */
   width: min(calc(0.75 * 80svh), calc(100vw - 2 * var(--gutter)));
   height: auto;
   aspect-ratio: 3 / 4;
@@ -91,6 +98,12 @@
   overflow: hidden;
   box-shadow: 0 40px 120px rgba(0, 0, 0, 0.8);
   z-index: 2;
+}
+
+.story__frame--draft {
+  background:
+    radial-gradient(circle at 50% 36%, rgba(127, 179, 179, 0.1), transparent 36%),
+    #050505;
 }
 
 .story__frame img {
