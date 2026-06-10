@@ -65,6 +65,10 @@ const easeOutCubic = (t: number) => 1 - Math.pow(1 - t, 3);
 const clamp01 = (v: number) => Math.min(1, Math.max(0, v));
 const window01 = (p: number, from: number, to: number) => clamp01((p - from) / (to - from));
 
+const CAM_Y = 0.18;
+const CAM_Z = 3.4;
+const CAM_FOV = 32;
+
 type PaneSpec = {
   geometry: THREE.ExtrudeGeometry;
   from: { pos: THREE.Vector3; rot: THREE.Euler };
@@ -72,11 +76,40 @@ type PaneSpec = {
   range: [number, number];
 };
 
+/**
+ * Endpositionen relativ zum Foto-Rahmen der Story berechnen, damit die
+ * Scheiben exakt „in" der Duschnische landen – unabhängig von der
+ * Viewport-Größe. Die Rahmenmaße spiegeln die CSS-Regeln in ScrollStory.css
+ * (Höhe min(80vh | 62vh mobil), Seitenverhältnis 3:4, zentriert).
+ */
+function frameLayout(vw: number, vh: number) {
+  const gutter = Math.min(Math.max(16, vw * 0.04), 32);
+  const capH = vw <= 720 ? 0.62 * vh : 0.8 * vh;
+  const frameH = Math.min(capH, (vw - 2 * gutter) / 0.75);
+  const frameW = frameH * 0.75;
+  // Weltkoordinaten pro Pixel in der z=0-Ebene
+  const wpp = (2 * CAM_Z * Math.tan(((CAM_FOV / 2) * Math.PI) / 180)) / vh;
+
+  // Türblatt: rechte Hälfte der Nische, Unterkante knapp über Rahmenunterkante
+  const paneScale = (frameH * 0.6 * wpp) / 1.455;
+  const bottomY = CAM_Y - (frameH / 2) * wpp + frameH * 0.035 * wpp;
+  const doorX = frameW * 0.17 * wpp;
+  // Seitenteil: links davor, im 90°-Anschluss zur Tür
+  const panelX = -frameW * 0.21 * wpp;
+  const panelZ = 0.705 * paneScale * 0.42;
+  // Gleiche Bodenlinie im Bild trotz Kameranähe (Strahlensatz)
+  const panelY = CAM_Y - ((CAM_Y - bottomY) * (CAM_Z - panelZ)) / CAM_Z;
+
+  return { paneScale, bottomY, doorX, panelX, panelY, panelZ };
+}
+
 function Panes({ progressRef }: { progressRef: MutableRefObject<number> }) {
-  const { gl, scene } = useThree();
+  const { gl, scene, size } = useThree();
   const groupRef = useRef<THREE.Group>(null);
   const doorRef = useRef<THREE.Mesh>(null);
   const panelRef = useRef<THREE.Mesh>(null);
+
+  const layout = useMemo(() => frameLayout(size.width, size.height), [size.width, size.height]);
 
   useEffect(() => {
     // Prozedurale Studio-Umgebung für Glanz & Reflexionen – keine externen Assets
@@ -110,33 +143,33 @@ function Panes({ progressRef }: { progressRef: MutableRefObject<number> }) {
   const panes = useMemo<PaneSpec[]>(
     () => [
       {
-        // Duschtüre – fliegt von rechts ein, stellt sich frontal
+        // Duschtüre – fliegt von rechts ein, stellt sich frontal in die Nische
         geometry: paneGeometry(doorShape(), 8),
         from: {
           pos: new THREE.Vector3(3.4, 1.6, -2.6),
           rot: new THREE.Euler(0.7, -1.5, 0.55),
         },
         to: {
-          pos: new THREE.Vector3(0.34, 0, 0),
+          pos: new THREE.Vector3(layout.doorX, layout.bottomY, 0),
           rot: new THREE.Euler(0, 0, 0),
         },
         range: [0.08, 0.6],
       },
       {
-        // Seitenteil – von links, dreht sich in den 90°-Anschluss
+        // Seitenteil – von links, dreht sich in den 90°-Anschluss davor
         geometry: paneGeometry(panelShape(), 10),
         from: {
           pos: new THREE.Vector3(-3.6, 2.0, -2.2),
           rot: new THREE.Euler(-0.9, 1.4, -0.6),
         },
         to: {
-          pos: new THREE.Vector3(-0.42, 0.15, 0.36),
-          rot: new THREE.Euler(0, Math.PI / 2.6, 0),
+          pos: new THREE.Vector3(layout.panelX, layout.panelY, layout.panelZ),
+          rot: new THREE.Euler(0, Math.PI / 2.45, 0),
         },
         range: [0.34, 0.88],
       },
     ],
-    []
+    [layout]
   );
 
   useEffect(
@@ -154,6 +187,7 @@ function Panes({ progressRef }: { progressRef: MutableRefObject<number> }) {
       const mesh = refs[i];
       if (!mesh) return;
       const t = easeOutCubic(window01(p, spec.range[0], spec.range[1]));
+      mesh.scale.setScalar(layout.paneScale);
       mesh.position.lerpVectors(spec.from.pos, spec.to.pos, t);
       mesh.rotation.set(
         THREE.MathUtils.lerp(spec.from.rot.x, spec.to.rot.x, t),
@@ -165,16 +199,17 @@ function Panes({ progressRef }: { progressRef: MutableRefObject<number> }) {
       mesh.position.y += Math.sin(performance.now() / 600 + i * 2) * hover;
     });
     if (groupRef.current) {
-      // Dezente Parallaxe zur Mausposition
+      // Sehr dezente Parallaxe zur Mausposition – darf die Endposition
+      // im Foto-Rahmen nur minimal verschieben
       groupRef.current.rotation.y +=
-        (pointer.x * 0.12 - groupRef.current.rotation.y) * 0.06;
+        (pointer.x * 0.045 - groupRef.current.rotation.y) * 0.06;
       groupRef.current.rotation.x +=
-        (-pointer.y * 0.05 - groupRef.current.rotation.x) * 0.06;
+        (-pointer.y * 0.02 - groupRef.current.rotation.x) * 0.06;
     }
   });
 
   return (
-    <group ref={groupRef} position={[0, -0.62, 0]} scale={0.88}>
+    <group ref={groupRef}>
       <mesh ref={doorRef} geometry={panes[0].geometry} material={material} />
       <mesh ref={panelRef} geometry={panes[1].geometry} material={material} />
     </group>

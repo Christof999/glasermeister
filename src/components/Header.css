@@ -22,17 +22,17 @@
 }
 
 .logo {
-  font-weight: 900;
-  font-size: clamp(1rem, 1.6vw, 1.2rem);
-  letter-spacing: -0.04em;
+  display: inline-flex;
+  align-items: center;
   color: var(--text);
   text-decoration: none;
   white-space: nowrap;
   padding: 8px 0;
-  transition: color 180ms var(--ease);
+  opacity: var(--intro-logo-handoff, 1);
+  transition: color 180ms var(--ease), opacity 240ms var(--ease);
 }
 .logo:hover { color: var(--accent); }
-.logo__mark { display: inline-block; }
+.logo__svg { height: 15px; width: auto; display: block; }
 
 .nav ul {
   list-style: none;
@@ -195,12 +195,8 @@
   border-bottom: 1px solid var(--border);
 }
 
-.drawer__logo {
-  font-weight: 900;
-  font-size: 1rem;
-  letter-spacing: -0.04em;
-  color: var(--text);
-}
+.drawer__logo { color: var(--text); line-height: 0; }
+.drawer__logo-svg { height: 13px; width: auto; display: block; }
 
 .drawer__close {
   width: 44px;

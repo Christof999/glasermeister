@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { NavLink, Link, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Logo } from './Logo';
 import './Header.css';
 
 const navItems = [
@@ -59,7 +60,7 @@ export function Header() {
     <header className={`site-header ${scrolled ? 'site-header--scrolled' : ''}`}>
       <div className="container site-header__inner">
         <Link to="/" className="logo" aria-label="der-glasermeister – zur Startseite">
-          <span className="logo__mark">der-glasermeister</span>
+          <Logo className="logo__svg" />
         </Link>
 
         <nav className="nav nav--desktop" aria-label="Hauptnavigation">
@@ -142,7 +143,9 @@ export function Header() {
               transition={{ type: 'tween', duration: 0.42, ease: [0.22, 1, 0.36, 1] }}
             >
               <div className="drawer__head">
-                <span className="drawer__logo" aria-hidden="true">der-glasermeister</span>
+                <span className="drawer__logo" aria-hidden="true">
+                  <Logo className="drawer__logo-svg" />
+                </span>
                 <button
                   type="button"
                   className="drawer__close"

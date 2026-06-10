@@ -1,31 +1,74 @@
-/* Schwebende Projekt-Galerie – schwarzer Raum, Tiefenstaffelung */
+/* Schwebende Projekt-Galerie – Karten sammeln sich mittig und
+   fächern beim Scrollen in den Raum auf, in der Mitte steht der Titel. */
 
 .fp {
+  position: relative;
+  height: 320vh;
   background:
     radial-gradient(1200px 600px at 70% 10%, rgba(127, 179, 179, 0.06), transparent 60%),
     radial-gradient(900px 500px at 15% 80%, rgba(127, 179, 179, 0.04), transparent 60%),
     #030303;
+}
+
+.fp__sticky {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  height: 100dvh;
   overflow: hidden;
 }
 
-.fp__head { margin-bottom: clamp(24px, 4vw, 56px); }
-
-.fp__stage {
-  position: relative;
-  height: clamp(900px, 160vh, 1500px);
-  max-width: 1500px;
-  margin: 0 auto;
+/* Titel in der Bühnenmitte */
+.fp__center {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  pointer-events: none;
+  z-index: 0;
+  padding-inline: var(--gutter);
 }
 
+.fp__center h2 {
+  font-size: clamp(2.2rem, 5.5vw, 4.6rem);
+  font-weight: 900;
+  letter-spacing: -0.03em;
+  margin-bottom: 0.4em;
+}
+
+.fp__center p {
+  color: var(--text-dim);
+  max-width: 36ch;
+  margin: 0;
+}
+
+.fp__hint {
+  position: absolute;
+  left: 50%;
+  bottom: 28px;
+  transform: translateX(-50%);
+  margin: 0;
+  font-size: 0.72rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  z-index: 20;
+  pointer-events: none;
+}
+
+/* Karten */
 .fp-card {
   position: absolute;
-  transform: translate(-50%, -50%);
+  translate: -50% -50%;
   width: 200px;
 }
 
-.fp-card--lg { width: clamp(260px, 30vw, 420px); }
-.fp-card--md { width: clamp(210px, 23vw, 320px); }
-.fp-card--sm { width: clamp(170px, 17vw, 240px); }
+.fp-card--lg { width: clamp(230px, 24vw, 340px); }
+.fp-card--md { width: clamp(190px, 19vw, 270px); }
+.fp-card--sm { width: clamp(150px, 15vw, 210px); }
 
 .fp-card__btn {
   display: block;
@@ -36,7 +79,6 @@
   text-align: left;
   color: inherit;
   cursor: pointer;
-  transform: scale(var(--fp-scale, 1));
   filter: brightness(var(--fp-dim, 1));
   animation: fp-float var(--fp-dur, 8s) var(--fp-delay, 0s) ease-in-out infinite alternate;
   transition: filter 300ms var(--ease);
@@ -49,8 +91,8 @@
 }
 
 @keyframes fp-float {
-  from { translate: 0 -10px; }
-  to { translate: 0 12px; }
+  from { transform: translateY(-9px) rotate(-0.5deg); }
+  to { transform: translateY(11px) rotate(0.6deg); }
 }
 
 .fp-card__btn img {
@@ -74,44 +116,48 @@
   flex-direction: column;
   gap: 2px;
   margin-top: 12px;
+  opacity: var(--fp-label-o, 1);
 }
 
 .fp-card__label strong {
-  font-size: 0.98rem;
+  font-size: 0.95rem;
   font-weight: 600;
   letter-spacing: -0.01em;
 }
 
 .fp-card__label span {
-  font-size: 0.78rem;
+  font-size: 0.76rem;
   color: var(--text-muted);
   letter-spacing: 0.04em;
 }
 
-/* Mobil: ruhiges Grid statt frei schwebender Karten */
-@media (max-width: 860px) {
-  .fp__stage {
-    height: auto;
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 18px;
-    padding-inline: var(--gutter);
-  }
+/* Einfache Variante: Mobil & reduzierte Bewegung */
+.fp--simple { height: auto; }
 
-  .fp-card,
-  .fp-card--lg,
-  .fp-card--md,
-  .fp-card--sm {
-    position: static;
-    transform: none !important;
-    width: 100%;
-  }
+.fp--simple .fp__head { margin-bottom: clamp(24px, 4vw, 56px); }
 
-  .fp-card__btn {
-    transform: none;
-    filter: none;
-    animation: none;
-  }
+.fp__grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 18px;
+  padding-inline: var(--gutter);
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.fp--simple .fp-card {
+  position: static;
+  translate: none;
+  width: 100%;
+}
+
+.fp--simple .fp-card__btn {
+  filter: none;
+  animation: none;
+}
+
+@media (min-width: 640px) {
+  .fp__grid { grid-template-columns: repeat(3, 1fr); }
 }
 
 @media (prefers-reduced-motion: reduce) {

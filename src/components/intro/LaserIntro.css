@@ -1,0 +1,154 @@
+/* Laser-Intro: Wortmarke wird in eine Glasscheibe graviert */
+
+.intro {
+  position: relative;
+  height: 220vh;
+  background:
+    radial-gradient(900px 500px at 50% 42%, rgba(127, 179, 179, 0.07), transparent 65%),
+    #050505;
+}
+
+.intro--static { height: auto; }
+
+.intro__sticky {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  height: 100dvh;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  /* über dem Header, damit das Logo beim Flug in die Ecke nicht
+     unter der Leiste verschwindet – Klicks gehen durch */
+  z-index: 120;
+  pointer-events: none;
+}
+
+.intro--static .intro__sticky { position: relative; }
+
+/* Glasscheibe mit Punkthaltern */
+.intro__pane {
+  position: absolute;
+  width: min(88vw, 920px);
+  aspect-ratio: 16 / 7;
+  border-radius: 22px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background:
+    linear-gradient(118deg, rgba(255, 255, 255, 0.085) 0%, rgba(255, 255, 255, 0.015) 36%, rgba(255, 255, 255, 0.06) 48%, rgba(255, 255, 255, 0.01) 60%, rgba(127, 179, 179, 0.05) 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.18),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.05),
+    0 50px 140px rgba(0, 0, 0, 0.75);
+}
+
+.intro__pane::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(64deg, transparent 42%, rgba(255, 255, 255, 0.05) 47%, transparent 53%);
+}
+
+.intro__bolt {
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #d8dedd, #5d6664 70%, #2c3231);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.7);
+}
+
+.intro__bolt--tl { top: 18px; left: 18px; }
+.intro__bolt--tr { top: 18px; right: 18px; }
+.intro__bolt--bl { bottom: 18px; left: 18px; }
+.intro__bolt--br { bottom: 18px; right: 18px; }
+
+/* Wortmarke */
+.intro__logo {
+  position: relative;
+  z-index: 2;
+  margin: 0;
+  width: min(74vw, 720px);
+  line-height: 0;
+}
+
+.intro__logo-reveal { display: block; }
+
+.intro__logo-svg {
+  width: 100%;
+  height: auto;
+  color: #edf3f2;
+  filter:
+    drop-shadow(0 0 18px rgba(127, 179, 179, 0.35))
+    drop-shadow(0 2px 6px rgba(0, 0, 0, 0.55));
+}
+
+/* Laserstrahl */
+.intro__beam {
+  position: absolute;
+  top: -90%;
+  bottom: -90%;
+  width: 3px;
+  border-radius: 3px;
+  background: linear-gradient(to bottom, transparent, #d8fffb 18%, #ffffff 50%, #d8fffb 82%, transparent);
+  box-shadow:
+    0 0 10px 2px rgba(160, 255, 245, 0.9),
+    0 0 36px 10px rgba(127, 179, 179, 0.55),
+    0 0 80px 28px rgba(127, 179, 179, 0.25);
+  pointer-events: none;
+}
+
+/* Tagline & Scrollhinweis */
+.intro__foot {
+  position: absolute;
+  bottom: clamp(28px, 7vh, 72px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 22px;
+}
+
+.intro__tagline {
+  margin: 0;
+  font-size: 0.85rem;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  text-align: center;
+}
+
+.intro--static .intro__tagline {
+  position: absolute;
+  bottom: clamp(28px, 7vh, 72px);
+}
+
+.intro__scrollhint {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  color: var(--text-muted);
+  font-size: 0.72rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+}
+
+.intro__scrollline {
+  width: 1px;
+  height: 48px;
+  background: linear-gradient(to bottom, var(--accent), transparent);
+  animation: intro-scroll 1.8s var(--ease) infinite;
+  transform-origin: top;
+}
+
+@keyframes intro-scroll {
+  0% { transform: scaleY(0); opacity: 0; }
+  30% { transform: scaleY(1); opacity: 1; }
+  100% { transform: scaleY(1) translateY(22px); opacity: 0; }
+}
+
+@media (max-width: 720px) {
+  .intro { height: 190vh; }
+  .intro__pane { aspect-ratio: 16 / 9; }
+  .intro__logo { width: 86vw; }
+}

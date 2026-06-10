@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import { services } from '../data/services';
+import { Logo } from './Logo';
 import './Footer.css';
 
 export function Footer() {
@@ -8,7 +9,9 @@ export function Footer() {
       <div className="container">
         <div className="site-footer__grid">
           <div>
-            <div className="site-footer__logo">der-glasermeister</div>
+            <div className="site-footer__logo">
+              <Logo className="site-footer__logo-svg" title="der-glasermeister" />
+            </div>
             <p className="site-footer__claim">
               Individuelle Glaslösungen aus Meisterhand – geplant und ausgeführt von
               Patrick Stettner.
