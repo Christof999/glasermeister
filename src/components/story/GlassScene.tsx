@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, type MutableRefObject } from 'react';
+import { useEffect, useMemo, useRef, type MutableRefObject, type RefObject } from 'react';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import * as THREE from 'three';
 import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
@@ -79,23 +79,38 @@ type PaneSpec = {
 /**
  * Endpositionen relativ zum Foto-Rahmen der Story berechnen, damit die
  * Scheiben exakt „in" der Duschnische landen – unabhängig von der
- * Viewport-Größe. Die Rahmenmaße spiegeln die CSS-Regeln in ScrollStory.css
- * (Höhe min(80vh | 62vh mobil), Seitenverhältnis 3:4, zentriert).
+ * Viewport-Größe. Der Rahmen wird direkt im DOM vermessen (offset-Werte,
+ * unbeeinflusst von Transforms); fällt nur ohne Element auf eine
+ * Näherung der CSS-Regeln zurück.
  */
-function frameLayout(vw: number, vh: number) {
-  const gutter = Math.min(Math.max(16, vw * 0.04), 32);
-  const capH = vw <= 720 ? 0.62 * vh : 0.8 * vh;
-  const frameH = Math.min(capH, (vw - 2 * gutter) / 0.75);
-  const frameW = frameH * 0.75;
+function frameLayout(vw: number, vh: number, frameEl: HTMLElement | null) {
+  let frameW: number;
+  let frameH: number;
+  let frameCxPx = 0; // Rahmenmitte relativ zur Bildschirmmitte
+  let frameBottomPx: number; // Unterkante relativ zur Bildschirmmitte
+
+  if (frameEl) {
+    frameW = frameEl.offsetWidth;
+    frameH = frameEl.offsetHeight;
+    frameCxPx = frameEl.offsetLeft + frameW / 2 - vw / 2;
+    frameBottomPx = frameEl.offsetTop + frameH - vh / 2;
+  } else {
+    const gutter = Math.min(Math.max(16, vw * 0.04), 32);
+    const capH = vw <= 720 ? 0.62 * vh : 0.8 * vh;
+    frameH = Math.min(capH, (vw - 2 * gutter) / 0.75);
+    frameW = frameH * 0.75;
+    frameBottomPx = frameH / 2;
+  }
+
   // Weltkoordinaten pro Pixel in der z=0-Ebene
   const wpp = (2 * CAM_Z * Math.tan(((CAM_FOV / 2) * Math.PI) / 180)) / vh;
 
   // Türblatt: rechte Hälfte der Nische, Unterkante knapp über Rahmenunterkante
-  const paneScale = (frameH * 0.6 * wpp) / 1.455;
-  const bottomY = CAM_Y - (frameH / 2) * wpp + frameH * 0.035 * wpp;
-  const doorX = frameW * 0.17 * wpp;
+  const paneScale = (frameH * 0.62 * wpp) / 1.455;
+  const bottomY = CAM_Y - frameBottomPx * wpp + frameH * 0.03 * wpp;
+  const doorX = (frameCxPx + frameW * 0.17) * wpp;
   // Seitenteil: links davor, im 90°-Anschluss zur Tür
-  const panelX = -frameW * 0.21 * wpp;
+  const panelX = (frameCxPx - frameW * 0.21) * wpp;
   const panelZ = 0.705 * paneScale * 0.42;
   // Gleiche Bodenlinie im Bild trotz Kameranähe (Strahlensatz)
   const panelY = CAM_Y - ((CAM_Y - bottomY) * (CAM_Z - panelZ)) / CAM_Z;
@@ -103,13 +118,21 @@ function frameLayout(vw: number, vh: number) {
   return { paneScale, bottomY, doorX, panelX, panelY, panelZ };
 }
 
-function Panes({ progressRef }: { progressRef: MutableRefObject<number> }) {
+type PanesProps = {
+  progressRef: MutableRefObject<number>;
+  frameRef?: RefObject<HTMLElement | null>;
+};
+
+function Panes({ progressRef, frameRef }: PanesProps) {
   const { gl, scene, size } = useThree();
   const groupRef = useRef<THREE.Group>(null);
   const doorRef = useRef<THREE.Mesh>(null);
   const panelRef = useRef<THREE.Mesh>(null);
 
-  const layout = useMemo(() => frameLayout(size.width, size.height), [size.width, size.height]);
+  const layout = useMemo(
+    () => frameLayout(size.width, size.height, frameRef?.current ?? null),
+    [size.width, size.height, frameRef]
+  );
 
   useEffect(() => {
     // Prozedurale Studio-Umgebung für Glanz & Reflexionen – keine externen Assets
@@ -216,7 +239,7 @@ function Panes({ progressRef }: { progressRef: MutableRefObject<number> }) {
   );
 }
 
-export function GlassScene({ progressRef }: { progressRef: MutableRefObject<number> }) {
+export function GlassScene({ progressRef, frameRef }: PanesProps) {
   return (
     <Canvas
       dpr={[1, 1.8]}
@@ -227,7 +250,7 @@ export function GlassScene({ progressRef }: { progressRef: MutableRefObject<numb
       <ambientLight intensity={0.25} />
       <directionalLight position={[2.5, 4, 3]} intensity={0.7} />
       <directionalLight position={[-3, 2, -2]} intensity={0.35} color="#7FB3B3" />
-      <Panes progressRef={progressRef} />
+      <Panes progressRef={progressRef} frameRef={frameRef} />
     </Canvas>
   );
 }

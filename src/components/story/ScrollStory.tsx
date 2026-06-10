@@ -45,6 +45,7 @@ function Caption({ progress, range, index, title, children }: CaptionProps) {
 
 export function ScrollStory() {
   const containerRef = useRef<HTMLDivElement>(null);
+  const frameRef = useRef<HTMLElement | null>(null);
   const sceneProgress = useRef(0);
   const reduced = useReducedMotion();
   const inView = useInView(containerRef, { margin: '400px 0px 400px 0px' });
@@ -115,6 +116,7 @@ export function ScrollStory() {
         {/* Foto-Bühne */}
         <motion.figure
           className="story__frame"
+          ref={frameRef}
           style={{ opacity: frameOpacity, scale: frameScale }}
         >
           <motion.img
@@ -162,10 +164,10 @@ export function ScrollStory() {
             <motion.g style={{ opacity: dimH }}>
               <motion.path
                 className="anno-line"
-                d="M 575 222 L 575 700 M 566 226 L 584 218 M 566 704 L 584 696"
+                d="M 566 222 L 566 700 M 557 226 L 575 218 M 557 704 L 575 696"
                 style={{ pathLength: dimH }}
               />
-              <text className="anno-text" x="588" y="470" transform="rotate(-90 588 470)">
+              <text className="anno-text" x="556" y="470" transform="rotate(-90 556 470)">
                 1455
               </text>
             </motion.g>
@@ -187,8 +189,8 @@ export function ScrollStory() {
                 d="M 282 232 L 330 182"
                 style={{ pathLength: bevel }}
               />
-              <text className="anno-text" x="330" y="168">
-                Schräge f. Balken · 569
+              <text className="anno-text" x="332" y="168">
+                Schräge · 569
               </text>
             </motion.g>
             {/* Radius */}
@@ -202,14 +204,14 @@ export function ScrollStory() {
                 R8
               </text>
             </motion.g>
-            {/* Materialnotiz */}
+            {/* Materialnotiz – unterhalb des „Vorher"-Tags */}
             <motion.g style={{ opacity: note }}>
-              <text className="anno-text anno-text--big" x="36" y="120" transform="rotate(-3 36 120)">
+              <text className="anno-text anno-text--big" x="38" y="178" transform="rotate(-3 38 178)">
                 Parsol grau · 8 mm ESG
               </text>
               <motion.path
                 className="anno-line"
-                d="M 34 134 q 60 10 120 2 q 50 -6 96 4"
+                d="M 36 192 q 60 10 120 2 q 50 -6 96 4"
                 style={{ pathLength: note }}
               />
             </motion.g>
@@ -242,7 +244,7 @@ export function ScrollStory() {
         <motion.div className="story__canvas" style={{ opacity: canvasOpacity }}>
           {showCanvas && (
             <Suspense fallback={null}>
-              <GlassScene progressRef={sceneProgress} />
+              <GlassScene progressRef={sceneProgress} frameRef={frameRef} />
             </Suspense>
           )}
         </motion.div>

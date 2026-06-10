@@ -71,9 +71,11 @@
 .story__frame {
   position: relative;
   margin: 0;
-  height: min(80vh, 80dvh);
+  /* Breite steuert, Höhe folgt der 3:4-Ratio – so bleibt das Seitenverhältnis
+     immer exakt und die Aufmaß-Skizze deckungsgleich mit dem Foto */
+  width: min(calc(0.75 * 80svh), calc(100vw - 2 * var(--gutter)));
+  height: auto;
   aspect-ratio: 3 / 4;
-  max-width: calc(100vw - 2 * var(--gutter));
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
   overflow: hidden;
@@ -203,9 +205,8 @@
 
 @media (max-width: 720px) {
   .story__frame {
-    height: auto;
-    width: calc(100vw - 2 * var(--gutter));
-    max-height: 62vh;
+    /* Höhe ≤ 64svh, Platz für die Kapitel-Karte am unteren Rand */
+    width: min(calc(0.75 * 64svh), calc(100vw - 2 * var(--gutter)));
   }
 
   .story__captions {

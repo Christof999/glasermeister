@@ -2,7 +2,8 @@
 
 .intro {
   position: relative;
-  height: 220vh;
+  /* knapp halten: nach der Logo-Übergabe soll es zügig weitergehen */
+  height: 165vh;
   background:
     radial-gradient(900px 500px at 50% 42%, rgba(127, 179, 179, 0.07), transparent 65%),
     #050505;
@@ -78,24 +79,32 @@
   width: 100%;
   height: auto;
   color: #edf3f2;
+  overflow: visible;
   filter:
     drop-shadow(0 0 18px rgba(127, 179, 179, 0.35))
     drop-shadow(0 2px 6px rgba(0, 0, 0, 0.55));
 }
 
-/* Laserstrahl */
-.intro__beam {
-  position: absolute;
-  top: -90%;
-  bottom: -90%;
-  width: 3px;
-  border-radius: 3px;
-  background: linear-gradient(to bottom, transparent, #d8fffb 18%, #ffffff 50%, #d8fffb 82%, transparent);
-  box-shadow:
-    0 0 10px 2px rgba(160, 255, 245, 0.9),
-    0 0 36px 10px rgba(127, 179, 179, 0.55),
-    0 0 80px 28px rgba(127, 179, 179, 0.25);
-  pointer-events: none;
+.intro__logo-fill { fill: #edf3f2; }
+
+.intro__logo-stroke {
+  fill: none;
+  stroke: #d8fbf4;
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.intro__laser-dot {
+  fill: #ffffff;
+  filter:
+    drop-shadow(0 0 5px #c6fff5)
+    drop-shadow(0 0 14px rgba(127, 179, 179, 0.95));
+}
+
+.intro__laser-glow {
+  fill: rgba(150, 255, 240, 0.18);
+  filter: blur(5px);
 }
 
 /* Tagline & Scrollhinweis */
@@ -148,7 +157,7 @@
 }
 
 @media (max-width: 720px) {
-  .intro { height: 190vh; }
+  .intro { height: 150vh; }
   .intro__pane { aspect-ratio: 16 / 9; }
   .intro__logo { width: 86vw; }
 }
