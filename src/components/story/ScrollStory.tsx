@@ -155,28 +155,28 @@ export function ScrollStory() {
             aria-hidden="true"
             style={{ opacity: annoOut }}
           >
-            {/* Skizze der Türscheibe – folgt der Bildperspektive:
-               Unterkante = Vorderkante der Duschtasse, rechts an der Wand */}
+            {/* Skizze der Türscheibe – an der fertigen Scheibe im Referenzfoto:
+               rechte Kante an der Wand, Unterkante auf der Duschkante */}
             <motion.path
               className="anno-line anno-line--dashed"
-              d="M 512 268 L 510 786 L 252 727 L 258 360 L 315 292 Z"
+              d="M 486 388 L 486 716 L 304 716 L 304 510 L 356 392 Z"
               style={{ pathLength: sketch, opacity: sketch }}
             />
             {/* Skizze des Seitenteils – steht im 90°-Winkel zur Tür und
                läuft nach hinten über Duschtasse und Sitzbank (Kantenansicht) */}
             <motion.path
               className="anno-line anno-line--dashed"
-              d="M 250 727 L 230 664 L 226 600 L 200 534 L 204 487 L 252 392 Z"
+              d="M 304 716 L 196 716 L 196 575 L 213 512 L 258 394 L 304 510 Z"
               style={{ pathLength: sketchPanel, opacity: sketchPanel }}
             />
             {/* Höhe 1455 – an der Wandkante rechts */}
             <motion.g style={{ opacity: dimH }}>
               <motion.path
                 className="anno-line"
-                d="M 535 280 L 535 778 M 526 284 L 544 276 M 526 782 L 544 774"
+                d="M 508 398 L 508 712 M 499 402 L 517 394 M 499 716 L 517 708"
                 style={{ pathLength: dimH }}
               />
-              <text className="anno-text" x="549" y="520" transform="rotate(-90 549 520)">
+              <text className="anno-text" x="522" y="560" transform="rotate(-90 522 560)">
                 1455
               </text>
             </motion.g>
@@ -184,10 +184,10 @@ export function ScrollStory() {
             <motion.g style={{ opacity: dimW }}>
               <motion.path
                 className="anno-line"
-                d="M 245 745 L 495 795 M 249 736 L 241 754 M 499 786 L 491 804"
+                d="M 302 736 L 488 736 M 302 726 L 302 746 M 488 726 L 488 746"
                 style={{ pathLength: dimW }}
               />
-              <text className="anno-text" x="345" y="742" transform="rotate(9 345 742)">
+              <text className="anno-text" x="370" y="728">
                 753
               </text>
             </motion.g>
@@ -195,10 +195,10 @@ export function ScrollStory() {
             <motion.g style={{ opacity: bevel }}>
               <motion.path
                 className="anno-line"
-                d="M 262 352 L 312 296"
+                d="M 306 508 L 356 394"
                 style={{ pathLength: bevel }}
               />
-              <text className="anno-text" x="328" y="252">
+              <text className="anno-text" x="360" y="374">
                 Schräge · 569
               </text>
             </motion.g>
@@ -206,10 +206,10 @@ export function ScrollStory() {
             <motion.g style={{ opacity: radius }}>
               <motion.path
                 className="anno-line"
-                d="M 484 300 q 18 -14 30 -6"
+                d="M 457 403 q 16 -13 28 -5"
                 style={{ pathLength: radius }}
               />
-              <text className="anno-text" x="448" y="332">
+              <text className="anno-text" x="430" y="438">
                 R8
               </text>
             </motion.g>
@@ -229,12 +229,12 @@ export function ScrollStory() {
             </motion.g>
             {/* Bandaussparung – Pfeil zur Schlagkante an der Wand */}
             <motion.g style={{ opacity: hinge }}>
-              <text className="anno-text" x="336" y="448" transform="rotate(-2 336 448)">
+              <text className="anno-text" x="328" y="492" transform="rotate(-2 328 492)">
                 Aussparung 52 × 84
               </text>
               <motion.path
                 className="anno-line"
-                d="M 458 452 Q 514 520 505 642 M 505 642 l -13 -8 M 505 642 l 3 -15"
+                d="M 452 498 Q 492 565 484 650 M 484 650 l -13 -8 M 484 650 l 3 -15"
                 style={{ pathLength: hinge }}
               />
             </motion.g>
@@ -242,10 +242,10 @@ export function ScrollStory() {
             <motion.g style={{ opacity: angle }}>
               <motion.path
                 className="anno-line"
-                d="M 192 632 q 20 -10 28 -26"
+                d="M 196 640 q 20 -9 29 -25"
                 style={{ pathLength: angle }}
               />
-              <text className="anno-text" x="78" y="678" transform="rotate(2 78 678)">
+              <text className="anno-text" x="70" y="688" transform="rotate(2 70 688)">
                 kein rechter Winkel!
               </text>
             </motion.g>

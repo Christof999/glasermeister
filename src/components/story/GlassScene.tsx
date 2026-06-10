@@ -70,14 +70,12 @@ const CAM_Z = 3.4;
 const CAM_FOV = 32;
 
 /**
- * Das Vorher-Foto ist schräg aufgenommen: Die Tassenvorderkante läuft im
- * Bild von links oben (252,727 im 600×800-Raster) nach rechts unten
- * (510,786). Die Tür steht auf dieser Kante (Gier-Winkel bildet die
- * Perspektive nach). Das Seitenteil schließt an der linken Türkante im
- * 90°-Winkel an und läuft nach hinten über Duschtasse und Sitzbank –
- * deshalb die Stufe in seinem Zuschnitt.
+ * Das Referenzfoto ist schräg aufgenommen: Die fertige Tür sitzt rechts an
+ * der Wandkante, die Stoßfuge zum Seitenteil liegt etwa bei x=304 im
+ * 600×800-Raster. Das Seitenteil läuft von dort nach links hinten unter die
+ * Dachschräge und über die Sitzbank.
  */
-const PANE_YAW = -0.38;
+const PANE_YAW = -0.24;
 
 type PaneSpec = {
   geometry: THREE.ExtrudeGeometry;
@@ -115,11 +113,12 @@ function frameLayout(vw: number, vh: number, frameEl: HTMLElement | null) {
   // Weltkoordinaten pro Pixel in der z=0-Ebene
   const wpp = (2 * CAM_Z * Math.tan(((CAM_FOV / 2) * Math.PI) / 180)) / vh;
 
-  // Türblatt: Quad der Foto-Skizze (Raster 600×800) –
-  // Mitte bei x ≈ 381/600, Unterkante bei y ≈ 757/800, Höhe ≈ 0.6 · frameH
-  const paneScale = (frameH * 0.6 * wpp) / 1.455;
-  const bottomY = CAM_Y - (frameBottomPx - frameH * 0.055) * wpp;
-  const doorX = (frameCxPx + frameW * 0.135) * wpp;
+  // Türblatt im Foto-Raster: Mitte x ≈ 395/600, Unterkante y ≈ 716/800,
+  // sichtbare Höhe ≈ 0.41 · frameH. Diese Werte folgen dem fertigen Foto,
+  // nicht der abstrakten Zeichnung, damit die 3D-Scheiben im Bild einrasten.
+  const paneScale = (frameH * 0.41 * wpp) / 1.455;
+  const bottomY = CAM_Y - (frameBottomPx - frameH * 0.105) * wpp;
+  const doorX = (frameCxPx + frameW * 0.158) * wpp;
 
   // Stoßfuge = linke Türkante; von dort läuft das Seitenteil senkrecht
   // nach hinten ins Rauminnere (über die Sitzbank)
@@ -127,11 +126,11 @@ function frameLayout(vw: number, vh: number, frameEl: HTMLElement | null) {
   const halfPanelW = (0.705 / 2) * paneScale;
   const jointX = doorX - halfDoorW * Math.cos(PANE_YAW);
   const jointZ = -halfDoorW * -Math.sin(PANE_YAW);
-  const backX = -Math.sin(PANE_YAW);
+  const backX = Math.sin(PANE_YAW);
   const backZ = -Math.cos(PANE_YAW);
   const panelX = jointX + halfPanelW * backX;
   const panelZ = jointZ + halfPanelW * backZ;
-  const panelYaw = PANE_YAW - Math.PI / 2;
+  const panelYaw = PANE_YAW + Math.PI / 2;
 
   return { paneScale, bottomY, doorX, panelX, panelZ, panelYaw };
 }
