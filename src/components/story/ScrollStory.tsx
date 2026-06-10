@@ -55,7 +55,7 @@ export function ScrollStory() {
   });
 
   useMotionValueEvent(p, 'change', (v) => {
-    sceneProgress.current = clamp01((v - 0.72) / (0.82 - 0.72));
+    sceneProgress.current = clamp01((v - 0.8) / (0.9 - 0.8));
   });
 
   // Intro
@@ -89,12 +89,12 @@ export function ScrollStory() {
   const hinge = useTransform(p, [0.6, 0.68], [0, 1]);
   const angle = useTransform(p, [0.64, 0.72], [0, 1]);
   const annoOut = useTransform(p, [0.88, 0.94], [1, 0]);
-  const sketchScale = useTransform(p, [0.7, 0.78], [1, 0.52]);
-  const sketchX = useTransform(p, [0.7, 0.78], [0, 104]);
-  const sketchY = useTransform(p, [0.7, 0.78], [0, -132]);
+  const sketchScale = useTransform(p, [0.7, 0.8], [1, 0.4]);
+  const sketchX = useTransform(p, [0.7, 0.8], [0, 120]);
+  const sketchY = useTransform(p, [0.7, 0.8], [0, -250]);
 
-  // 3D-Scheiben kommen erst nach fertig gezeichneter Skizze dazu.
-  const canvasOpacity = useTransform(p, [0.72, 0.78, 0.94, 0.98], [0, 1, 1, 0]);
+  // 3D-Scheiben kommen erst, wenn die Skizze aus der Mitte gewandert ist.
+  const canvasOpacity = useTransform(p, [0.8, 0.86, 0.94, 0.98], [0, 1, 1, 0]);
   const showCanvas = inView && !reduced;
 
   return (
@@ -172,22 +172,22 @@ export function ScrollStory() {
                 {/* Frontale Aufmaß-Skizze: zwei getrennte Zuschnitte. */}
                 <motion.path
                   className="anno-line anno-line--dashed"
-                  d="M 365 150 L 525 150 L 525 700 L 310 700 L 310 245 Z"
+                  d="M 335 685 L 515 685 L 515 595 L 503 595 L 503 563 L 515 563 L 515 260 L 503 260 L 503 228 L 515 228 L 515 135 L 379 135 L 335 215 Z"
                   style={{ pathLength: sketch, opacity: sketch }}
                 />
                 <motion.path
                   className="anno-line anno-line--dashed"
-                  d="M 120 330 L 255 315 L 300 445 L 300 640 L 115 640 L 115 455 Z"
+                  d="M 245 640 L 325 640 L 325 250 L 270 250 L 115 454 L 119 518 L 245 529 Z"
                   style={{ pathLength: sketchPanel, opacity: sketchPanel }}
                 />
                 {/* Höhe 1455 – an der großen Tür */}
                 <motion.g style={{ opacity: dimH }}>
                   <motion.path
                     className="anno-line"
-                    d="M 548 154 L 548 696 M 538 158 L 558 150 M 538 700 L 558 692"
+                    d="M 548 140 L 548 680 M 538 144 L 558 136 M 538 684 L 558 676"
                     style={{ pathLength: dimH }}
                   />
-                  <text className="anno-text" x="566" y="438" transform="rotate(-90 566 438)">
+                  <text className="anno-text" x="566" y="420" transform="rotate(-90 566 420)">
                     1455
                   </text>
                 </motion.g>
@@ -195,10 +195,10 @@ export function ScrollStory() {
                 <motion.g style={{ opacity: dimW }}>
                   <motion.path
                     className="anno-line"
-                    d="M 310 730 L 525 730 M 310 718 L 310 742 M 525 718 L 525 742"
+                    d="M 335 718 L 515 718 M 335 706 L 335 730 M 515 706 L 515 730"
                     style={{ pathLength: dimW }}
                   />
-                  <text className="anno-text" x="392" y="722">
+                  <text className="anno-text" x="410" y="710">
                     753
                   </text>
                 </motion.g>
@@ -206,10 +206,10 @@ export function ScrollStory() {
                 <motion.g style={{ opacity: bevel }}>
                   <motion.path
                     className="anno-line"
-                    d="M 312 244 L 365 150"
+                    d="M 335 215 L 379 135"
                     style={{ pathLength: bevel }}
                   />
-                  <text className="anno-text" x="372" y="112">
+                  <text className="anno-text" x="374" y="108">
                     Schräge · 569
                   </text>
                 </motion.g>
@@ -217,10 +217,10 @@ export function ScrollStory() {
                 <motion.g style={{ opacity: radius }}>
                   <motion.path
                     className="anno-line"
-                    d="M 492 168 q 20 -16 34 -6"
+                    d="M 492 152 q 20 -16 34 -6"
                     style={{ pathLength: radius }}
                   />
-                  <text className="anno-text" x="460" y="204">
+                  <text className="anno-text" x="460" y="190">
                     R8
                   </text>
                 </motion.g>
