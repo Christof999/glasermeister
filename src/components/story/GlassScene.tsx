@@ -70,12 +70,13 @@ const CAM_Z = 3.4;
 const CAM_FOV = 32;
 
 /**
- * Das Referenzfoto ist schräg aufgenommen: Die fertige Tür sitzt rechts an
- * der Wandkante, die Stoßfuge zum Seitenteil liegt etwa bei x=304 im
+ * Das Referenzfoto ist schräg aufgenommen: Die fertige Tür füllt die Nische
+ * deutlich höher aus als der erste Versuch. Rechts liegt sie nahe der
+ * Armaturenwand, die Stoßfuge zum Seitenteil sitzt etwa bei x=275 im
  * 600×800-Raster. Das Seitenteil läuft von dort nach links hinten unter die
  * Dachschräge und über die Sitzbank.
  */
-const PANE_YAW = -0.24;
+const PANE_YAW = -0.34;
 
 type PaneSpec = {
   geometry: THREE.ExtrudeGeometry;
@@ -113,12 +114,12 @@ function frameLayout(vw: number, vh: number, frameEl: HTMLElement | null) {
   // Weltkoordinaten pro Pixel in der z=0-Ebene
   const wpp = (2 * CAM_Z * Math.tan(((CAM_FOV / 2) * Math.PI) / 180)) / vh;
 
-  // Türblatt im Foto-Raster: Mitte x ≈ 395/600, Unterkante y ≈ 716/800,
-  // sichtbare Höhe ≈ 0.41 · frameH. Diese Werte folgen dem fertigen Foto,
-  // nicht der abstrakten Zeichnung, damit die 3D-Scheiben im Bild einrasten.
-  const paneScale = (frameH * 0.41 * wpp) / 1.455;
-  const bottomY = CAM_Y - (frameBottomPx - frameH * 0.105) * wpp;
-  const doorX = (frameCxPx + frameW * 0.158) * wpp;
+  // Türblatt im Foto-Raster: Mitte x ≈ 400/600, Unterkante y ≈ 742/800,
+  // sichtbare Höhe ≈ 0.6 · frameH. Das legt die rechte Kante wieder an die
+  // Armaturenwand und zieht die Scheibe unter die Dachschräge hoch.
+  const paneScale = (frameH * 0.6 * wpp) / 1.455;
+  const bottomY = CAM_Y - (frameBottomPx - frameH * 0.073) * wpp;
+  const doorX = (frameCxPx + frameW * 0.167) * wpp;
 
   // Stoßfuge = linke Türkante; von dort läuft das Seitenteil senkrecht
   // nach hinten ins Rauminnere (über die Sitzbank)
