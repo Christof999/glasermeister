@@ -150,6 +150,11 @@
   mix-blend-mode: screen;
 }
 
+.story__anno-drawing {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
 .anno-line {
   fill: none;
   stroke: #efe9da;

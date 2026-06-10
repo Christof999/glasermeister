@@ -55,7 +55,7 @@ export function ScrollStory() {
   });
 
   useMotionValueEvent(p, 'change', (v) => {
-    sceneProgress.current = clamp01((v - 0.55) / (0.76 - 0.55));
+    sceneProgress.current = clamp01((v - 0.76) / (0.9 - 0.76));
   });
 
   // Intro
@@ -65,17 +65,17 @@ export function ScrollStory() {
   // Foto-Ebene: Vorherbild startet groß, fährt zur Seite und kommt am Ende
   // wieder in die Mitte zurück; dabei fadet es zum echten Nachherbild.
   const photoOpacity = useTransform(p, [0.03, 0.09], [0, 1]);
-  const photoScale = useTransform(p, [0.03, 0.13, 0.28, 0.78, 0.94], [1.06, 1, 0.52, 0.52, 1]);
-  const photoX = useTransform(p, [0.13, 0.28, 0.78, 0.94], ['0vw', '-38vw', '-38vw', '0vw']);
-  const photoY = useTransform(p, [0.13, 0.28, 0.78, 0.94], ['0vh', '-5vh', '-5vh', '0vh']);
+  const photoScale = useTransform(p, [0.03, 0.13, 0.28, 0.88, 0.98], [1.06, 1, 0.52, 0.52, 1]);
+  const photoX = useTransform(p, [0.13, 0.28, 0.88, 0.98], ['0vw', '-38vw', '-38vw', '0vw']);
+  const photoY = useTransform(p, [0.13, 0.28, 0.88, 0.98], ['0vh', '-5vh', '-5vh', '0vh']);
   const vorherFilter = useTransform(
     p,
-    [0.26, 0.36, 0.82, 0.94],
+    [0.26, 0.36, 0.9, 0.98],
     ['brightness(1)', 'brightness(0.58)', 'brightness(0.58)', 'brightness(1)']
   );
-  const nachherOpacity = useTransform(p, [0.82, 0.94], [0, 1]);
-  const tagVorher = useTransform(p, [0.08, 0.12, 0.78, 0.84], [0, 1, 1, 0]);
-  const tagNachher = useTransform(p, [0.86, 0.94], [0, 1]);
+  const nachherOpacity = useTransform(p, [0.9, 0.98], [0, 1]);
+  const tagVorher = useTransform(p, [0.08, 0.12, 0.88, 0.92], [0, 1, 1, 0]);
+  const tagNachher = useTransform(p, [0.92, 0.98], [0, 1]);
 
   // Schwarze Entwurfs-Ebene: Skizze und 3D-Glas entstehen unabhängig vom Foto.
   const draftOpacity = useTransform(p, [0.24, 0.3, 0.78, 0.88], [0, 1, 1, 0]);
@@ -88,10 +88,13 @@ export function ScrollStory() {
   const note = useTransform(p, [0.56, 0.62], [0, 1]);
   const hinge = useTransform(p, [0.6, 0.68], [0, 1]);
   const angle = useTransform(p, [0.64, 0.72], [0, 1]);
-  const annoOut = useTransform(p, [0.78, 0.88], [1, 0]);
+  const annoOut = useTransform(p, [0.88, 0.94], [1, 0]);
+  const sketchScale = useTransform(p, [0.7, 0.78], [1, 0.58]);
+  const sketchX = useTransform(p, [0.7, 0.78], [0, -112]);
+  const sketchY = useTransform(p, [0.7, 0.78], [0, -88]);
 
   // 3D-Scheiben kommen erst nach fertig gezeichneter Skizze dazu.
-  const canvasOpacity = useTransform(p, [0.55, 0.62, 0.78, 0.88], [0, 1, 1, 0]);
+  const canvasOpacity = useTransform(p, [0.76, 0.84, 0.9, 0.94], [0, 1, 1, 0]);
   const showCanvas = inView && !reduced;
 
   return (
@@ -162,97 +165,102 @@ export function ScrollStory() {
               aria-hidden="true"
               style={{ opacity: annoOut }}
             >
-            {/* Frontale Aufmaß-Skizze: zwei getrennte Zuschnitte. */}
-            <motion.path
-              className="anno-line anno-line--dashed"
-              d="M 365 150 L 525 150 L 525 700 L 310 700 L 310 245 Z"
-              style={{ pathLength: sketch, opacity: sketch }}
-            />
-            <motion.path
-              className="anno-line anno-line--dashed"
-              d="M 120 330 L 255 315 L 300 445 L 300 640 L 115 640 L 115 455 Z"
-              style={{ pathLength: sketchPanel, opacity: sketchPanel }}
-            />
-            {/* Höhe 1455 – an der großen Tür */}
-            <motion.g style={{ opacity: dimH }}>
-              <motion.path
-                className="anno-line"
-                d="M 548 154 L 548 696 M 538 158 L 558 150 M 538 700 L 558 692"
-                style={{ pathLength: dimH }}
-              />
-              <text className="anno-text" x="566" y="438" transform="rotate(-90 566 438)">
-                1455
-              </text>
-            </motion.g>
-            {/* Breite 753 – frontal unter der Tür */}
-            <motion.g style={{ opacity: dimW }}>
-              <motion.path
-                className="anno-line"
-                d="M 310 730 L 525 730 M 310 718 L 310 742 M 525 718 L 525 742"
-                style={{ pathLength: dimW }}
-              />
-              <text className="anno-text" x="392" y="722">
-                753
-              </text>
-            </motion.g>
-            {/* Eckschräge 569 */}
-            <motion.g style={{ opacity: bevel }}>
-              <motion.path
-                className="anno-line"
-                d="M 312 244 L 365 150"
-                style={{ pathLength: bevel }}
-              />
-              <text className="anno-text" x="340" y="122">
-                Schräge · 569
-              </text>
-            </motion.g>
-            {/* Radius */}
-            <motion.g style={{ opacity: radius }}>
-              <motion.path
-                className="anno-line"
-                d="M 492 168 q 20 -16 34 -6"
-                style={{ pathLength: radius }}
-              />
-              <text className="anno-text" x="460" y="204">
-                R8
-              </text>
-            </motion.g>
-            {/* Materialnotiz – frei auf der Dachschräge, zweizeilig */}
-            <motion.g style={{ opacity: note }} transform="rotate(-2 335 86)">
-              <text className="anno-text anno-text--big" x="335" y="86">
-                Parsol grau
-              </text>
-              <text className="anno-text anno-text--big" x="335" y="128">
-                8 mm ESG
-              </text>
-              <motion.path
-                className="anno-line"
-                d="M 333 142 q 50 9 100 2 q 36 -5 62 3"
-                style={{ pathLength: note }}
-              />
-            </motion.g>
-            {/* Bandaussparung – Pfeil zur Schlagkante an der Wand */}
-            <motion.g style={{ opacity: hinge }}>
-              <text className="anno-text" x="330" y="430" transform="rotate(-2 330 430)">
-                Aussparung 52 × 84
-              </text>
-              <motion.path
-                className="anno-line"
-                d="M 446 438 Q 520 500 520 590 M 520 590 l -12 -10 M 520 590 l 5 -15"
-                style={{ pathLength: hinge }}
-              />
-            </motion.g>
-            {/* Winkel – am kleineren Seitenteil */}
-            <motion.g style={{ opacity: angle }}>
-              <motion.path
-                className="anno-line"
-                d="M 112 510 q 22 -12 34 -32"
-                style={{ pathLength: angle }}
-              />
-              <text className="anno-text" x="54" y="690" transform="rotate(2 54 690)">
-                kein rechter Winkel!
-              </text>
-            </motion.g>
+              <motion.g
+                className="story__anno-drawing"
+                style={{ x: sketchX, y: sketchY, scale: sketchScale }}
+              >
+                {/* Frontale Aufmaß-Skizze: zwei getrennte Zuschnitte. */}
+                <motion.path
+                  className="anno-line anno-line--dashed"
+                  d="M 365 150 L 525 150 L 525 700 L 310 700 L 310 245 Z"
+                  style={{ pathLength: sketch, opacity: sketch }}
+                />
+                <motion.path
+                  className="anno-line anno-line--dashed"
+                  d="M 120 330 L 255 315 L 300 445 L 300 640 L 115 640 L 115 455 Z"
+                  style={{ pathLength: sketchPanel, opacity: sketchPanel }}
+                />
+                {/* Höhe 1455 – an der großen Tür */}
+                <motion.g style={{ opacity: dimH }}>
+                  <motion.path
+                    className="anno-line"
+                    d="M 548 154 L 548 696 M 538 158 L 558 150 M 538 700 L 558 692"
+                    style={{ pathLength: dimH }}
+                  />
+                  <text className="anno-text" x="566" y="438" transform="rotate(-90 566 438)">
+                    1455
+                  </text>
+                </motion.g>
+                {/* Breite 753 – frontal unter der Tür */}
+                <motion.g style={{ opacity: dimW }}>
+                  <motion.path
+                    className="anno-line"
+                    d="M 310 730 L 525 730 M 310 718 L 310 742 M 525 718 L 525 742"
+                    style={{ pathLength: dimW }}
+                  />
+                  <text className="anno-text" x="392" y="722">
+                    753
+                  </text>
+                </motion.g>
+                {/* Eckschräge 569 */}
+                <motion.g style={{ opacity: bevel }}>
+                  <motion.path
+                    className="anno-line"
+                    d="M 312 244 L 365 150"
+                    style={{ pathLength: bevel }}
+                  />
+                  <text className="anno-text" x="372" y="112">
+                    Schräge · 569
+                  </text>
+                </motion.g>
+                {/* Radius */}
+                <motion.g style={{ opacity: radius }}>
+                  <motion.path
+                    className="anno-line"
+                    d="M 492 168 q 20 -16 34 -6"
+                    style={{ pathLength: radius }}
+                  />
+                  <text className="anno-text" x="460" y="204">
+                    R8
+                  </text>
+                </motion.g>
+                {/* Materialnotiz – links frei platziert, damit oben nichts kollidiert. */}
+                <motion.g style={{ opacity: note }} transform="rotate(-2 86 118)">
+                  <text className="anno-text anno-text--big" x="86" y="118">
+                    Parsol grau
+                  </text>
+                  <text className="anno-text anno-text--big" x="86" y="158">
+                    8 mm ESG
+                  </text>
+                  <motion.path
+                    className="anno-line"
+                    d="M 84 172 q 44 8 88 2 q 32 -5 56 3"
+                    style={{ pathLength: note }}
+                  />
+                </motion.g>
+                {/* Bandaussparung – Pfeil zur Schlagkante an der Wand */}
+                <motion.g style={{ opacity: hinge }}>
+                  <text className="anno-text" x="330" y="430" transform="rotate(-2 330 430)">
+                    Aussparung 52 × 84
+                  </text>
+                  <motion.path
+                    className="anno-line"
+                    d="M 446 438 Q 520 500 520 590 M 520 590 l -12 -10 M 520 590 l 5 -15"
+                    style={{ pathLength: hinge }}
+                  />
+                </motion.g>
+                {/* Winkel – am kleineren Seitenteil */}
+                <motion.g style={{ opacity: angle }}>
+                  <motion.path
+                    className="anno-line"
+                    d="M 112 510 q 22 -12 34 -32"
+                    style={{ pathLength: angle }}
+                  />
+                  <text className="anno-text" x="54" y="690" transform="rotate(2 54 690)">
+                    kein rechter Winkel!
+                  </text>
+                </motion.g>
+              </motion.g>
             </motion.svg>
           </motion.figure>
 
@@ -275,11 +283,11 @@ export function ScrollStory() {
             Jede Kante wird vor Ort auf den Millimeter aufgenommen und in die
             Zeichnung übertragen – hier ist kein Winkel ein rechter.
           </Caption>
-          <Caption progress={p} range={[0.55, 0.84]} index="03" title="Das Glas">
+          <Caption progress={p} range={[0.74, 0.9]} index="03" title="Das Glas">
             Türblatt und Seitenteil aus grau getöntem Sicherheitsglas, Kanten
             feingeschliffen. Gefertigt nach Zeichnung – passend beim ersten Einsetzen.
           </Caption>
-          <Caption progress={p} range={[0.86, 1]} index="04" title="Nachher">
+          <Caption progress={p} range={[0.9, 1]} index="04" title="Nachher">
             Als wäre es immer da gewesen. Maßarbeit sieht man ihr nicht an –
             genau das ist der Punkt.
           </Caption>
