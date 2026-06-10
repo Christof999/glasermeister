@@ -162,11 +162,11 @@ export function ScrollStory() {
               d="M 512 268 L 510 786 L 252 727 L 258 360 L 315 292 Z"
               style={{ pathLength: sketch, opacity: sketch }}
             />
-            {/* Skizze des Seitenteils – links anschließend, die Stufe
-               folgt Duschtasse und Sitzbank, die Schräge dem Dach */}
+            {/* Skizze des Seitenteils – steht im 90°-Winkel zur Tür und
+               läuft nach hinten über Duschtasse und Sitzbank (Kantenansicht) */}
             <motion.path
               className="anno-line anno-line--dashed"
-              d="M 252 727 L 177 710 L 180 621 L 71 599 L 66 553 L 206 396 L 256 391"
+              d="M 250 727 L 230 664 L 226 600 L 200 534 L 204 487 L 252 392 Z"
               style={{ pathLength: sketchPanel, opacity: sketchPanel }}
             />
             {/* Höhe 1455 – an der Wandkante rechts */}
@@ -242,10 +242,10 @@ export function ScrollStory() {
             <motion.g style={{ opacity: angle }}>
               <motion.path
                 className="anno-line"
-                d="M 152 634 q 24 -10 32 -30"
+                d="M 192 632 q 20 -10 28 -26"
                 style={{ pathLength: angle }}
               />
-              <text className="anno-text" x="86" y="688" transform="rotate(2 86 688)">
+              <text className="anno-text" x="78" y="678" transform="rotate(2 78 678)">
                 kein rechter Winkel!
               </text>
             </motion.g>

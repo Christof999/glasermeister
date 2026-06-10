@@ -72,9 +72,10 @@ const CAM_FOV = 32;
 /**
  * Das Vorher-Foto ist schräg aufgenommen: Die Tassenvorderkante läuft im
  * Bild von links oben (252,727 im 600×800-Raster) nach rechts unten
- * (510,786). Beide Scheiben stehen in einer Ebene auf dieser Kante
- * (die Stufe im Seitenteil folgt der Sitzbank) – daher bekommen sie
- * einen Gier-Winkel, der diese Perspektive nachbildet.
+ * (510,786). Die Tür steht auf dieser Kante (Gier-Winkel bildet die
+ * Perspektive nach). Das Seitenteil schließt an der linken Türkante im
+ * 90°-Winkel an und läuft nach hinten über Duschtasse und Sitzbank –
+ * deshalb die Stufe in seinem Zuschnitt.
  */
 const PANE_YAW = -0.38;
 
@@ -119,12 +120,20 @@ function frameLayout(vw: number, vh: number, frameEl: HTMLElement | null) {
   const paneScale = (frameH * 0.6 * wpp) / 1.455;
   const bottomY = CAM_Y - (frameBottomPx - frameH * 0.055) * wpp;
   const doorX = (frameCxPx + frameW * 0.135) * wpp;
-  // Seitenteil: schließt in derselben Ebene links an (Stoßfuge)
-  const joint = (0.753 / 2 + 0.705 / 2 + 0.006) * paneScale;
-  const panelX = doorX - joint * Math.cos(PANE_YAW);
-  const panelZ = joint * Math.sin(PANE_YAW); // negativ → weiter hinten
 
-  return { paneScale, bottomY, doorX, panelX, panelZ };
+  // Stoßfuge = linke Türkante; von dort läuft das Seitenteil senkrecht
+  // nach hinten ins Rauminnere (über die Sitzbank)
+  const halfDoorW = (0.753 / 2) * paneScale;
+  const halfPanelW = (0.705 / 2) * paneScale;
+  const jointX = doorX - halfDoorW * Math.cos(PANE_YAW);
+  const jointZ = -halfDoorW * -Math.sin(PANE_YAW);
+  const backX = -Math.sin(PANE_YAW);
+  const backZ = -Math.cos(PANE_YAW);
+  const panelX = jointX + halfPanelW * backX;
+  const panelZ = jointZ + halfPanelW * backZ;
+  const panelYaw = PANE_YAW - Math.PI / 2;
+
+  return { paneScale, bottomY, doorX, panelX, panelZ, panelYaw };
 }
 
 type PanesProps = {
@@ -188,15 +197,16 @@ function Panes({ progressRef, frameRef }: PanesProps) {
         range: [0.08, 0.6],
       },
       {
-        // Seitenteil – von links, schließt in derselben Ebene an
+        // Seitenteil – von links, dreht sich in den 90°-Anschluss
+        // und läuft nach hinten über die Sitzbank
         geometry: paneGeometry(panelShape(), 10),
         from: {
           pos: new THREE.Vector3(-3.6, 2.0, -2.2),
-          rot: new THREE.Euler(-0.9, 1.4, -0.6),
+          rot: new THREE.Euler(-0.9, -0.5, -0.6),
         },
         to: {
           pos: new THREE.Vector3(layout.panelX, layout.bottomY, layout.panelZ),
-          rot: new THREE.Euler(0, PANE_YAW, 0),
+          rot: new THREE.Euler(0, layout.panelYaw, 0),
         },
         range: [0.34, 0.88],
       },
