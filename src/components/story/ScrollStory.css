@@ -101,9 +101,11 @@
 }
 
 .story__frame--draft {
-  background:
-    radial-gradient(circle at 50% 36%, rgba(127, 179, 179, 0.1), transparent 36%),
-    #050505;
+  background: transparent;
+  border-color: transparent;
+  border-radius: 0;
+  box-shadow: none;
+  overflow: visible;
 }
 
 .story__frame img {

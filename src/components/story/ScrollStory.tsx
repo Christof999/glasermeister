@@ -162,48 +162,47 @@ export function ScrollStory() {
               aria-hidden="true"
               style={{ opacity: annoOut }}
             >
-            {/* Aufmaß-Skizze auf der schwarzen Entwurfsfläche. */}
+            {/* Frontale Aufmaß-Skizze: zwei getrennte Zuschnitte. */}
             <motion.path
               className="anno-line anno-line--dashed"
-              d="M 514 290 L 512 782 L 252 728 L 258 356 L 318 286 Z"
+              d="M 365 150 L 525 150 L 525 700 L 310 700 L 310 245 Z"
               style={{ pathLength: sketch, opacity: sketch }}
             />
-            {/* Seitenteil über Sitzbank und Dachschräge */}
             <motion.path
               className="anno-line anno-line--dashed"
-              d="M 252 728 L 196 690 L 196 594 L 214 528 L 258 356 Z"
+              d="M 120 330 L 255 315 L 300 445 L 300 640 L 115 640 L 115 455 Z"
               style={{ pathLength: sketchPanel, opacity: sketchPanel }}
             />
-            {/* Höhe 1455 – an der Wandkante rechts */}
+            {/* Höhe 1455 – an der großen Tür */}
             <motion.g style={{ opacity: dimH }}>
               <motion.path
                 className="anno-line"
-                d="M 536 302 L 536 776 M 527 306 L 545 298 M 527 780 L 545 772"
+                d="M 548 154 L 548 696 M 538 158 L 558 150 M 538 700 L 558 692"
                 style={{ pathLength: dimH }}
               />
-              <text className="anno-text" x="550" y="548" transform="rotate(-90 550 548)">
+              <text className="anno-text" x="566" y="438" transform="rotate(-90 566 438)">
                 1455
               </text>
             </motion.g>
-            {/* Breite 753 – parallel zur Tassenvorderkante */}
+            {/* Breite 753 – frontal unter der Tür */}
             <motion.g style={{ opacity: dimW }}>
               <motion.path
                 className="anno-line"
-                d="M 246 746 L 506 796 M 250 737 L 242 755 M 510 787 L 502 805"
+                d="M 310 730 L 525 730 M 310 718 L 310 742 M 525 718 L 525 742"
                 style={{ pathLength: dimW }}
               />
-              <text className="anno-text" x="354" y="744" transform="rotate(9 354 744)">
+              <text className="anno-text" x="392" y="722">
                 753
               </text>
             </motion.g>
-            {/* Eckschräge 569 – folgt dem Balken */}
+            {/* Eckschräge 569 */}
             <motion.g style={{ opacity: bevel }}>
               <motion.path
                 className="anno-line"
-                d="M 260 354 L 318 286"
+                d="M 312 244 L 365 150"
                 style={{ pathLength: bevel }}
               />
-              <text className="anno-text" x="336" y="274">
+              <text className="anno-text" x="340" y="122">
                 Schräge · 569
               </text>
             </motion.g>
@@ -211,10 +210,10 @@ export function ScrollStory() {
             <motion.g style={{ opacity: radius }}>
               <motion.path
                 className="anno-line"
-                d="M 486 306 q 18 -14 30 -6"
+                d="M 492 168 q 20 -16 34 -6"
                 style={{ pathLength: radius }}
               />
-              <text className="anno-text" x="450" y="340">
+              <text className="anno-text" x="460" y="204">
                 R8
               </text>
             </motion.g>
@@ -234,23 +233,23 @@ export function ScrollStory() {
             </motion.g>
             {/* Bandaussparung – Pfeil zur Schlagkante an der Wand */}
             <motion.g style={{ opacity: hinge }}>
-              <text className="anno-text" x="334" y="452" transform="rotate(-2 334 452)">
+              <text className="anno-text" x="330" y="430" transform="rotate(-2 330 430)">
                 Aussparung 52 × 84
               </text>
               <motion.path
                 className="anno-line"
-                d="M 460 456 Q 518 524 508 646 M 508 646 l -13 -8 M 508 646 l 3 -15"
+                d="M 446 438 Q 520 500 520 590 M 520 590 l -12 -10 M 520 590 l 5 -15"
                 style={{ pathLength: hinge }}
               />
             </motion.g>
-            {/* Winkel – an der Stufenecke des Seitenteils */}
+            {/* Winkel – am kleineren Seitenteil */}
             <motion.g style={{ opacity: angle }}>
               <motion.path
                 className="anno-line"
-                d="M 192 632 q 20 -10 28 -26"
+                d="M 112 510 q 22 -12 34 -32"
                 style={{ pathLength: angle }}
               />
-              <text className="anno-text" x="78" y="678" transform="rotate(2 78 678)">
+              <text className="anno-text" x="54" y="690" transform="rotate(2 54 690)">
                 kein rechter Winkel!
               </text>
             </motion.g>
