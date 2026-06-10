@@ -1,0 +1,138 @@
+/* Glasschnitt-Minispiel */
+
+.game {
+  background: #060606;
+  border-top: 1px solid var(--border);
+}
+
+.game__target-val { color: var(--accent); }
+
+.game__bench {
+  margin-top: clamp(28px, 4vw, 48px);
+  max-width: 860px;
+}
+
+.game__ruler {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 6px;
+  font-size: 0.68rem;
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+  user-select: none;
+}
+
+.game__tick {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  width: 1px;
+}
+
+.game__tick i {
+  display: block;
+  width: 1px;
+  height: 8px;
+  background: var(--border-strong);
+}
+
+.game__pane {
+  position: relative;
+  height: clamp(180px, 30vw, 280px);
+  border-radius: var(--radius);
+  touch-action: none;
+  user-select: none;
+}
+
+.game__pane--live { cursor: crosshair; }
+
+.game__half {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  background:
+    linear-gradient(115deg, rgba(255, 255, 255, 0.14) 0%, rgba(255, 255, 255, 0.02) 30%, rgba(255, 255, 255, 0.1) 47%, rgba(255, 255, 255, 0.02) 52%, rgba(255, 255, 255, 0.06) 100%),
+    linear-gradient(rgba(127, 179, 179, 0.13), rgba(127, 179, 179, 0.07));
+  border: 1px solid rgba(170, 210, 210, 0.35);
+  box-shadow: inset 0 0 30px rgba(127, 179, 179, 0.08);
+}
+
+.game__half--left { left: 0; border-radius: var(--radius) 0 0 var(--radius); }
+.game__half--right { right: 0; border-radius: 0 var(--radius) var(--radius) 0; }
+.game__half--broken { border-color: rgba(227, 107, 107, 0.5); }
+
+.game__line {
+  position: absolute;
+  top: -8px;
+  bottom: -8px;
+  width: 0;
+  pointer-events: none;
+}
+
+.game__line em {
+  position: absolute;
+  top: -24px;
+  left: 0;
+  transform: translateX(-50%);
+  font-style: normal;
+  font-size: 0.72rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--text-dim);
+  white-space: nowrap;
+}
+
+.game__line--target { border-left: 2px dashed var(--accent); }
+.game__line--target em { color: var(--accent); font-weight: 700; }
+
+.game__line--aim { border-left: 1px solid rgba(255, 255, 255, 0.85); }
+
+.game__line--cut { border-left: 2px solid #fff; }
+
+.game__cracks {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.game__cracks path {
+  fill: none;
+  stroke: rgba(255, 255, 255, 0.65);
+  stroke-width: 0.4;
+  stroke-linejoin: bevel;
+}
+
+.game__result { margin-top: 24px; }
+
+.game__verdict {
+  font-size: clamp(1.4rem, 3vw, 2rem);
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  margin-bottom: 0.2em;
+}
+
+.game__verdict--broken { color: var(--danger); }
+
+.game__detail { color: var(--text-dim); }
+
+.game__actions {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  flex-wrap: wrap;
+  margin-top: 12px;
+}
+
+.game__best {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.game__hint {
+  margin-top: 24px;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}

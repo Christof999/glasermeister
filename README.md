@@ -58,12 +58,15 @@ Wichtige Hinweise:
 
 ```
 src/
-├── components/   # Header, Footer, Cards, ContactForm, Lightbox, CookieBanner
-├── pages/        # Home, Service, Referenzen, UeberUns, Kontakt, Impressum, Datenschutz
-├── data/         # services.ts – einzige Quelle der Wahrheit für alle Leistungen
-├── lib/          # SEO Helpers + JSON-LD
-└── styles/       # global.css
+├── components/       # Header, Footer, FloatingProjects, GlassCutGame, Lightbox, CookieBanner
+│   └── story/        # ScrollStory (Aufmaß-Animation) + GlassScene (three.js)
+├── pages/            # Home, Service, Kontakt, Impressum, Datenschutz
+├── data/             # services.ts (Leistungen) + projects.ts (Projekte & Stories)
+├── lib/              # SEO Helpers + JSON-LD
+└── styles/           # global.css
 ```
 
-Alle Inhalte einer Leistung (Texte, Bullets, Galerie) leben in `services.ts`,
-sodass Anpassungen genau an einer Stelle passieren.
+Leistungs-Inhalte leben in `services.ts`, die Projekt-Stories der schwebenden
+Galerie in `projects.ts` – Anpassungen passieren jeweils an genau einer Stelle.
+Die Scroll-Story auf der Startseite nutzt die Maße der Originalzeichnungen
+(`Duschtüre schulstr..pdf`, `Seitenteil Dusche.pdf` im Repo-Root).

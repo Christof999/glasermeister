@@ -1,0 +1,233 @@
+/* Scroll-Story: Vom Aufmaß zum fertigen Glas */
+
+.story {
+  position: relative;
+  height: 560vh;
+  background: #050505;
+}
+
+.story__sticky {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
+  display: grid;
+  place-items: center;
+}
+
+/* Intro */
+.story__intro {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  z-index: 5;
+  padding-inline: var(--gutter);
+  pointer-events: none;
+}
+
+.story__intro h2 {
+  font-size: clamp(2rem, 5vw + 0.6rem, 4.4rem);
+  font-weight: 900;
+  letter-spacing: -0.03em;
+  margin-bottom: 2rem;
+}
+
+.story__intro em {
+  font-style: normal;
+  color: var(--accent);
+}
+
+.story__scrollhint {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  color: var(--text-muted);
+  font-size: 0.78rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+}
+
+.story__scrollline {
+  width: 1px;
+  height: 56px;
+  background: linear-gradient(to bottom, var(--accent), transparent);
+  animation: story-scroll 1.8s var(--ease) infinite;
+  transform-origin: top;
+}
+
+@keyframes story-scroll {
+  0% { transform: scaleY(0); opacity: 0; }
+  30% { transform: scaleY(1); opacity: 1; }
+  100% { transform: scaleY(1) translateY(24px); opacity: 0; }
+}
+
+/* Foto-Bühne */
+.story__frame {
+  position: relative;
+  margin: 0;
+  height: min(80vh, 80dvh);
+  aspect-ratio: 3 / 4;
+  max-width: calc(100vw - 2 * var(--gutter));
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: 0 40px 120px rgba(0, 0, 0, 0.8);
+  z-index: 1;
+}
+
+.story__frame img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.story__after { z-index: 2; }
+
+.story__tag {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  z-index: 4;
+  background: rgba(5, 5, 5, 0.72);
+  backdrop-filter: blur(6px);
+  border: 1px solid var(--border-strong);
+  color: var(--text);
+  font-size: 0.74rem;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  padding: 7px 14px;
+  border-radius: 999px;
+}
+
+.story__tag--after {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+/* Bleistift-Aufmaß */
+.story__anno {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 3;
+  mix-blend-mode: screen;
+}
+
+.anno-line {
+  fill: none;
+  stroke: #efe9da;
+  stroke-width: 2.4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  opacity: 0.9;
+}
+
+.anno-line--dashed {
+  stroke-dasharray: 10 8;
+  stroke-width: 2.8;
+}
+
+.anno-text {
+  font-family: 'Caveat', cursive;
+  font-size: 30px;
+  font-weight: 600;
+  fill: #efe9da;
+}
+
+.anno-text--big { font-size: 38px; }
+
+/* 3D-Ebene */
+.story__canvas {
+  position: absolute;
+  inset: 0;
+  z-index: 6;
+  pointer-events: none;
+}
+
+.story__canvas canvas {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+/* Kapitel-Texte */
+.story__captions {
+  position: absolute;
+  left: clamp(16px, 5vw, 80px);
+  bottom: clamp(20px, 7vh, 72px);
+  z-index: 8;
+  max-width: 340px;
+  pointer-events: none;
+}
+
+.story__caption {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: max-content;
+  max-width: min(340px, calc(100vw - 2 * var(--gutter)));
+  background: rgba(8, 8, 8, 0.78);
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 18px 22px;
+}
+
+.story__caption-num {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.24em;
+  color: var(--accent);
+}
+
+.story__caption h3 {
+  margin: 4px 0 6px;
+  font-size: 1.25rem;
+}
+
+.story__caption p {
+  margin: 0;
+  color: var(--text-dim);
+  font-size: 0.92rem;
+  line-height: 1.55;
+}
+
+@media (max-width: 720px) {
+  .story__frame {
+    height: auto;
+    width: calc(100vw - 2 * var(--gutter));
+    max-height: 62vh;
+  }
+
+  .story__captions {
+    left: var(--gutter);
+    right: var(--gutter);
+    bottom: 18px;
+    max-width: none;
+  }
+
+  .story__caption {
+    width: 100%;
+    max-width: none;
+    padding: 14px 16px;
+  }
+
+  .story__caption p { font-size: 0.86rem; }
+  .anno-text { font-size: 34px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .story { height: auto; }
+  .story__sticky { position: relative; height: auto; padding-block: 80px; }
+  .story__intro { position: relative; margin-bottom: 48px; }
+  .story__captions { display: none; }
+}

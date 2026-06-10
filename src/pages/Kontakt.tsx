@@ -1,6 +1,5 @@
 import { Seo, localBusinessJsonLd } from '../lib/seo';
 import { PageMotion, Reveal } from '../components/PageMotion';
-import { ContactForm } from '../components/ContactForm';
 import './Kontakt.css';
 
 export function Kontakt() {
@@ -8,7 +7,7 @@ export function Kontakt() {
     <PageMotion>
       <Seo
         title="Kontakt – der-glasermeister Merkendorf"
-        description="Schreiben Sie uns oder rufen Sie direkt an: 0175 2533137. Glasermeister Patrick Stettner aus Merkendorf – Anfragen kostenlos."
+        description="Rufen Sie direkt an: 0175 2533137 – oder schreiben Sie eine E-Mail. Glasermeister Patrick Stettner aus Merkendorf, Anfragen kostenlos."
         path="/kontakt"
         jsonLd={localBusinessJsonLd}
       />
@@ -17,10 +16,11 @@ export function Kontakt() {
         <div className="container">
           <Reveal>
             <span className="eyebrow">Kontakt</span>
-            <h1>Lassen Sie uns über Ihr Projekt sprechen.</h1>
+            <h1>Ein Anruf genügt.</h1>
             <p className="lead">
-              Beschreiben Sie Ihr Vorhaben in wenigen Sätzen – ich melde mich
-              schnellstmöglich für ein unverbindliches Aufmaß und Angebot.
+              Am schnellsten klären wir Ihr Vorhaben im Gespräch – kostenlos und
+              unverbindlich. Tagsüber bin ich oft auf der Baustelle: Hinterlassen
+              Sie eine Nachricht, ich rufe garantiert zurück.
             </p>
           </Reveal>
         </div>
@@ -29,27 +29,27 @@ export function Kontakt() {
       <section className="section section--tight">
         <div className="container kontakt-grid">
           <Reveal>
-            <ContactForm />
+            <div className="kontakt-direct">
+              <a href="tel:+491752533137" className="kontakt-direct__card">
+                <span className="kontakt-info__label">Telefon</span>
+                <strong>0175 2533137</strong>
+                <span className="kontakt-direct__hint">Mo – Fr · nach Terminvereinbarung</span>
+              </a>
+              <a href="mailto:info@der-glasermeister.de" className="kontakt-direct__card">
+                <span className="kontakt-info__label">E-Mail</span>
+                <strong>info@der-glasermeister.de</strong>
+                <span className="kontakt-direct__hint">
+                  Gern mit Fotos und groben Maßen – das beschleunigt das Angebot.
+                </span>
+              </a>
+            </div>
           </Reveal>
 
           <Reveal delay={0.1}>
             <aside className="kontakt-info">
-              <h2>Direkt erreichen</h2>
+              <h2>Werkstatt &amp; Anschrift</h2>
 
               <div className="kontakt-info__block">
-                <span className="kontakt-info__label">Telefon</span>
-                <a href="tel:+491752533137" className="kontakt-info__value">0175 2533137</a>
-              </div>
-
-              <div className="kontakt-info__block">
-                <span className="kontakt-info__label">E-Mail</span>
-                <a href="mailto:info@der-glasermeister.de" className="kontakt-info__value">
-                  info@der-glasermeister.de
-                </a>
-              </div>
-
-              <div className="kontakt-info__block">
-                <span className="kontakt-info__label">Werkstatt &amp; Anschrift</span>
                 <address className="kontakt-info__value">
                   der-glasermeister<br />
                   Patrick Stettner<br />
@@ -70,13 +70,10 @@ export function Kontakt() {
               </div>
 
               <div className="kontakt-info__block">
-                <span className="kontakt-info__label">Erreichbarkeit</span>
+                <span className="kontakt-info__label">Einzugsgebiet</span>
                 <p className="kontakt-info__value">
-                  Mo – Fr · nach Terminvereinbarung<br />
-                  <span className="kontakt-info__hint">
-                    Tagsüber bin ich oft auf der Baustelle. Bitte hinterlassen Sie eine
-                    Nachricht – ich rufe garantiert zurück.
-                  </span>
+                  Merkendorf, Ansbach, Gunzenhausen, Weißenburg –<br />
+                  Mittelfranken &amp; Umgebung.
                 </p>
               </div>
             </aside>

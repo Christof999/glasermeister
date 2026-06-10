@@ -1,125 +1,129 @@
+/* Hero – große Typo, fertiges Projekt als Bühne */
+
 .hero {
   position: relative;
   isolation: isolate;
-  min-height: 560px;
-  height: clamp(560px, 78vh, 760px);
+  min-height: 620px;
+  height: 100vh;
+  height: 100dvh;
   display: flex;
   align-items: center;
-  padding: clamp(72px, 12vw, 140px) 0 clamp(56px, 8vw, 100px);
   overflow: hidden;
 }
 
 .hero__media {
   position: absolute;
   inset: 0;
-  z-index: -2;
+  z-index: -1;
 }
+
 .hero__media img {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  /* Patrick steht im oberen Drittel des Bildes – Bild nach oben verankern */
-  object-position: 50% 18%;
-  filter: grayscale(0.1) brightness(0.62);
-}
-/* Bei sehr breiten Viewports stärker nach oben verankern */
-@media (min-width: 1400px) {
-  .hero__media img { object-position: 50% 10%; }
+  object-position: 62% 40%;
+  filter: brightness(0.5) saturate(0.9);
 }
 
-.hero__veil {
+.hero__media::after {
+  content: '';
   position: absolute;
   inset: 0;
-  z-index: -1;
-  background-color: rgba(10, 10, 10, 0.66);
+  background:
+    linear-gradient(100deg, rgba(5, 5, 5, 0.92) 20%, rgba(5, 5, 5, 0.45) 60%, rgba(5, 5, 5, 0.25) 100%),
+    linear-gradient(to top, #050505 0%, transparent 26%);
 }
 
-.hero__content { max-width: 880px; }
+.hero__content { max-width: 980px; }
 
-.hero h1 { margin: 8px 0 24px; }
+.hero h1 {
+  margin: 10px 0 24px;
+  font-size: clamp(2.8rem, 8vw, 6.2rem);
+  line-height: 1.02;
+}
+
 .hero__accent { color: var(--accent); }
 
 .hero__actions {
   display: flex;
   flex-wrap: wrap;
   gap: 14px;
-  margin-top: 32px;
+  margin-top: 36px;
 }
 
-.hero__meta {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 18px;
-  margin-top: 56px;
-  padding-top: 32px;
-  border-top: 1px solid rgba(127, 179, 179, 0.28);
-  max-width: 720px;
+.hero__hint {
+  position: absolute;
+  left: 50%;
+  bottom: 26px;
+  transform: translateX(-50%);
 }
-@media (min-width: 640px) {
-  .hero__meta { grid-template-columns: repeat(3, 1fr); }
-}
-.hero__meta strong {
+
+.hero__hint-line {
   display: block;
-  font-size: 0.95rem;
-  font-weight: 600;
-  color: var(--text);
-  margin-bottom: 4px;
-}
-.hero__meta span {
-  display: block;
-  font-size: 0.85rem;
-  color: var(--accent);
-  font-weight: 500;
-  letter-spacing: 0.01em;
+  width: 1px;
+  height: 48px;
+  background: linear-gradient(to bottom, var(--accent), transparent);
+  animation: hero-hint 2s var(--ease) infinite;
+  transform-origin: top;
 }
 
-.services-grid {
-  grid-template-columns: 1fr;
-  margin-top: 48px;
-}
-@media (min-width: 640px) {
-  .services-grid { grid-template-columns: repeat(2, 1fr); }
-}
-@media (min-width: 960px) {
-  .services-grid { grid-template-columns: repeat(3, 1fr); }
+@keyframes hero-hint {
+  0% { transform: scaleY(0); opacity: 0; }
+  35% { transform: scaleY(1); opacity: 1; }
+  100% { transform: scaleY(1) translateY(20px); opacity: 0; }
 }
 
-.process {
-  background: var(--bg-elev);
-  border-block: 1px solid var(--border);
-}
-.process__steps {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 28px;
-  margin-top: 48px;
-}
-@media (min-width: 640px) {
-  .process__steps { grid-template-columns: repeat(2, 1fr); }
-}
-@media (min-width: 1024px) {
-  .process__steps { grid-template-columns: repeat(4, 1fr); }
-}
-.process__step {
-  padding: 28px 24px;
+/* Leistungen – bewusst leise */
+
+.quiet-services {
+  padding-block: clamp(40px, 6vw, 72px);
+  border-top: 1px solid var(--border);
   background: var(--bg);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
-  height: 100%;
 }
-.process__num {
+
+.quiet-services__row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+
+.quiet-services h2 {
+  font-size: clamp(1.1rem, 1.6vw, 1.4rem);
+  font-weight: 600;
+  color: var(--text-dim);
+  margin: 0;
+}
+
+.quiet-services__list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.quiet-services__list li { margin: 0; }
+
+.quiet-services__pill {
   display: inline-block;
-  font-size: 0.85rem;
-  font-weight: 700;
+  padding: 9px 18px;
+  border: 1px solid var(--border-strong);
+  border-radius: 999px;
+  color: var(--text-dim);
+  font-size: 0.88rem;
+  font-weight: 500;
+  transition: border-color 200ms var(--ease), color 200ms var(--ease);
+}
+
+.quiet-services__pill:hover {
+  border-color: var(--accent);
   color: var(--accent);
-  letter-spacing: 0.12em;
-  margin-bottom: 12px;
 }
-.process__step h3 {
-  font-size: 1.15rem;
-  margin: 0 0 8px;
-}
-.process__step p { color: var(--text-dim); margin: 0; font-size: 0.95rem; }
+
+/* CTA */
 
 .cta-section { text-align: center; }
 .cta-section__inner { max-width: 720px; margin: 0 auto; }
