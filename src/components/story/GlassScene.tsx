@@ -105,8 +105,8 @@ function frameLayout(vw: number, vh: number, frameEl: HTMLElement | null) {
 
   const paneScale = (frameH * 0.62 * wpp) / 1.455;
   const bottomY = CAM_Y - (frameBottomPx - frameH * 0.12) * wpp;
-  const doorX = (frameCxPx + frameW * 0.18) * wpp;
-  const panelX = (frameCxPx - frameW * 0.22) * wpp;
+  const doorX = (frameCxPx + frameW * 0.13) * wpp;
+  const panelX = (frameCxPx - frameW * 0.18) * wpp;
 
   return { paneScale, bottomY, doorX, panelX };
 }
@@ -143,14 +143,14 @@ function Panes({ progressRef, frameRef }: PanesProps) {
   const material = useMemo(
     () =>
       new THREE.MeshPhysicalMaterial({
-        color: new THREE.Color('#3d4644'), // Parsol grau, getönt
+        color: new THREE.Color('#6f817d'), // Parsol grau, getönt
         metalness: 0,
         roughness: 0.04,
         transparent: true,
-        opacity: 0.38,
+        opacity: 0.58,
         clearcoat: 1,
         clearcoatRoughness: 0.06,
-        envMapIntensity: 0.65,
+        envMapIntensity: 0.85,
         side: THREE.DoubleSide,
       }),
     []
@@ -162,27 +162,27 @@ function Panes({ progressRef, frameRef }: PanesProps) {
         // Große Duschtür – frontal von rechts in die Entwurfsfläche
         geometry: paneGeometry(doorShape(), 8),
         from: {
-          pos: new THREE.Vector3(layout.doorX + 2.8, layout.bottomY, 0),
+          pos: new THREE.Vector3(layout.doorX + 1.8, layout.bottomY, 0),
           rot: new THREE.Euler(0, 0, 0),
         },
         to: {
           pos: new THREE.Vector3(layout.doorX, layout.bottomY, 0),
           rot: new THREE.Euler(0, 0, 0),
         },
-        range: [0.08, 0.6],
+        range: [0.02, 0.42],
       },
       {
         // Kleineres Seitenteil – frontal von links, als eigenes Teil
         geometry: paneGeometry(panelShape(), 10),
         from: {
-          pos: new THREE.Vector3(layout.panelX - 2.8, layout.bottomY, 0),
+          pos: new THREE.Vector3(layout.panelX - 1.8, layout.bottomY, 0),
           rot: new THREE.Euler(0, 0, 0),
         },
         to: {
           pos: new THREE.Vector3(layout.panelX, layout.bottomY, 0),
           rot: new THREE.Euler(0, 0, 0),
         },
-        range: [0.28, 0.82],
+        range: [0.12, 0.52],
       },
     ],
     [layout]

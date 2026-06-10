@@ -55,7 +55,7 @@ export function ScrollStory() {
   });
 
   useMotionValueEvent(p, 'change', (v) => {
-    sceneProgress.current = clamp01((v - 0.76) / (0.9 - 0.76));
+    sceneProgress.current = clamp01((v - 0.72) / (0.82 - 0.72));
   });
 
   // Intro
@@ -78,7 +78,7 @@ export function ScrollStory() {
   const tagNachher = useTransform(p, [0.92, 0.98], [0, 1]);
 
   // Schwarze Entwurfs-Ebene: Skizze und 3D-Glas entstehen unabhängig vom Foto.
-  const draftOpacity = useTransform(p, [0.24, 0.3, 0.78, 0.88], [0, 1, 1, 0]);
+  const draftOpacity = useTransform(p, [0.24, 0.3, 0.94, 0.98], [0, 1, 1, 0]);
   const sketch = useTransform(p, [0.3, 0.4], [0, 1]);
   const sketchPanel = useTransform(p, [0.36, 0.46], [0, 1]);
   const dimH = useTransform(p, [0.4, 0.48], [0, 1]);
@@ -89,12 +89,12 @@ export function ScrollStory() {
   const hinge = useTransform(p, [0.6, 0.68], [0, 1]);
   const angle = useTransform(p, [0.64, 0.72], [0, 1]);
   const annoOut = useTransform(p, [0.88, 0.94], [1, 0]);
-  const sketchScale = useTransform(p, [0.7, 0.78], [1, 0.58]);
-  const sketchX = useTransform(p, [0.7, 0.78], [0, -112]);
-  const sketchY = useTransform(p, [0.7, 0.78], [0, -88]);
+  const sketchScale = useTransform(p, [0.7, 0.78], [1, 0.52]);
+  const sketchX = useTransform(p, [0.7, 0.78], [0, 104]);
+  const sketchY = useTransform(p, [0.7, 0.78], [0, -132]);
 
   // 3D-Scheiben kommen erst nach fertig gezeichneter Skizze dazu.
-  const canvasOpacity = useTransform(p, [0.76, 0.84, 0.9, 0.94], [0, 1, 1, 0]);
+  const canvasOpacity = useTransform(p, [0.72, 0.78, 0.94, 0.98], [0, 1, 1, 0]);
   const showCanvas = inView && !reduced;
 
   return (
