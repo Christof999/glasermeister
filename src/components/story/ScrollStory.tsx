@@ -65,8 +65,8 @@ export function ScrollStory() {
   // Foto-Ebene: Vorherbild startet groß, fährt zur Seite und kommt am Ende
   // wieder in die Mitte zurück; dabei fadet es zum echten Nachherbild.
   const photoOpacity = useTransform(p, [0.03, 0.09], [0, 1]);
-  const photoScale = useTransform(p, [0.03, 0.13, 0.28, 0.88, 0.98], [1.06, 1, 0.52, 0.52, 1]);
-  const photoX = useTransform(p, [0.13, 0.28, 0.88, 0.98], ['0vw', '-38vw', '-38vw', '0vw']);
+  const photoScale = useTransform(p, [0.03, 0.13, 0.28, 0.88, 0.98], [1.06, 1, 0.48, 0.48, 1]);
+  const photoX = useTransform(p, [0.13, 0.28, 0.88, 0.98], ['0vw', '-44vw', '-44vw', '0vw']);
   const photoY = useTransform(p, [0.13, 0.28, 0.88, 0.98], ['0vh', '-5vh', '-5vh', '0vh']);
   const vorherFilter = useTransform(
     p,

@@ -103,10 +103,10 @@ function frameLayout(vw: number, vh: number, frameEl: HTMLElement | null) {
   // Weltkoordinaten pro Pixel in der z=0-Ebene
   const wpp = (2 * CAM_Z * Math.tan(((CAM_FOV / 2) * Math.PI) / 180)) / vh;
 
-  const paneScale = (frameH * 0.62 * wpp) / 1.455;
+  const paneScale = (frameH * 0.52 * wpp) / 1.455;
   const bottomY = CAM_Y - (frameBottomPx - frameH * 0.12) * wpp;
-  const doorX = (frameCxPx + frameW * 0.13) * wpp;
-  const panelX = (frameCxPx - frameW * 0.18) * wpp;
+  const doorX = (frameCxPx + frameW * 0.34) * wpp;
+  const panelX = (frameCxPx - frameW * 0.04) * wpp;
 
   return { paneScale, bottomY, doorX, panelX };
 }
