@@ -1,21 +1,11 @@
-import { lazy, Suspense, useRef, type ReactNode } from 'react';
+import { useRef, type ReactNode } from 'react';
 import {
   motion,
   useScroll,
   useTransform,
-  useInView,
-  useMotionValueEvent,
-  useReducedMotion,
   type MotionValue,
 } from 'framer-motion';
 import './ScrollStory.css';
-
-// three.js erst laden, wenn die Story in Sichtweite kommt
-const GlassScene = lazy(() =>
-  import('./GlassScene').then((m) => ({ default: m.GlassScene }))
-);
-
-const clamp01 = (v: number) => Math.min(1, Math.max(0, v));
 
 type CaptionProps = {
   progress: MotionValue<number>;
@@ -46,17 +36,10 @@ function Caption({ progress, range, index, title, children }: CaptionProps) {
 export function ScrollStory() {
   const containerRef = useRef<HTMLDivElement>(null);
   const frameRef = useRef<HTMLElement | null>(null);
-  const sceneProgress = useRef(0);
-  const reduced = useReducedMotion();
-  const inView = useInView(containerRef, { margin: '400px 0px 400px 0px' });
 
   const { scrollYProgress: p } = useScroll({
     target: containerRef,
     offset: ['start start', 'end end'],
-  });
-
-  useMotionValueEvent(p, 'change', (v) => {
-    sceneProgress.current = clamp01((v - 0.46) / (0.88 - 0.46));
   });
 
   // Intro
@@ -71,9 +54,9 @@ export function ScrollStory() {
     [0.42, 0.52, 0.84, 0.92],
     ['brightness(1)', 'brightness(0.3)', 'brightness(0.3)', 'brightness(1)']
   );
-  const nachherOpacity = useTransform(p, [0.86, 0.94], [0, 1]);
+  const nachherOpacity = useTransform(p, [0.5, 0.7], [0, 1]);
   const tagVorher = useTransform(p, [0.08, 0.12, 0.42, 0.46], [0, 1, 1, 0]);
-  const tagNachher = useTransform(p, [0.9, 0.96], [0, 1]);
+  const tagNachher = useTransform(p, [0.58, 0.66], [0, 1]);
 
   // Bleistift-Annotationen (Fenster im Scrollverlauf)
   const sketch = useTransform(p, [0.11, 0.21], [0, 1]);
@@ -86,11 +69,6 @@ export function ScrollStory() {
   const hinge = useTransform(p, [0.35, 0.41], [0, 1]);
   const angle = useTransform(p, [0.39, 0.44], [0, 1]);
   const annoOut = useTransform(p, [0.44, 0.5], [1, 0]);
-
-  // 3D-Ebene
-  const canvasOpacity = useTransform(p, [0.46, 0.52, 0.85, 0.92], [0, 1, 1, 0]);
-
-  const showCanvas = inView && !reduced;
 
   return (
     <section
@@ -155,28 +133,27 @@ export function ScrollStory() {
             aria-hidden="true"
             style={{ opacity: annoOut }}
           >
-            {/* Skizze der Türscheibe – an der fertigen Scheibe im Referenzfoto:
-               rechte Kante an der Wand, Unterkante auf der Duschkante */}
+            {/* Aufmaß-Skizze im Vorherfoto: bewusst als Zeichnung, nicht als
+               künstliche Ersatzscheibe. Das echte Ergebnis folgt im Foto-Fade. */}
             <motion.path
               className="anno-line anno-line--dashed"
-              d="M 522 304 L 522 742 L 276 736 L 276 430 L 342 304 Z"
+              d="M 514 290 L 512 782 L 252 728 L 258 356 L 318 286 Z"
               style={{ pathLength: sketch, opacity: sketch }}
             />
-            {/* Skizze des Seitenteils – steht im 90°-Winkel zur Tür und
-               läuft nach hinten über Duschtasse und Sitzbank (Kantenansicht) */}
+            {/* Seitenteil über Sitzbank und Dachschräge */}
             <motion.path
               className="anno-line anno-line--dashed"
-              d="M 276 736 L 204 708 L 204 585 L 224 520 L 252 454 L 276 430 Z"
+              d="M 252 728 L 196 690 L 196 594 L 214 528 L 258 356 Z"
               style={{ pathLength: sketchPanel, opacity: sketchPanel }}
             />
             {/* Höhe 1455 – an der Wandkante rechts */}
             <motion.g style={{ opacity: dimH }}>
               <motion.path
                 className="anno-line"
-                d="M 544 312 L 544 736 M 535 316 L 553 308 M 535 740 L 553 732"
+                d="M 536 302 L 536 776 M 527 306 L 545 298 M 527 780 L 545 772"
                 style={{ pathLength: dimH }}
               />
-              <text className="anno-text" x="558" y="548" transform="rotate(-90 558 548)">
+              <text className="anno-text" x="550" y="548" transform="rotate(-90 550 548)">
                 1455
               </text>
             </motion.g>
@@ -184,10 +161,10 @@ export function ScrollStory() {
             <motion.g style={{ opacity: dimW }}>
               <motion.path
                 className="anno-line"
-                d="M 276 760 L 522 766 M 276 750 L 276 770 M 522 756 L 522 776"
+                d="M 246 746 L 506 796 M 250 737 L 242 755 M 510 787 L 502 805"
                 style={{ pathLength: dimW }}
               />
-              <text className="anno-text" x="384" y="752" transform="rotate(1.5 384 752)">
+              <text className="anno-text" x="354" y="744" transform="rotate(9 354 744)">
                 753
               </text>
             </motion.g>
@@ -195,10 +172,10 @@ export function ScrollStory() {
             <motion.g style={{ opacity: bevel }}>
               <motion.path
                 className="anno-line"
-                d="M 278 428 L 342 304"
+                d="M 260 354 L 318 286"
                 style={{ pathLength: bevel }}
               />
-              <text className="anno-text" x="356" y="382">
+              <text className="anno-text" x="336" y="274">
                 Schräge · 569
               </text>
             </motion.g>
@@ -206,10 +183,10 @@ export function ScrollStory() {
             <motion.g style={{ opacity: radius }}>
               <motion.path
                 className="anno-line"
-                d="M 494 318 q 18 -14 30 -6"
+                d="M 486 306 q 18 -14 30 -6"
                 style={{ pathLength: radius }}
               />
-              <text className="anno-text" x="462" y="352">
+              <text className="anno-text" x="450" y="340">
                 R8
               </text>
             </motion.g>
@@ -229,12 +206,12 @@ export function ScrollStory() {
             </motion.g>
             {/* Bandaussparung – Pfeil zur Schlagkante an der Wand */}
             <motion.g style={{ opacity: hinge }}>
-              <text className="anno-text" x="342" y="502" transform="rotate(-2 342 502)">
+              <text className="anno-text" x="334" y="452" transform="rotate(-2 334 452)">
                 Aussparung 52 × 84
               </text>
               <motion.path
                 className="anno-line"
-                d="M 474 506 Q 536 575 522 684 M 522 684 l -13 -8 M 522 684 l 3 -15"
+                d="M 460 456 Q 518 524 508 646 M 508 646 l -13 -8 M 508 646 l 3 -15"
                 style={{ pathLength: hinge }}
               />
             </motion.g>
@@ -242,24 +219,15 @@ export function ScrollStory() {
             <motion.g style={{ opacity: angle }}>
               <motion.path
                 className="anno-line"
-                d="M 198 648 q 20 -9 29 -25"
+                d="M 192 632 q 20 -10 28 -26"
                 style={{ pathLength: angle }}
               />
-              <text className="anno-text" x="76" y="700" transform="rotate(2 76 700)">
+              <text className="anno-text" x="78" y="678" transform="rotate(2 78 678)">
                 kein rechter Winkel!
               </text>
             </motion.g>
           </motion.svg>
         </motion.figure>
-
-        {/* 3D-Glasscheiben */}
-        <motion.div className="story__canvas" style={{ opacity: canvasOpacity }}>
-          {showCanvas && (
-            <Suspense fallback={null}>
-              <GlassScene progressRef={sceneProgress} frameRef={frameRef} />
-            </Suspense>
-          )}
-        </motion.div>
 
         {/* Kapitel */}
         <div className="story__captions">
