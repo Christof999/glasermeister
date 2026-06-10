@@ -77,6 +77,7 @@ export function ScrollStory() {
 
   // Bleistift-Annotationen (Fenster im Scrollverlauf)
   const sketch = useTransform(p, [0.11, 0.21], [0, 1]);
+  const sketchPanel = useTransform(p, [0.15, 0.25], [0, 1]);
   const dimH = useTransform(p, [0.17, 0.24], [0, 1]);
   const dimW = useTransform(p, [0.21, 0.28], [0, 1]);
   const bevel = useTransform(p, [0.25, 0.3], [0, 1]);
@@ -161,6 +162,13 @@ export function ScrollStory() {
               d="M 512 268 L 510 786 L 252 727 L 258 360 L 315 292 Z"
               style={{ pathLength: sketch, opacity: sketch }}
             />
+            {/* Skizze des Seitenteils – links anschließend, die Stufe
+               folgt Duschtasse und Sitzbank, die Schräge dem Dach */}
+            <motion.path
+              className="anno-line anno-line--dashed"
+              d="M 252 727 L 177 710 L 180 621 L 71 599 L 66 553 L 206 396 L 256 391"
+              style={{ pathLength: sketchPanel, opacity: sketchPanel }}
+            />
             {/* Höhe 1455 – an der Wandkante rechts */}
             <motion.g style={{ opacity: dimH }}>
               <motion.path
@@ -230,14 +238,14 @@ export function ScrollStory() {
                 style={{ pathLength: hinge }}
               />
             </motion.g>
-            {/* Winkel – an der Sitzbankkante */}
+            {/* Winkel – an der Stufenecke des Seitenteils */}
             <motion.g style={{ opacity: angle }}>
               <motion.path
                 className="anno-line"
-                d="M 212 600 q 26 -10 36 -30"
+                d="M 152 634 q 24 -10 32 -30"
                 style={{ pathLength: angle }}
               />
-              <text className="anno-text" x="148" y="648" transform="rotate(2 148 648)">
+              <text className="anno-text" x="86" y="688" transform="rotate(2 86 688)">
                 kein rechter Winkel!
               </text>
             </motion.g>
