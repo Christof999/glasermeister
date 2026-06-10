@@ -1,11 +1,20 @@
-import { useRef, type ReactNode } from 'react';
+import { lazy, Suspense, useRef, type ReactNode } from 'react';
 import {
   motion,
   useScroll,
   useTransform,
+  useInView,
+  useMotionValueEvent,
+  useReducedMotion,
   type MotionValue,
 } from 'framer-motion';
 import './ScrollStory.css';
+
+const GlassScene = lazy(() =>
+  import('./GlassScene').then((m) => ({ default: m.GlassScene }))
+);
+
+const clamp01 = (v: number) => Math.min(1, Math.max(0, v));
 
 type CaptionProps = {
   progress: MotionValue<number>;
@@ -36,39 +45,53 @@ function Caption({ progress, range, index, title, children }: CaptionProps) {
 export function ScrollStory() {
   const containerRef = useRef<HTMLDivElement>(null);
   const frameRef = useRef<HTMLElement | null>(null);
+  const sceneProgress = useRef(0);
+  const reduced = useReducedMotion();
+  const inView = useInView(containerRef, { margin: '400px 0px 400px 0px' });
 
   const { scrollYProgress: p } = useScroll({
     target: containerRef,
     offset: ['start start', 'end end'],
   });
 
+  useMotionValueEvent(p, 'change', (v) => {
+    sceneProgress.current = clamp01((v - 0.5) / (0.78 - 0.5));
+  });
+
   // Intro
   const introOpacity = useTransform(p, [0, 0.07, 0.11], [1, 1, 0]);
   const introY = useTransform(p, [0, 0.11], [0, -60]);
 
-  // Foto-Rahmen (Vorher → Nachher)
+  // Gemeinsame Bühne: Vorherfoto wird kleiner und wandert nach links,
+  // Skizze und 3D-Canvas bleiben dadurch sauber daran gekoppelt.
   const frameOpacity = useTransform(p, [0.03, 0.09], [0, 1]);
-  const frameScale = useTransform(p, [0.03, 0.45], [1.06, 1]);
+  const stageScale = useTransform(p, [0.03, 0.13, 0.28], [1.06, 1, 0.78]);
+  const stageX = useTransform(p, [0.13, 0.28], ['0vw', '-14vw']);
+  const stageY = useTransform(p, [0.13, 0.28], ['0vh', '-4vh']);
   const vorherFilter = useTransform(
     p,
-    [0.42, 0.52, 0.84, 0.92],
-    ['brightness(1)', 'brightness(0.3)', 'brightness(0.3)', 'brightness(1)']
+    [0.44, 0.54, 0.82, 0.92],
+    ['brightness(1)', 'brightness(0.48)', 'brightness(0.48)', 'brightness(1)']
   );
-  const nachherOpacity = useTransform(p, [0.5, 0.7], [0, 1]);
-  const tagVorher = useTransform(p, [0.08, 0.12, 0.42, 0.46], [0, 1, 1, 0]);
-  const tagNachher = useTransform(p, [0.58, 0.66], [0, 1]);
+  const nachherOpacity = useTransform(p, [0.82, 0.94], [0, 1]);
+  const tagVorher = useTransform(p, [0.08, 0.12, 0.34, 0.38], [0, 1, 1, 0]);
+  const tagNachher = useTransform(p, [0.86, 0.94], [0, 1]);
 
   // Bleistift-Annotationen (Fenster im Scrollverlauf)
-  const sketch = useTransform(p, [0.11, 0.21], [0, 1]);
-  const sketchPanel = useTransform(p, [0.15, 0.25], [0, 1]);
-  const dimH = useTransform(p, [0.17, 0.24], [0, 1]);
-  const dimW = useTransform(p, [0.21, 0.28], [0, 1]);
-  const bevel = useTransform(p, [0.25, 0.3], [0, 1]);
-  const radius = useTransform(p, [0.28, 0.33], [0, 1]);
-  const note = useTransform(p, [0.31, 0.37], [0, 1]);
-  const hinge = useTransform(p, [0.35, 0.41], [0, 1]);
-  const angle = useTransform(p, [0.39, 0.44], [0, 1]);
-  const annoOut = useTransform(p, [0.44, 0.5], [1, 0]);
+  const sketch = useTransform(p, [0.24, 0.34], [0, 1]);
+  const sketchPanel = useTransform(p, [0.3, 0.4], [0, 1]);
+  const dimH = useTransform(p, [0.34, 0.42], [0, 1]);
+  const dimW = useTransform(p, [0.38, 0.46], [0, 1]);
+  const bevel = useTransform(p, [0.42, 0.48], [0, 1]);
+  const radius = useTransform(p, [0.46, 0.52], [0, 1]);
+  const note = useTransform(p, [0.5, 0.58], [0, 1]);
+  const hinge = useTransform(p, [0.54, 0.62], [0, 1]);
+  const angle = useTransform(p, [0.58, 0.66], [0, 1]);
+  const annoOut = useTransform(p, [0.8, 0.9], [1, 0]);
+
+  // 3D-Scheiben kommen erst nach fertig gezeichneter Skizze dazu.
+  const canvasOpacity = useTransform(p, [0.5, 0.58, 0.8, 0.9], [0, 1, 1, 0]);
+  const showCanvas = inView && !reduced;
 
   return (
     <section
@@ -92,47 +115,47 @@ export function ScrollStory() {
           </div>
         </motion.div>
 
-        {/* Foto-Bühne */}
-        <motion.figure
-          className="story__frame"
-          ref={frameRef}
-          style={{ opacity: frameOpacity, scale: frameScale }}
+        {/* Foto-, Skizzen- und Glas-Bühne */}
+        <motion.div
+          className="story__stage"
+          style={{ opacity: frameOpacity, x: stageX, y: stageY, scale: stageScale }}
         >
-          <motion.img
-            src="/images/schulstrasse/img_1537.jpg"
-            alt="Geflieste Duschnische unter der Dachschräge, noch ohne Glas"
-            style={{ filter: vorherFilter }}
-            loading="lazy"
-            decoding="async"
-            width="1200"
-            height="1600"
-          />
-          <motion.img
-            className="story__after"
-            src="/images/schulstrasse/img_1683.jpg"
-            alt="Fertige Dusche mit grauer Glastür und Seitenteil unter der Dachschräge"
-            style={{ opacity: nachherOpacity }}
-            loading="lazy"
-            decoding="async"
-            width="1200"
-            height="1600"
-          />
+          <motion.figure className="story__frame" ref={frameRef}>
+            <motion.img
+              src="/images/schulstrasse/img_1537.jpg"
+              alt="Geflieste Duschnische unter der Dachschräge, noch ohne Glas"
+              style={{ filter: vorherFilter }}
+              loading="lazy"
+              decoding="async"
+              width="1200"
+              height="1600"
+            />
+            <motion.img
+              className="story__after"
+              src="/images/schulstrasse/img_1683.jpg"
+              alt="Fertige Dusche mit grauer Glastür und Seitenteil unter der Dachschräge"
+              style={{ opacity: nachherOpacity }}
+              loading="lazy"
+              decoding="async"
+              width="1200"
+              height="1600"
+            />
 
-          <motion.span className="story__tag" style={{ opacity: tagVorher }}>
-            Vorher
-          </motion.span>
-          <motion.span className="story__tag story__tag--after" style={{ opacity: tagNachher }}>
-            Nachher
-          </motion.span>
+            <motion.span className="story__tag" style={{ opacity: tagVorher }}>
+              Vorher
+            </motion.span>
+            <motion.span className="story__tag story__tag--after" style={{ opacity: tagNachher }}>
+              Nachher
+            </motion.span>
 
-          {/* Bleistift-Aufmaß */}
-          <motion.svg
-            className="story__anno"
-            viewBox="0 0 600 800"
-            preserveAspectRatio="xMidYMid slice"
-            aria-hidden="true"
-            style={{ opacity: annoOut }}
-          >
+            {/* Bleistift-Aufmaß */}
+            <motion.svg
+              className="story__anno"
+              viewBox="0 0 600 800"
+              preserveAspectRatio="xMidYMid slice"
+              aria-hidden="true"
+              style={{ opacity: annoOut }}
+            >
             {/* Aufmaß-Skizze im Vorherfoto: bewusst als Zeichnung, nicht als
                künstliche Ersatzscheibe. Das echte Ergebnis folgt im Foto-Fade. */}
             <motion.path
@@ -226,8 +249,17 @@ export function ScrollStory() {
                 kein rechter Winkel!
               </text>
             </motion.g>
-          </motion.svg>
-        </motion.figure>
+            </motion.svg>
+          </motion.figure>
+
+          <motion.div className="story__canvas" style={{ opacity: canvasOpacity }}>
+            {showCanvas && (
+              <Suspense fallback={null}>
+                <GlassScene progressRef={sceneProgress} frameRef={frameRef} />
+              </Suspense>
+            )}
+          </motion.div>
+        </motion.div>
 
         {/* Kapitel */}
         <div className="story__captions">
