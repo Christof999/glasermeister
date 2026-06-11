@@ -12,38 +12,43 @@ import type { LookState } from './lookState';
  */
 
 const RADIUS = 10;
-const COLS = 7;
-const ROW_OFFSETS = [-0.72, 0, 0.72]; // Polarwinkel-Versatz der drei Ringe
-const TILE_PHI = 0.62; // Kachelbreite im Bogenmaß
-const TILE_THETA = 0.58; // Kachelhöhe im Bogenmaß
 const FOV = 96;
+
+/** Kachelmaße im Bogenmaß, abgeleitet von der Layout-Größe des Projekts */
+const TILE_SIZE: Record<Project['size'], { phi: number; theta: number }> = {
+  lg: { phi: 0.8, theta: 0.74 },
+  md: { phi: 0.68, theta: 0.62 },
+  sm: { phi: 0.58, theta: 0.52 },
+};
 
 type TileSpec = {
   key: string;
   project: Project;
   phiStart: number;
+  phiLen: number;
   thetaStart: number;
+  thetaLen: number;
   thetaCenter: number;
 };
 
+/** Jedes Projekt genau einmal: ein Ring um den Äquator, abwechselnd
+ * nach oben/unten versetzt, damit es nach Raum statt Karussell aussieht. */
 function buildTiles(): TileSpec[] {
-  const tiles: TileSpec[] = [];
-  const step = (Math.PI * 2) / COLS;
-  ROW_OFFSETS.forEach((offset, row) => {
-    const thetaCenter = Math.PI / 2 + offset;
-    for (let col = 0; col < COLS; col++) {
-      // Reihen versetzt starten, damit nicht dreimal dieselbe Spalte entsteht
-      const project = projects[(row * 3 + col) % projects.length];
-      tiles.push({
-        key: `${row}-${col}`,
-        project,
-        phiStart: col * step + (row % 2) * (step / 2) - TILE_PHI / 2,
-        thetaStart: thetaCenter - TILE_THETA / 2,
-        thetaCenter,
-      });
-    }
+  const step = (Math.PI * 2) / projects.length;
+  return projects.map((project, i) => {
+    const size = TILE_SIZE[project.size];
+    const wobble = (((i * 37) % 5) - 2) * 0.045;
+    const thetaCenter = Math.PI / 2 + (i % 2 === 0 ? -0.36 : 0.38) + wobble;
+    return {
+      key: project.id,
+      project,
+      phiStart: i * step - size.phi / 2,
+      phiLen: size.phi,
+      thetaStart: thetaCenter - size.theta / 2,
+      thetaLen: size.theta,
+      thetaCenter,
+    };
   });
-  return tiles;
 }
 
 /** Textur mittig zuschneiden, damit das Foto die Kachel ohne Verzerrung füllt. */
@@ -70,12 +75,10 @@ function coverTexture(base: THREE.Texture, tileAspect: number): THREE.Texture {
 function Tile({
   spec,
   texture,
-  onSelect,
   onHover,
 }: {
   spec: TileSpec;
   texture: THREE.Texture;
-  onSelect: (p: Project) => void;
   onHover: (p: Project | null) => void;
 }) {
   const material = useRef<THREE.MeshBasicMaterial>(null);
@@ -87,15 +90,15 @@ function Tile({
       24,
       18,
       spec.phiStart,
-      TILE_PHI,
+      spec.phiLen,
       spec.thetaStart,
-      TILE_THETA
+      spec.thetaLen
     );
     // Von innen betrachtet wären die Fotos spiegelverkehrt – UVs horizontal kippen
     const uv = g.attributes.uv as THREE.BufferAttribute;
     for (let i = 0; i < uv.count; i++) uv.setX(i, 1 - uv.getX(i));
     return g;
-  }, [spec.phiStart, spec.thetaStart]);
+  }, [spec.phiStart, spec.phiLen, spec.thetaStart, spec.thetaLen]);
 
   useEffect(() => () => geometry.dispose(), [geometry]);
 
@@ -107,13 +110,11 @@ function Tile({
     c.setScalar(c.r + (target - c.r) * k);
   });
 
+  // Die Auswahl (Tap/Klick) wertet der umgebende Raum über den
+  // Hover-Zustand aus – das ist robuster als der Klick-Raycast.
   return (
     <mesh
       geometry={geometry}
-      onClick={(e: ThreeEvent<MouseEvent>) => {
-        e.stopPropagation();
-        if (e.delta < 12) onSelect(spec.project);
-      }}
       onPointerOver={(e: ThreeEvent<PointerEvent>) => {
         e.stopPropagation();
         hovered.current = true;
@@ -135,13 +136,7 @@ function Tile({
   );
 }
 
-function Tiles({
-  onSelect,
-  onHover,
-}: {
-  onSelect: (p: Project) => void;
-  onHover: (p: Project | null) => void;
-}) {
+function Tiles({ onHover }: { onHover: (p: Project | null) => void }) {
   const tiles = useMemo(buildTiles, []);
   const covers = useMemo(() => projects.map((p) => p.cover), []);
   const baseTextures = useLoader(THREE.TextureLoader, covers);
@@ -149,8 +144,7 @@ function Tiles({
   const textures = useMemo(() => {
     const byCover = new Map(covers.map((c, i) => [c, baseTextures[i]]));
     return tiles.map((tile) => {
-      const tileAspect =
-        (TILE_PHI * Math.sin(tile.thetaCenter)) / TILE_THETA;
+      const tileAspect = (tile.phiLen * Math.sin(tile.thetaCenter)) / tile.thetaLen;
       return coverTexture(byCover.get(tile.project.cover)!, tileAspect);
     });
   }, [tiles, covers, baseTextures]);
@@ -160,7 +154,7 @@ function Tiles({
   return (
     <>
       {tiles.map((tile, i) => (
-        <Tile key={tile.key} spec={tile} texture={textures[i]} onSelect={onSelect} onHover={onHover} />
+        <Tile key={tile.key} spec={tile} texture={textures[i]} onHover={onHover} />
       ))}
     </>
   );
@@ -169,14 +163,20 @@ function Tiles({
 /** Glättet Blickrichtung aus Mausposition, Drag-Versatz und leichter Eigendrehung. */
 function Rig({ look, paused }: { look: React.MutableRefObject<LookState>; paused: boolean }) {
   useFrame((state, dt) => {
+    if (paused) return; // Modal offen: Hintergrund komplett einfrieren
     const l = look.current;
-    if (!paused) l.drift += dt * 0.018;
+    // Eigendrehung stoppen, solange eine Kachel anvisiert wird –
+    // sonst wandert das Ziel zwischen Drücken und Loslassen weg
+    if (!l.hold) l.drift += dt * 0.018;
     const targetYaw = l.mouseYaw + l.dragYaw + l.drift;
     const targetPitch = THREE.MathUtils.clamp(l.mousePitch + l.dragPitch, -0.6, 0.6);
     const k = 1 - Math.exp(-dt * 3.4);
     l.yaw += (targetYaw - l.yaw) * k;
     l.pitch += (targetPitch - l.pitch) * k;
     state.camera.rotation.set(l.pitch, l.yaw, 0, 'YXZ');
+    // Hover bei jedem Frame neu auswerten: Die Kamera bewegt sich auch
+    // unter einem ruhenden Zeiger, sonst veraltet der anvisierte Treffer.
+    state.events.update?.();
   });
   return null;
 }
@@ -184,12 +184,10 @@ function Rig({ look, paused }: { look: React.MutableRefObject<LookState>; paused
 export function SphereScene({
   look,
   paused,
-  onSelect,
   onHover,
 }: {
   look: React.MutableRefObject<LookState>;
   paused: boolean;
-  onSelect: (p: Project) => void;
   onHover: (p: Project | null) => void;
 }) {
   return (
@@ -201,7 +199,7 @@ export function SphereScene({
       <color attach="background" args={['#040404']} />
       <Rig look={look} paused={paused} />
       <Suspense fallback={null}>
-        <Tiles onSelect={onSelect} onHover={onHover} />
+        <Tiles onHover={onHover} />
       </Suspense>
     </Canvas>
   );

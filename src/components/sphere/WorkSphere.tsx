@@ -144,14 +144,31 @@ function SphereRoom({
   setActive: (p: Project | null) => void;
 }) {
   const look = useRef(createLookState());
-  const drag = useRef<{ id: number; x: number; y: number } | null>(null);
-  const [hovered, setHovered] = useState<Project | null>(null);
+  const drag = useRef<{
+    id: number;
+    x: number;
+    y: number;
+    startX: number;
+    startY: number;
+    project: Project | null;
+  } | null>(null);
+  const hoveredRef = useRef<Project | null>(null);
+  const [hovered, setHoveredState] = useState<Project | null>(null);
+
+  const setHovered = useCallback((p: Project | null) => {
+    hoveredRef.current = p;
+    look.current.hold = !!p;
+    setHoveredState(p);
+  }, []);
+
+  const frozen = !!active;
 
   const handlePointerMove = (e: React.PointerEvent) => {
+    if (frozen) return;
     if (drag.current && e.pointerId === drag.current.id) {
       const dx = e.clientX - drag.current.x;
       const dy = e.clientY - drag.current.y;
-      drag.current = { id: e.pointerId, x: e.clientX, y: e.clientY };
+      drag.current = { ...drag.current, x: e.clientX, y: e.clientY };
       look.current.dragYaw += dx * 0.0042;
       look.current.dragPitch += dy * 0.0032;
       return;
@@ -164,24 +181,43 @@ function SphereRoom({
     }
   };
 
+  // Tap/Klick: beim Drücken anvisierte Kachel merken, beim Loslassen
+  // öffnen – sofern sich der Zeiger kaum bewegt hat (sonst war es ein Drag).
+  const handlePointerUp = (e: React.PointerEvent) => {
+    const d = drag.current;
+    drag.current = null;
+    if (!d || frozen) return;
+    const moved = Math.hypot(e.clientX - d.startX, e.clientY - d.startY);
+    if (moved < 10 && d.project) setActive(d.project);
+  };
+
   return (
     <div
-      className={`ws-room ${hovered ? 'ws-room--hover' : ''}`}
+      className={`ws-room ${hovered ? 'ws-room--hover' : ''} ${frozen ? 'ws-room--frozen' : ''}`}
       role="dialog"
       aria-modal="true"
       aria-label="Meine Arbeiten – begehbarer 3D-Raum"
       onPointerDown={(e) => {
-        drag.current = { id: e.pointerId, x: e.clientX, y: e.clientY };
+        if (frozen) return;
+        drag.current = {
+          id: e.pointerId,
+          x: e.clientX,
+          y: e.clientY,
+          startX: e.clientX,
+          startY: e.clientY,
+          project: hoveredRef.current,
+        };
       }}
       onPointerMove={handlePointerMove}
-      onPointerUp={() => (drag.current = null)}
+      onPointerUp={handlePointerUp}
       onPointerCancel={() => (drag.current = null)}
       onPointerLeave={() => (drag.current = null)}
     >
       <Suspense fallback={null}>
-        <SphereScene look={look} paused={!!active} onSelect={setActive} onHover={setHovered} />
+        <SphereScene look={look} paused={frozen} onHover={setHovered} />
       </Suspense>
 
+      <div className="ws-room__lens" aria-hidden="true" />
       <div className="ws-room__vignette" aria-hidden="true" />
 
       <button type="button" className="ws-room__exit" onClick={onExit}>
@@ -228,9 +264,9 @@ export function WorkSphere() {
   const ctaOpacity = useTransform(scrollYProgress, [0.42, 0.55], [0, 1]);
   const ctaY = useTransform(scrollYProgress, [0.42, 0.55], [24, 0]);
 
-  // Seite hinter Sphere/Tunnel nicht scrollen lassen (Modal regelt sich selbst)
+  // Seite nicht scrollen lassen, solange Sphäre, Tunnel oder Modal offen sind
   useEffect(() => {
-    if (inSphere || tunnel) {
+    if (inSphere || tunnel || active) {
       document.body.style.overflow = 'hidden';
       return () => {
         document.body.style.overflow = '';

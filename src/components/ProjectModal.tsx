@@ -7,9 +7,9 @@ import './ProjectModal.css';
 export function ProjectModal({ project, onClose }: { project: Project; onClose: () => void }) {
   const [imgIndex, setImgIndex] = useState(0);
 
+  // Der Scroll-Lock der Seite gehört dem Aufrufer (WorkSphere),
+  // das Modal kümmert sich nur um die Escape-Taste.
   useEffect(() => {
-    const prevOverflow = document.body.style.overflow;
-    document.body.style.overflow = 'hidden';
     const onKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
         e.stopPropagation();
@@ -17,10 +17,7 @@ export function ProjectModal({ project, onClose }: { project: Project; onClose: 
       }
     };
     window.addEventListener('keydown', onKey, true);
-    return () => {
-      document.body.style.overflow = prevOverflow;
-      window.removeEventListener('keydown', onKey, true);
-    };
+    return () => window.removeEventListener('keydown', onKey, true);
   }, [onClose]);
 
   return createPortal(

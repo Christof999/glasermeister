@@ -169,6 +169,17 @@
   height: 100%;
 }
 
+/* Linsen-Blur am Rand: nur die Bildränder verschwimmen, die Mitte bleibt scharf */
+.ws-room__lens {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  backdrop-filter: blur(9px);
+  -webkit-backdrop-filter: blur(9px);
+  -webkit-mask-image: radial-gradient(ellipse 72% 64% at 50% 50%, transparent 52%, #000 88%);
+  mask-image: radial-gradient(ellipse 72% 64% at 50% 50%, transparent 52%, #000 88%);
+}
+
 /* Fisheye-/Linsen-Eindruck: dunkle, leicht getönte Randabschattung */
 .ws-room__vignette {
   position: absolute;
@@ -215,6 +226,9 @@
   0%, 100% { transform: translateY(0); }
   50% { transform: translateY(7px); }
 }
+
+/* Modal offen: alles hinter dem Modal steht still */
+.ws-room--frozen .ws-room__exit { animation-play-state: paused; }
 
 .ws-room__hud {
   position: absolute;
