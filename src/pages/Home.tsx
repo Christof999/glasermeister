@@ -4,7 +4,7 @@ import { Seo, localBusinessWithReviewsJsonLd } from '../lib/seo';
 import { PageMotion, Reveal } from '../components/PageMotion';
 import { LaserIntro } from '../components/intro/LaserIntro';
 import { ScrollStory } from '../components/story/ScrollStory';
-import { FloatingProjects } from '../components/FloatingProjects';
+import { WorkSphere } from '../components/sphere/WorkSphere';
 import { GlassCutGame } from '../components/GlassCutGame';
 import { Reviews } from '../components/Reviews';
 import './Home.css';
@@ -25,8 +25,8 @@ export function Home() {
       {/* Scroll-Story: Vom Aufmaß zum fertigen Glas */}
       <ScrollStory />
 
-      {/* Projekte – schwebend im Raum */}
-      <FloatingProjects />
+      {/* Projekte – begehbare Sphäre mit Tunnel-Transition */}
+      <WorkSphere />
 
       {/* Leistungen – bewusst knapp */}
       <section className="quiet-services" aria-labelledby="leistungen-h">

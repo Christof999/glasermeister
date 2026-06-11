@@ -1,0 +1,326 @@
+/* Projekte als begehbare Sphäre: Scroll-Überschrift, Tunnel-Transition
+   und der 3D-Raum mit Fisheye-Blick. */
+
+.ws {
+  position: relative;
+  height: 220vh;
+  background:
+    radial-gradient(1100px 560px at 70% 12%, rgba(127, 179, 179, 0.06), transparent 60%),
+    radial-gradient(900px 500px at 18% 85%, rgba(127, 179, 179, 0.04), transparent 60%),
+    #030303;
+}
+
+.ws__sticky {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(18px, 3vh, 30px);
+  text-align: center;
+  overflow: hidden;
+  padding-inline: var(--gutter);
+}
+
+/* --------------------------------------------------- Überschrift */
+
+.ws__title {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  column-gap: 0.32em;
+  row-gap: 0.05em;
+  margin: 0;
+  font-size: clamp(2.3rem, 7vw, 5.2rem);
+  font-weight: 900;
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+  max-width: 14ch;
+}
+
+.ws__word {
+  display: inline-flex;
+  white-space: nowrap;
+  overflow: hidden;
+  padding-bottom: 0.08em;
+}
+
+.ws__letter {
+  display: inline-block;
+  will-change: transform, opacity;
+}
+
+/* --------------------------------------------------- CTA */
+
+.ws__cta {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+}
+
+.ws__cta p {
+  margin: 0;
+  color: var(--text-dim);
+  max-width: 40ch;
+}
+
+.ws__enter {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 34px;
+  border-radius: 999px;
+  border: 1px solid var(--accent-deep);
+  background: rgba(127, 179, 179, 0.08);
+  color: var(--accent-strong);
+  font-size: 0.95rem;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background 250ms var(--ease), border-color 250ms var(--ease),
+    box-shadow 250ms var(--ease), transform 250ms var(--ease);
+  animation: ws-pulse 3.2s ease-in-out infinite;
+}
+
+.ws__enter:hover,
+.ws__enter:focus-visible {
+  background: rgba(127, 179, 179, 0.16);
+  border-color: var(--accent);
+  box-shadow: 0 0 50px rgba(127, 179, 179, 0.35);
+  transform: translateY(-2px);
+}
+
+.ws__enter-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--accent-strong);
+  box-shadow: 0 0 14px var(--accent-strong);
+}
+
+@keyframes ws-pulse {
+  0%, 100% { box-shadow: 0 0 18px rgba(127, 179, 179, 0.12); }
+  50% { box-shadow: 0 0 44px rgba(127, 179, 179, 0.3); }
+}
+
+/* --------------------------------------------------- Tunnel */
+
+.ws-tunnel {
+  position: fixed;
+  inset: 0;
+  z-index: 600;
+  pointer-events: all;
+  overflow: hidden;
+}
+
+/* Mittig verankern: framer-motion setzt nur `transform` (scale),
+   die Zentrierung läuft über die separate `translate`-Eigenschaft. */
+.ws-tunnel__dot,
+.ws-tunnel__flash,
+.ws-tunnel__ring {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  translate: -50% -50%;
+  border-radius: 50%;
+}
+
+.ws-tunnel__dot {
+  width: 260vmax;
+  height: 260vmax;
+  background: radial-gradient(circle, #ffffff 58%, #dff0f0 78%, rgba(223, 240, 240, 0.92) 100%);
+  box-shadow: 0 0 120px 40px rgba(220, 245, 245, 0.85);
+}
+
+.ws-tunnel__ring {
+  width: 260vmax;
+  height: 260vmax;
+  border: 2.5vmax solid rgba(220, 245, 245, 0.55);
+}
+
+.ws-tunnel__flash {
+  width: 300vmax;
+  height: 300vmax;
+  background: #ffffff;
+}
+
+/* --------------------------------------------------- Sphere-Raum */
+
+.ws-room {
+  position: fixed;
+  inset: 0;
+  z-index: 250;
+  background: #040404;
+  touch-action: none;
+  overscroll-behavior: contain;
+  cursor: grab;
+}
+
+.ws-room--hover { cursor: pointer; }
+
+.ws-room canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* Fisheye-/Linsen-Eindruck: dunkle, leicht getönte Randabschattung */
+.ws-room__vignette {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse 120% 105% at 50% 50%, transparent 52%, rgba(0, 0, 0, 0.45) 82%, rgba(0, 0, 0, 0.85) 100%),
+    radial-gradient(ellipse 80% 70% at 50% 50%, rgba(127, 179, 179, 0.045), transparent 70%);
+}
+
+.ws-room__exit {
+  position: absolute;
+  top: clamp(16px, 4vh, 36px);
+  left: 50%;
+  translate: -50% 0;
+  z-index: 10;
+  display: inline-flex;
+  align-items: center;
+  padding: 12px 26px;
+  border-radius: 999px;
+  border: 1px solid rgba(242, 242, 242, 0.35);
+  background: rgba(5, 5, 5, 0.55);
+  backdrop-filter: blur(10px);
+  color: var(--text);
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  cursor: pointer;
+  animation: ws-hover 3.6s ease-in-out infinite;
+  transition: border-color 250ms var(--ease), color 250ms var(--ease),
+    box-shadow 250ms var(--ease);
+}
+
+.ws-room__exit:hover,
+.ws-room__exit:focus-visible {
+  border-color: var(--accent);
+  color: var(--accent-strong);
+  box-shadow: 0 0 36px rgba(127, 179, 179, 0.3);
+  animation-play-state: paused;
+}
+
+@keyframes ws-hover {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(7px); }
+}
+
+.ws-room__hud {
+  position: absolute;
+  left: 50%;
+  bottom: clamp(18px, 5vh, 44px);
+  translate: -50% 0;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  margin: 0;
+  text-align: center;
+  pointer-events: none;
+  max-width: min(90vw, 520px);
+}
+
+.ws-room__hud strong {
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  text-shadow: 0 2px 14px rgba(0, 0, 0, 0.8);
+}
+
+.ws-room__hud span {
+  font-size: 0.76rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+
+.ws-room__hint {
+  color: var(--text-muted) !important;
+  text-transform: none !important;
+  letter-spacing: 0.04em !important;
+}
+
+/* --------------------------------------------------- Fallback-Grid */
+
+.ws--simple { height: auto; }
+
+.ws--simple .ws__head {
+  margin-bottom: clamp(24px, 4vw, 56px);
+}
+
+.ws--simple .ws__head h2 {
+  font-size: clamp(2rem, 5vw, 3.6rem);
+  font-weight: 900;
+  letter-spacing: -0.03em;
+  margin-bottom: 0.35em;
+}
+
+.ws__grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 18px;
+  padding-inline: var(--gutter);
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.ws-card {
+  display: block;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  background: none;
+  text-align: left;
+  color: inherit;
+  cursor: pointer;
+}
+
+.ws-card img {
+  width: 100%;
+  aspect-ratio: 4 / 5;
+  object-fit: cover;
+  border-radius: var(--radius);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.7);
+  transition: transform 350ms var(--ease), box-shadow 350ms var(--ease);
+}
+
+.ws-card:hover img,
+.ws-card:focus-visible img {
+  transform: scale(1.02);
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.85), 0 0 0 1px rgba(127, 179, 179, 0.35);
+}
+
+.ws-card__label {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-top: 12px;
+}
+
+.ws-card__label strong {
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.ws-card__label span {
+  font-size: 0.76rem;
+  color: var(--text-muted);
+  letter-spacing: 0.04em;
+}
+
+@media (min-width: 640px) {
+  .ws__grid { grid-template-columns: repeat(3, 1fr); }
+}
