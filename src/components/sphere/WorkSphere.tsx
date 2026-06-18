@@ -75,26 +75,71 @@ function ScrollTitle({ progress }: { progress: MotionValue<number> }) {
 
 /* ----------------------------------------------- Tunnel-Transition */
 
-function Tunnel({ onCovered, onDone }: { onCovered: () => void; onDone: () => void }) {
+const STREAKS = 22;
+// Fixe Winkel/Längen je Streak – außerhalb der Komponente, damit sie über
+// die Renderzyklen stabil bleiben und nicht bei jedem State-Wechsel springen.
+const STREAK_SPECS = Array.from({ length: STREAKS }, (_, i) => ({
+  angle: (360 / STREAKS) * i + (((i * 53) % 7) - 3) * 1.4,
+  delay: (i % 7) * 0.035,
+  length: 0.62 + (((i * 29) % 5) / 5) * 0.5,
+}));
+
+/** Lichtstreifen, die aus der Mitte schießen (Eintritt) bzw. nach innen
+ *  zusammenfallen (Austritt) – der „Warp“-Eindruck beim Eintauchen. */
+function Streaks({ mode }: { mode: 'enter' | 'exit' }) {
+  return (
+    <div className="ws-tunnel__streaks">
+      {STREAK_SPECS.map((s, i) => (
+        <motion.span
+          key={i}
+          className="ws-tunnel__streak"
+          style={{ rotate: `${s.angle}deg`, scaleY: s.length }}
+          initial={mode === 'enter' ? { scaleX: 0, opacity: 0 } : { scaleX: 1, opacity: 0.85 }}
+          animate={
+            mode === 'enter'
+              ? { scaleX: [0, 1, 0.2], opacity: [0, 0.95, 0] }
+              : { scaleX: [1, 0], opacity: [0.85, 0] }
+          }
+          transition={{
+            duration: mode === 'enter' ? 1.05 : 0.85,
+            delay: s.delay,
+            ease: mode === 'enter' ? [0.55, 0, 0.85, 0.5] : [0.4, 0, 0.6, 1],
+          }}
+        />
+      ))}
+    </div>
+  );
+}
+
+/** Eintritt: Lichtstreifen + Ringe schießen nach außen, ein leuchtender Kern
+ *  füllt den Schirm, dann blendet ein Flash zur Sphäre auf. */
+function EnterTunnel({ onCovered, onDone }: { onCovered: () => void; onDone: () => void }) {
   const [stage, setStage] = useState<'grow' | 'reveal'>('grow');
   return (
-    <div className="ws-tunnel" aria-hidden="true">
+    <div className="ws-tunnel ws-tunnel--enter" aria-hidden="true">
       {stage === 'grow' ? (
         <>
-          {[0, 1, 2].map((i) => (
+          <motion.span
+            className="ws-tunnel__aura"
+            initial={{ scale: 0.2, opacity: 0 }}
+            animate={{ scale: 1, opacity: [0, 0.9, 0.5] }}
+            transition={{ duration: 1.2, ease: 'easeOut' }}
+          />
+          <Streaks mode="enter" />
+          {[0, 1, 2, 3].map((i) => (
             <motion.span
               key={i}
               className="ws-tunnel__ring"
-              initial={{ scale: 0.002, opacity: 0.9 }}
-              animate={{ scale: 1.1, opacity: 0 }}
-              transition={{ duration: 1.15, delay: i * 0.14, ease: [0.6, 0, 0.9, 0.4] }}
+              initial={{ scale: 0.02, opacity: 0.85 }}
+              animate={{ scale: 1.25, opacity: 0 }}
+              transition={{ duration: 1.15, delay: i * 0.12, ease: [0.6, 0, 0.9, 0.4] }}
             />
           ))}
           <motion.span
-            className="ws-tunnel__dot"
+            className="ws-tunnel__core"
             initial={{ scale: 0.004 }}
-            animate={{ scale: 1.05 }}
-            transition={{ duration: 1.25, ease: [0.62, 0, 0.9, 0.35] }}
+            animate={{ scale: 1.15 }}
+            transition={{ duration: 1.3, ease: [0.66, 0, 0.86, 0.32] }}
             onAnimationComplete={() => {
               onCovered();
               setStage('reveal');
@@ -106,11 +151,75 @@ function Tunnel({ onCovered, onDone }: { onCovered: () => void; onDone: () => vo
           className="ws-tunnel__flash"
           initial={{ opacity: 1 }}
           animate={{ opacity: 0 }}
-          transition={{ duration: 0.75, ease: 'easeOut' }}
+          transition={{ duration: 0.8, ease: 'easeOut' }}
           onAnimationComplete={onDone}
         />
       )}
     </div>
+  );
+}
+
+/** Austritt: die Sphäre wird in einen Lichtpunkt gesogen – Ringe und
+ *  Streifen fallen nach innen, ein Schleier deckt ab, dann Auflösung zur Seite. */
+function ExitTunnel({ onCovered, onDone }: { onCovered: () => void; onDone: () => void }) {
+  const [stage, setStage] = useState<'collapse' | 'reveal'>('collapse');
+  return (
+    <div className="ws-tunnel ws-tunnel--exit" aria-hidden="true">
+      {stage === 'collapse' ? (
+        <>
+          <motion.span
+            className="ws-tunnel__veil"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.95, ease: 'easeIn' }}
+            onAnimationComplete={() => {
+              onCovered();
+              setStage('reveal');
+            }}
+          />
+          <Streaks mode="exit" />
+          {[0, 1, 2, 3].map((i) => (
+            <motion.span
+              key={i}
+              className="ws-tunnel__ring"
+              initial={{ scale: 1.25, opacity: 0 }}
+              animate={{ scale: 0.04, opacity: 0.9 }}
+              transition={{ duration: 0.9, delay: i * 0.07, ease: [0.4, 0, 0.2, 1] }}
+            />
+          ))}
+          <motion.span
+            className="ws-tunnel__core ws-tunnel__core--exit"
+            initial={{ scale: 1.2, opacity: 0.95 }}
+            animate={{ scale: 0.002, opacity: 1 }}
+            transition={{ duration: 0.95, ease: [0.5, 0, 0.75, 0] }}
+          />
+        </>
+      ) : (
+        <motion.span
+          className="ws-tunnel__veil ws-tunnel__veil--out"
+          initial={{ opacity: 1 }}
+          animate={{ opacity: 0 }}
+          transition={{ duration: 0.7, ease: 'easeOut' }}
+          onAnimationComplete={onDone}
+        />
+      )}
+    </div>
+  );
+}
+
+function Tunnel({
+  mode,
+  onCovered,
+  onDone,
+}: {
+  mode: 'enter' | 'exit';
+  onCovered: () => void;
+  onDone: () => void;
+}) {
+  return mode === 'enter' ? (
+    <EnterTunnel onCovered={onCovered} onDone={onDone} />
+  ) : (
+    <ExitTunnel onCovered={onCovered} onDone={onDone} />
   );
 }
 
@@ -335,6 +444,7 @@ export function WorkSphere() {
 
       {tunnel && (
         <Tunnel
+          mode={tunnel}
           onCovered={() => {
             if (tunnel === 'enter') {
               setInSphere(true);

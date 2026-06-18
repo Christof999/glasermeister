@@ -118,10 +118,15 @@
   overflow: hidden;
 }
 
-/* Mittig verankern: framer-motion setzt nur `transform` (scale),
+/* Eintritt startet aus tiefem Schwarz, damit die Lichtstreifen leuchten. */
+.ws-tunnel--enter {
+  background: radial-gradient(circle at 50% 50%, #06100f 0%, #020303 70%);
+}
+
+/* Mittig verankern: framer-motion setzt nur `transform` (scale/rotate),
    die Zentrierung läuft über die separate `translate`-Eigenschaft. */
-.ws-tunnel__dot,
-.ws-tunnel__flash,
+.ws-tunnel__core,
+.ws-tunnel__aura,
 .ws-tunnel__ring {
   position: absolute;
   left: 50%;
@@ -130,23 +135,83 @@
   border-radius: 50%;
 }
 
-.ws-tunnel__dot {
+/* Leuchtender Kern, der den Schirm beim Eintauchen füllt. */
+.ws-tunnel__core {
   width: 260vmax;
   height: 260vmax;
-  background: radial-gradient(circle, #ffffff 58%, #dff0f0 78%, rgba(223, 240, 240, 0.92) 100%);
-  box-shadow: 0 0 120px 40px rgba(220, 245, 245, 0.85);
+  background: radial-gradient(circle, #ffffff 50%, #e6f8f8 70%, rgba(127, 179, 179, 0.92) 100%);
+  box-shadow: 0 0 160px 60px rgba(127, 179, 179, 0.7);
+  will-change: transform;
+}
+
+.ws-tunnel__core--exit {
+  background: radial-gradient(circle, #ffffff 30%, #cdeeee 60%, rgba(127, 179, 179, 0) 100%);
+  box-shadow: 0 0 90px 30px rgba(127, 179, 179, 0.55);
+}
+
+/* Weicher Glanz-Hof hinter den Streifen. */
+.ws-tunnel__aura {
+  width: 150vmax;
+  height: 150vmax;
+  background: radial-gradient(circle, rgba(127, 179, 179, 0.5) 0%, rgba(127, 179, 179, 0.12) 38%, transparent 68%);
+  filter: blur(8px);
+  will-change: transform, opacity;
 }
 
 .ws-tunnel__ring {
-  width: 260vmax;
-  height: 260vmax;
-  border: 2.5vmax solid rgba(220, 245, 245, 0.55);
+  width: 240vmax;
+  height: 240vmax;
+  border: 2vmax solid rgba(220, 245, 245, 0.5);
+  box-shadow: 0 0 40px rgba(127, 179, 179, 0.4), inset 0 0 40px rgba(127, 179, 179, 0.25);
+  will-change: transform, opacity;
+}
+
+/* Lichtstreifen: dünne Strahlen, die radial aus der Mitte verlaufen. */
+.ws-tunnel__streaks {
+  position: absolute;
+  inset: 0;
+}
+
+.ws-tunnel__streak {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: clamp(2px, 0.45vw, 6px);
+  height: 78vmax;
+  margin-left: calc(clamp(2px, 0.45vw, 6px) / -2);
+  transform-origin: 50% 0;
+  border-radius: 999px;
+  background: linear-gradient(
+    to bottom,
+    rgba(223, 240, 240, 0) 0%,
+    rgba(127, 179, 179, 0.65) 45%,
+    rgba(240, 252, 252, 0.95) 100%
+  );
+  filter: blur(0.4px);
+  will-change: transform, opacity;
 }
 
 .ws-tunnel__flash {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  translate: -50% -50%;
   width: 300vmax;
   height: 300vmax;
-  background: #ffffff;
+  border-radius: 50%;
+  background: radial-gradient(circle, #ffffff 60%, #eafafa 100%);
+}
+
+/* Austritt: getönter Schleier, der die Sphäre auflöst bzw. zur Seite überblendet. */
+.ws-tunnel__veil {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 50% 50%, rgba(127, 179, 179, 0.28) 0%, #050606 62%);
+  will-change: opacity;
+}
+
+.ws-tunnel__veil--out {
+  background: radial-gradient(circle at 50% 50%, rgba(127, 179, 179, 0.18) 0%, #050606 62%);
 }
 
 /* --------------------------------------------------- Sphere-Raum */
