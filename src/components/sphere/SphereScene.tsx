@@ -2,6 +2,7 @@ import { Suspense, useEffect, useMemo, useRef } from 'react';
 import { Canvas, useFrame, useLoader, type ThreeEvent } from '@react-three/fiber';
 import * as THREE from 'three';
 import { projects, type Project } from '../../data/projects';
+import { toWebp } from '../../lib/img';
 import type { LookState } from './lookState';
 
 /**
@@ -139,7 +140,10 @@ function Tile({
 function Tiles({ onHover }: { onHover: (p: Project | null) => void }) {
   const tiles = useMemo(buildTiles, []);
   const covers = useMemo(() => projects.map((p) => p.cover), []);
-  const baseTextures = useLoader(THREE.TextureLoader, covers);
+  // Texturen als WebP laden (deutlich kleiner), aber weiterhin über den
+  // Originalpfad referenzieren – jeder WebGL-fähige Browser kann WebP.
+  const sources = useMemo(() => covers.map(toWebp), [covers]);
+  const baseTextures = useLoader(THREE.TextureLoader, sources);
 
   const textures = useMemo(() => {
     const byCover = new Map(covers.map((c, i) => [c, baseTextures[i]]));

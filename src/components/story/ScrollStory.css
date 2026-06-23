@@ -233,24 +233,30 @@
   line-height: 1.55;
 }
 
-/* Größere Schirme (Tablet quer / Desktop): das Foto wandert nach links,
-   die Skizze steht mittig – also die Kapitel-Texte nach rechts setzen,
-   damit die Bühne über die volle Breite ausgewogen aufgeteilt ist.
-   Das Handy-Layout (≤720px) bleibt davon unberührt. */
-@media (min-width: 1024px) {
+/* Echte Desktop-Breiten (ab 1280px): das Foto wandert nach links, die
+   Skizze steht mittig – also die Kapitel-Texte rechts andocken, damit die
+   Bühne über die volle Breite ausgewogen aufgeteilt ist.
+   Tablets (inkl. iPad Pro im Hochformat = 1024px) und Handys behalten das
+   bewährte Layout aus dem Basis-/≤720px-Block. */
+@media (min-width: 1280px) {
   .story__frame {
     /* etwas mehr Präsenz auf großen Schirmen, ohne die Mitte zu sprengen */
-    width: min(calc(0.75 * 84svh), 42vw);
+    width: min(calc(0.75 * 84svh), 40vw);
   }
 
+  /* Container rechts verankern … */
   .story__captions {
     left: auto;
-    right: clamp(48px, 6vw, 104px);
+    right: clamp(64px, 6vw, 140px);
     bottom: clamp(64px, 11vh, 132px);
     max-width: 380px;
   }
 
+  /* … und die Karten an dessen rechter Kante ausrichten, damit sie nach
+     links in den Bildschirm wachsen statt nach rechts abgeschnitten zu werden. */
   .story__caption {
+    left: auto;
+    right: 0;
     max-width: 380px;
     padding: 22px 26px;
   }
@@ -259,10 +265,10 @@
   .story__caption p { font-size: 0.96rem; }
 }
 
-/* Sehr breite Schirme: Skizze und Texte nicht auseinanderdriften lassen */
-@media (min-width: 1600px) {
+/* Sehr breite Schirme: Texte nicht ganz an den Rand driften lassen */
+@media (min-width: 1680px) {
   .story__captions {
-    right: clamp(104px, 11vw, 260px);
+    right: clamp(140px, 12vw, 300px);
   }
 }
 

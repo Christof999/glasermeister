@@ -33,6 +33,11 @@
 }
 .logo:hover { color: var(--accent); }
 .logo__svg { height: 15px; width: auto; display: block; }
+/* Auf dem Handy braucht die Wortmarke etwas mehr Präsenz. Die Intro-Übergabe
+   misst die Header-Logo-Größe live, bleibt also automatisch passgenau. */
+@media (max-width: 720px) {
+  .logo__svg { height: 20px; }
+}
 
 .nav ul {
   list-style: none;

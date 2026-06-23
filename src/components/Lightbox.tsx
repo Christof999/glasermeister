@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
+import { toWebp } from '../lib/img';
 import './Lightbox.css';
 
 type Props = {
@@ -63,17 +64,20 @@ export function Lightbox({ images, alts, index, onClose, onPrev, onNext }: Props
             </svg>
           </button>
 
-          <motion.img
-            key={images[index]}
-            src={images[index]}
-            alt={alts[index] ?? ''}
-            className="lightbox__image"
-            initial={{ scale: 0.98, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            exit={{ scale: 0.98, opacity: 0 }}
-            transition={{ duration: 0.22 }}
-            onClick={(e) => e.stopPropagation()}
-          />
+          <picture className="pic">
+            <source type="image/webp" srcSet={toWebp(images[index])} />
+            <motion.img
+              key={images[index]}
+              src={images[index]}
+              alt={alts[index] ?? ''}
+              className="lightbox__image"
+              initial={{ scale: 0.98, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.98, opacity: 0 }}
+              transition={{ duration: 0.22 }}
+              onClick={(e) => e.stopPropagation()}
+            />
+          </picture>
 
           <button
             type="button"

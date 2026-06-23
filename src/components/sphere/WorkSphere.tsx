@@ -9,6 +9,8 @@ import {
 } from 'framer-motion';
 import { projects, type Project } from '../../data/projects';
 import { ProjectModal } from '../ProjectModal';
+import { Picture } from '../Picture';
+import { toWebp } from '../../lib/img';
 import { createLookState } from './lookState';
 import './WorkSphere.css';
 
@@ -230,7 +232,7 @@ function ProjectGrid({ onOpen }: { onOpen: (p: Project) => void }) {
     <div className="ws__grid">
       {projects.map((p) => (
         <button key={p.id} type="button" className="ws-card" onClick={() => onOpen(p)} aria-haspopup="dialog">
-          <img src={p.cover} alt={p.title} loading="lazy" decoding="async" />
+          <Picture src={p.cover} alt={p.title} loading="lazy" decoding="async" />
           <span className="ws-card__label">
             <strong>{p.title}</strong>
             <span>{p.category}</span>
@@ -389,7 +391,7 @@ export function WorkSphere() {
     import('./SphereScene');
     projects.forEach((p) => {
       const img = new Image();
-      img.src = p.cover;
+      img.src = toWebp(p.cover);
     });
     setTunnel('enter');
   }, [tunnel]);

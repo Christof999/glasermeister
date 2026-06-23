@@ -2,6 +2,8 @@ import { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { motion } from 'framer-motion';
 import type { Project } from '../data/projects';
+import { Picture } from './Picture';
+import { toWebp } from '../lib/img';
 import './ProjectModal.css';
 
 const FOCUSABLE =
@@ -76,14 +78,18 @@ export function ProjectModal({ project, onClose }: { project: Project; onClose: 
         </button>
 
         <div className="fp-modal__media">
-          <motion.img
-            key={project.images[imgIndex]}
-            src={project.images[imgIndex]}
-            alt={`${project.title} – Bild ${imgIndex + 1} von ${project.images.length}`}
-            initial={{ opacity: 0.4 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.3 }}
-          />
+          <picture className="pic">
+            <source type="image/webp" srcSet={toWebp(project.images[imgIndex])} />
+            <motion.img
+              className="fp-modal__img"
+              key={project.images[imgIndex]}
+              src={project.images[imgIndex]}
+              alt={`${project.title} – Bild ${imgIndex + 1} von ${project.images.length}`}
+              initial={{ opacity: 0.4 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.3 }}
+            />
+          </picture>
           {project.images.length > 1 && (
             <div className="fp-modal__thumbs" role="tablist" aria-label="Projektbilder">
               {project.images.map((src, i) => (
@@ -95,7 +101,7 @@ export function ProjectModal({ project, onClose }: { project: Project; onClose: 
                   className={`fp-modal__thumb ${i === imgIndex ? 'fp-modal__thumb--active' : ''}`}
                   onClick={() => setImgIndex(i)}
                 >
-                  <img src={src} alt="" loading="lazy" decoding="async" />
+                  <Picture src={src} alt="" loading="lazy" decoding="async" />
                 </button>
               ))}
             </div>

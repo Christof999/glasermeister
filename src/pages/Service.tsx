@@ -4,6 +4,7 @@ import { services, getService } from '../data/services';
 import { Seo } from '../lib/seo';
 import { PageMotion, Reveal } from '../components/PageMotion';
 import { Lightbox } from '../components/Lightbox';
+import { Picture } from '../components/Picture';
 import './Service.css';
 
 export function Service() {
@@ -39,7 +40,7 @@ export function Service() {
 
       <section className="service-hero" aria-label={service.title}>
         <div className="service-hero__media" aria-hidden="true">
-          <img src={service.hero} alt="" loading="eager" decoding="async" width="1600" height="1000" />
+          <Picture src={service.hero} alt="" loading="eager" fetchPriority="high" decoding="async" width="1600" height="1000" />
           <div className="service-hero__veil" />
         </div>
         <div className="container service-hero__content">
@@ -102,7 +103,7 @@ export function Service() {
                     onClick={() => setLbIndex(i)}
                     aria-label={`Bild ${i + 1} vergrößern`}
                   >
-                    <img src={src} alt={alts[i]} loading="lazy" decoding="async" />
+                    <Picture src={src} alt={alts[i]} loading="lazy" decoding="async" />
                   </button>
                 </Reveal>
               ))}

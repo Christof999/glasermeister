@@ -67,6 +67,10 @@ body {
 
 img, picture, svg, video { display: block; max-width: 100%; height: auto; }
 
+/* <picture>-Wrapper layout-neutral halten: Das <img> sitzt dadurch wie
+   ein direktes Kind im Container (siehe Picture-Komponente). */
+.pic { display: contents; }
+
 h1, h2, h3, h4, h5, h6 {
   margin: 0 0 0.5em;
   font-weight: 700;

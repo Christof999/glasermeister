@@ -159,25 +159,31 @@ export function ScrollStory() {
           style={{ opacity: photoOpacity, x: photoX, y: photoY, scale: photoScale }}
         >
           <motion.figure className="story__frame story__frame--photo">
-            <motion.img
-              src="/images/schulstrasse/img_1537.jpg"
-              alt="Geflieste Duschnische unter der Dachschräge, noch ohne Glas"
-              style={{ filter: vorherFilter }}
-              loading="lazy"
-              decoding="async"
-              width="1200"
-              height="1600"
-            />
-            <motion.img
-              className="story__after"
-              src="/images/schulstrasse/img_1683.jpg"
-              alt="Fertige Dusche mit grauer Glastür und Seitenteil unter der Dachschräge"
-              style={{ opacity: nachherOpacity }}
-              loading="lazy"
-              decoding="async"
-              width="1200"
-              height="1600"
-            />
+            <picture className="pic">
+              <source type="image/webp" srcSet="/images/schulstrasse/img_1537.webp" />
+              <motion.img
+                src="/images/schulstrasse/img_1537.jpg"
+                alt="Geflieste Duschnische unter der Dachschräge, noch ohne Glas"
+                style={{ filter: vorherFilter }}
+                loading="lazy"
+                decoding="async"
+                width="1200"
+                height="1600"
+              />
+            </picture>
+            <picture className="pic">
+              <source type="image/webp" srcSet="/images/schulstrasse/img_1683.webp" />
+              <motion.img
+                className="story__after"
+                src="/images/schulstrasse/img_1683.jpg"
+                alt="Fertige Dusche mit grauer Glastür und Seitenteil unter der Dachschräge"
+                style={{ opacity: nachherOpacity }}
+                loading="lazy"
+                decoding="async"
+                width="1200"
+                height="1600"
+              />
+            </picture>
 
             <motion.span className="story__tag" style={{ opacity: tagVorher }}>
               Vorher
