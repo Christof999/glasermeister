@@ -233,6 +233,39 @@
   line-height: 1.55;
 }
 
+/* Größere Schirme (Tablet quer / Desktop): das Foto wandert nach links,
+   die Skizze steht mittig – also die Kapitel-Texte nach rechts setzen,
+   damit die Bühne über die volle Breite ausgewogen aufgeteilt ist.
+   Das Handy-Layout (≤720px) bleibt davon unberührt. */
+@media (min-width: 1024px) {
+  .story__frame {
+    /* etwas mehr Präsenz auf großen Schirmen, ohne die Mitte zu sprengen */
+    width: min(calc(0.75 * 84svh), 42vw);
+  }
+
+  .story__captions {
+    left: auto;
+    right: clamp(48px, 6vw, 104px);
+    bottom: clamp(64px, 11vh, 132px);
+    max-width: 380px;
+  }
+
+  .story__caption {
+    max-width: 380px;
+    padding: 22px 26px;
+  }
+
+  .story__caption h3 { font-size: 1.4rem; }
+  .story__caption p { font-size: 0.96rem; }
+}
+
+/* Sehr breite Schirme: Skizze und Texte nicht auseinanderdriften lassen */
+@media (min-width: 1600px) {
+  .story__captions {
+    right: clamp(104px, 11vw, 260px);
+  }
+}
+
 @media (max-width: 720px) {
   .story__frame {
     /* Höhe ≤ 64svh, Platz für die Kapitel-Karte am unteren Rand */
@@ -256,9 +289,32 @@
   .anno-text { font-size: 34px; }
 }
 
+/* Statische Kapitel-Fassung (nur bei reduzierter Bewegung gerendert) */
+.story__captions-static {
+  display: none;
+}
+
+.story__caption--static {
+  position: static;
+  width: 100%;
+  max-width: 60ch;
+  margin: 0 auto 16px;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .story { height: auto; }
-  .story__sticky { position: relative; height: auto; padding-block: 80px; }
+  .story__sticky {
+    position: relative;
+    height: auto;
+    padding-block: 80px;
+    display: block;
+  }
   .story__intro { position: relative; margin-bottom: 48px; }
   .story__captions { display: none; }
+  .story__captions-static {
+    display: block;
+    position: relative;
+    margin-top: 40px;
+    padding-inline: var(--gutter);
+  }
 }

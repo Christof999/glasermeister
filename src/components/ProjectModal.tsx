@@ -1,23 +1,52 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { motion } from 'framer-motion';
 import type { Project } from '../data/projects';
 import './ProjectModal.css';
 
+const FOCUSABLE =
+  'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"]), input, select, textarea';
+
 export function ProjectModal({ project, onClose }: { project: Project; onClose: () => void }) {
   const [imgIndex, setImgIndex] = useState(0);
+  const panelRef = useRef<HTMLElement>(null);
 
-  // Der Scroll-Lock der Seite gehört dem Aufrufer (WorkSphere),
-  // das Modal kümmert sich nur um die Escape-Taste.
+  // Der Scroll-Lock der Seite gehört dem Aufrufer (WorkSphere). Das Modal
+  // kümmert sich um Escape und – für die Tastaturbedienung – um den
+  // Fokus: Tab bleibt im Dialog gefangen, beim Schließen kehrt der Fokus
+  // an das auslösende Element zurück.
   useEffect(() => {
+    const previouslyFocused = document.activeElement as HTMLElement | null;
+
     const onKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
         e.stopPropagation();
         onClose();
+        return;
+      }
+      if (e.key === 'Tab' && panelRef.current) {
+        const items = Array.from(
+          panelRef.current.querySelectorAll<HTMLElement>(FOCUSABLE)
+        ).filter((el) => el.offsetParent !== null);
+        if (items.length === 0) return;
+        const first = items[0];
+        const last = items[items.length - 1];
+        const activeEl = document.activeElement;
+        if (e.shiftKey && activeEl === first) {
+          e.preventDefault();
+          last.focus();
+        } else if (!e.shiftKey && activeEl === last) {
+          e.preventDefault();
+          first.focus();
+        }
       }
     };
+
     window.addEventListener('keydown', onKey, true);
-    return () => window.removeEventListener('keydown', onKey, true);
+    return () => {
+      window.removeEventListener('keydown', onKey, true);
+      previouslyFocused?.focus?.();
+    };
   }, [onClose]);
 
   return createPortal(
@@ -32,6 +61,7 @@ export function ProjectModal({ project, onClose }: { project: Project; onClose: 
       onClick={onClose}
     >
       <motion.article
+        ref={panelRef}
         className="fp-modal__panel"
         initial={{ opacity: 0, y: 48, scale: 0.96 }}
         animate={{ opacity: 1, y: 0, scale: 1 }}

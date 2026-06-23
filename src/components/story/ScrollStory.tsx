@@ -16,6 +16,40 @@ const GlassScene = lazy(() =>
 
 const clamp01 = (v: number) => Math.min(1, Math.max(0, v));
 
+type Chapter = {
+  range: [number, number];
+  index: string;
+  title: string;
+  text: string;
+};
+
+const chapters: Chapter[] = [
+  {
+    range: [0.09, 0.24],
+    index: '01',
+    title: 'Vorher',
+    text: 'Ein Bad unterm Dach, fertig gefliest – nur die Dusche ist noch offen. Der Balken von 1780 bleibt, das Glas muss sich fügen.',
+  },
+  {
+    range: [0.26, 0.55],
+    index: '02',
+    title: 'Das Aufmaß',
+    text: 'Jede Kante wird vor Ort auf den Millimeter aufgenommen und in die Zeichnung übertragen – hier ist kein Winkel ein rechter.',
+  },
+  {
+    range: [0.74, 0.9],
+    index: '03',
+    title: 'Das Glas',
+    text: 'Türblatt und Seitenteil aus grau getöntem Sicherheitsglas, Kanten feingeschliffen. Gefertigt nach Zeichnung – passend beim ersten Einsetzen.',
+  },
+  {
+    range: [0.9, 1],
+    index: '04',
+    title: 'Nachher',
+    text: 'Als wäre es immer da gewesen. Maßarbeit sieht man ihr nicht an – genau das ist der Punkt.',
+  },
+];
+
 type CaptionProps = {
   progress: MotionValue<number>;
   range: [number, number];
@@ -273,25 +307,28 @@ export function ScrollStory() {
           </motion.div>
         </motion.div>
 
-        {/* Kapitel */}
-        <div className="story__captions">
-          <Caption progress={p} range={[0.09, 0.24]} index="01" title="Vorher">
-            Ein Bad unterm Dach, fertig gefliest – nur die Dusche ist noch offen.
-            Der Balken von 1780 bleibt, das Glas muss sich fügen.
-          </Caption>
-          <Caption progress={p} range={[0.26, 0.55]} index="02" title="Das Aufmaß">
-            Jede Kante wird vor Ort auf den Millimeter aufgenommen und in die
-            Zeichnung übertragen – hier ist kein Winkel ein rechter.
-          </Caption>
-          <Caption progress={p} range={[0.74, 0.9]} index="03" title="Das Glas">
-            Türblatt und Seitenteil aus grau getöntem Sicherheitsglas, Kanten
-            feingeschliffen. Gefertigt nach Zeichnung – passend beim ersten Einsetzen.
-          </Caption>
-          <Caption progress={p} range={[0.9, 1]} index="04" title="Nachher">
-            Als wäre es immer da gewesen. Maßarbeit sieht man ihr nicht an –
-            genau das ist der Punkt.
-          </Caption>
+        {/* Kapitel – animiert über den Scroll-Fortschritt */}
+        <div className="story__captions" aria-hidden={reduced ? true : undefined}>
+          {chapters.map((c) => (
+            <Caption key={c.index} progress={p} range={c.range} index={c.index} title={c.title}>
+              {c.text}
+            </Caption>
+          ))}
         </div>
+
+        {/* Statische Fassung der Kapitel – nur bei reduzierter Bewegung sichtbar,
+            damit auch ohne Scroll-Animation der komplette Text lesbar bleibt. */}
+        {reduced && (
+          <div className="story__captions-static">
+            {chapters.map((c) => (
+              <div key={c.index} className="story__caption story__caption--static">
+                <span className="story__caption-num">{c.index}</span>
+                <h3>{c.title}</h3>
+                <p>{c.text}</p>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     </section>
   );
