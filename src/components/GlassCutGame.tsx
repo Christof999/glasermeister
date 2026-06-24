@@ -10,7 +10,7 @@ function verdict(diff: number): { title: string; sub: string; broken: boolean } 
   if (diff <= 2) return { title: 'Meisterhaft.', sub: 'Auf den Millimeter – Sie sind eingestellt.', broken: false };
   if (diff <= 5) return { title: 'Fast perfekt.', sub: 'Das würde in der Werkstatt durchgehen.', broken: false };
   if (diff <= 12) return { title: 'Solide Arbeit.', sub: 'Ein Geselle wäre stolz – der Meister schleift nach.', broken: false };
-  if (diff <= 25) return { title: 'Knapp daneben.', sub: 'Beim getönten ESG gäbe es keinen zweiten Versuch …', broken: false };
+  if (diff <= 25) return { title: 'Knapp daneben.', sub: 'Gut, dass hier noch Floatglas liegt – fertiges ESG lässt sich nicht mehr schneiden.', broken: false };
   return { title: 'Bruch!', sub: 'Das Glas ist hin. Gut, dass es nur ein Pixel-Glas war.', broken: true };
 }
 

@@ -19,13 +19,14 @@ export const services: Service[] = [
     description: [
       'Jede Dusche ist ein Unikat. Wir vermessen vor Ort, planen mit Ihnen Glasstärke, Beschläge und Oberflächenveredelung – und montieren sauber, ohne Kompromisse bei der Dichtigkeit.',
       'Auf Wunsch mit Klarglas, satinierter Oberfläche oder getöntem Grauglas für eine ruhige, moderne Optik. Sicherheitsglas (ESG) ist Standard.',
+      'Durch die Kombination diverser Farbfolien können fast unbegrenzt fein abgestufte Farbnuancen erzeugt werden.',
     ],
     bullets: [
       'Walk-in, Eck- oder U-Lösungen',
       'Echtglasduschen – rahmenlos, vollverklebt',
-      'Klar, satiniert, getönt oder mit Klarlackbeschichtung',
+      'Klar, satiniert, getönt, Digitaldruck, teilflächige Verspiegelung oder als Vollspiegel',
       'Edelstahl- oder schwarze Beschläge',
-      'Sicherheits-Einscheibenglas (ESG) nach DIN EN 12150',
+      'Einscheiben-Sicherheitsglas (ESG) nach DIN EN 12150',
       'Ersatzscheiben für bestehende Duschtüren',
     ],
     hero: '/images/IMG_0301.jpeg',

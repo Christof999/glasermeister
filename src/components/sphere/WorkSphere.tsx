@@ -434,7 +434,7 @@ export function WorkSphere() {
         <span className="eyebrow">Projekte</span>
         <ScrollTitle progress={scrollYProgress} />
         <motion.div className="ws__cta" style={{ opacity: ctaOpacity, y: ctaY }}>
-          <p>Sieben Projekte, ein Raum – mittendrin statt davor.</p>
+          <p>Sieben Projekte, ein Raum – mittendrin statt nur davor.</p>
           <button type="button" className="ws__enter" onClick={enter}>
             <span className="ws__enter-dot" aria-hidden="true" />
             enter the sphere

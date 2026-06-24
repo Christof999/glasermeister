@@ -40,7 +40,7 @@ const chapters: Chapter[] = [
     range: [0.74, 0.9],
     index: '03',
     title: 'Das Glas',
-    text: 'Türblatt und Seitenteil aus grau getöntem Sicherheitsglas, Kanten feingeschliffen. Gefertigt nach Zeichnung – passend beim ersten Einsetzen.',
+    text: 'Türblatt und Seitenteil aus grau getöntem Sicherheitsglas, Kanten poliert. Gefertigt nach Zeichnung – passend beim ersten Einsetzen.',
   },
   {
     range: [0.9, 1],

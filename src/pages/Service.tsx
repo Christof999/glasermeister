@@ -92,7 +92,7 @@ export function Service() {
           <div className="container">
             <Reveal>
               <span className="eyebrow">Eindrücke</span>
-              <h2 id="srv-gallery">Beispiele aus der Werkstatt</h2>
+              <h2 id="srv-gallery">Beispiele aus bereits umgesetzten Objekten</h2>
             </Reveal>
             <div className="service-gallery">
               {service.gallery.map((src, i) => (
