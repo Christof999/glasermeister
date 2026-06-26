@@ -287,7 +287,7 @@ function SphereRoom({
     if (e.pointerType === 'mouse') {
       const nx = e.clientX / window.innerWidth - 0.5;
       const ny = e.clientY / window.innerHeight - 0.5;
-      look.current.mouseYaw = -nx * Math.PI * 1.5;
+      look.current.mouseYaw = -nx * 1.7;
       look.current.mousePitch = -ny * 0.85;
     }
   };
