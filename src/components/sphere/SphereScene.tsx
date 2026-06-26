@@ -99,7 +99,7 @@ function Tile({
   texture: THREE.Texture;
   onHover: (p: Project | null) => void;
 }) {
-  const material = useRef<THREE.MeshBasicMaterial>(null);
+  const meshRef = useRef<THREE.Mesh>(null);
   const hovered = useRef(false);
 
   const geometry = useMemo(
@@ -108,17 +108,63 @@ function Tile({
   );
   useEffect(() => () => geometry.dispose(), [geometry]);
 
+  // Eigene Uniforms steuern Hover-Helligkeit/-Schärfe und werden pro Frame
+  // weich animiert.
+  const uniforms = useMemo(
+    () => ({ uHover: { value: 0 }, uFeather: { value: 0.13 }, uBase: { value: 0.78 } }),
+    []
+  );
+
+  // MeshBasicMaterial (volles Farbmanagement, Cover-Fit über die Textur) um
+  // weiche Ränder und einen Hover-Boost erweitern. vTileUv ist die rohe
+  // Plane-UV (0…1), damit der Feather exakt an den Kachelrändern sitzt –
+  // unabhängig vom Bildzuschnitt.
+  const material = useMemo(() => {
+    const m = new THREE.MeshBasicMaterial({
+      map: texture,
+      transparent: true,
+      depthWrite: false,
+      toneMapped: false,
+    });
+    m.onBeforeCompile = (shader) => {
+      shader.uniforms.uHover = uniforms.uHover;
+      shader.uniforms.uFeather = uniforms.uFeather;
+      shader.uniforms.uBase = uniforms.uBase;
+      shader.vertexShader = shader.vertexShader
+        .replace('#include <common>', '#include <common>\nvarying vec2 vTileUv;')
+        .replace('#include <uv_vertex>', '#include <uv_vertex>\n  vTileUv = uv;');
+      shader.fragmentShader = shader.fragmentShader
+        .replace(
+          '#include <common>',
+          '#include <common>\nuniform float uHover;\nuniform float uFeather;\nuniform float uBase;\nvarying vec2 vTileUv;'
+        )
+        .replace(
+          '#include <dithering_fragment>',
+          `#include <dithering_fragment>
+  float fAmt = mix(uFeather, uFeather * 0.4, uHover);
+  vec2 dEdge = min(vTileUv, 1.0 - vTileUv);
+  float edgeMask = smoothstep(0.0, fAmt, dEdge.x) * smoothstep(0.0, fAmt, dEdge.y);
+  gl_FragColor.a *= edgeMask;
+  gl_FragColor.rgb *= mix(uBase, 1.06, uHover);`
+        );
+    };
+    return m;
+  }, [texture, uniforms]);
+
+  useEffect(() => () => material.dispose(), [material]);
+
   useFrame((_, dt) => {
-    if (!material.current) return;
-    const target = hovered.current ? 1 : 0.74;
-    const c = material.current.color;
     const k = 1 - Math.exp(-dt * 9);
-    c.setScalar(c.r + (target - c.r) * k);
+    const target = hovered.current ? 1 : 0;
+    uniforms.uHover.value += (target - uniforms.uHover.value) * k;
+    meshRef.current?.scale.setScalar(1 + uniforms.uHover.value * 0.06);
   });
 
   return (
     <mesh
+      ref={meshRef}
       geometry={geometry}
+      material={material}
       position={spec.position}
       quaternion={spec.quaternion}
       onPointerOver={(e: ThreeEvent<PointerEvent>) => {
@@ -130,9 +176,7 @@ function Tile({
         hovered.current = false;
         onHover(null);
       }}
-    >
-      <meshBasicMaterial ref={material} map={texture} color="#bdbdbd" toneMapped={false} />
-    </mesh>
+    />
   );
 }
 
