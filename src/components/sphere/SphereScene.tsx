@@ -25,29 +25,65 @@ const TILE_SIZE: Record<Project['size'], { phi: number; theta: number }> = {
 type TileSpec = {
   key: string;
   project: Project;
+  radius: number;
   phiStart: number;
   phiLen: number;
   thetaStart: number;
   thetaLen: number;
   thetaCenter: number;
+  roll: number;
+  axis: [number, number, number];
 };
 
-/** Jedes Projekt genau einmal: ein Ring um den Äquator, abwechselnd
- * nach oben/unten versetzt, damit es nach Raum statt Karussell aussieht. */
+/** Kleiner deterministischer Zufallsgenerator – gleiche Sphäre bei jedem
+ *  Laden, aber genug „Unordnung“ für einen lebendigen Raum. */
+function mulberry32(seed: number) {
+  let a = seed;
+  return () => {
+    a |= 0;
+    a = (a + 0x6d2b79f5) | 0;
+    let t = Math.imul(a ^ (a >>> 15), 1 | a);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
+/** Jedes Projekt genau einmal – über die ganze Innenseite verstreut statt
+ *  in einem ordentlichen Äquator-Ring. Grundabstand im Azimut sorgt dafür,
+ *  dass in jeder Blickrichtung etwas liegt; Jitter, Höhenstreuung, eine
+ *  Eigendrehung je Kachel und wechselnde Abstände nehmen den „gebügelten“
+ *  Eindruck und geben Tiefe beim Umsehen. */
 function buildTiles(): TileSpec[] {
-  const step = (Math.PI * 2) / projects.length;
+  const n = projects.length;
+  const step = (Math.PI * 2) / n;
+  const rand = mulberry32(0x5eed42);
   return projects.map((project, i) => {
     const size = TILE_SIZE[project.size];
-    const wobble = (((i * 37) % 5) - 2) * 0.045;
-    const thetaCenter = Math.PI / 2 + (i % 2 === 0 ? -0.36 : 0.38) + wobble;
+    // Azimut: gleichmäßige Grundverteilung + kräftiger Jitter
+    const phiCenter = i * step + (rand() - 0.5) * step * 1.15;
+    // Höhe: weit über den Äquator gestreut (statt enger Zickzack-Reihe)
+    const thetaCenter = Math.PI / 2 + (rand() * 2 - 1) * 0.82;
+    // Eigendrehung der Kachel um ihre Blickachse
+    const roll = (rand() * 2 - 1) * 0.27;
+    // Abstand variieren → Parallaxe/Tiefe beim Umsehen
+    const radius = RADIUS * (0.82 + rand() * 0.36);
+    // Radiale Achse durch den Kachelmittelpunkt (three.js-SphereGeometry-Konvention)
+    const axis: [number, number, number] = [
+      -Math.cos(phiCenter) * Math.sin(thetaCenter),
+      Math.cos(thetaCenter),
+      Math.sin(phiCenter) * Math.sin(thetaCenter),
+    ];
     return {
       key: project.id,
       project,
-      phiStart: i * step - size.phi / 2,
+      radius,
+      phiStart: phiCenter - size.phi / 2,
       phiLen: size.phi,
       thetaStart: thetaCenter - size.theta / 2,
       thetaLen: size.theta,
       thetaCenter,
+      roll,
+      axis,
     };
   });
 }
@@ -87,7 +123,7 @@ function Tile({
 
   const geometry = useMemo(() => {
     const g = new THREE.SphereGeometry(
-      RADIUS,
+      spec.radius,
       24,
       18,
       spec.phiStart,
@@ -99,9 +135,21 @@ function Tile({
     const uv = g.attributes.uv as THREE.BufferAttribute;
     for (let i = 0; i < uv.count; i++) uv.setX(i, 1 - uv.getX(i));
     return g;
-  }, [spec.phiStart, spec.phiLen, spec.thetaStart, spec.thetaLen]);
+  }, [spec.radius, spec.phiStart, spec.phiLen, spec.thetaStart, spec.thetaLen]);
 
   useEffect(() => () => geometry.dispose(), [geometry]);
+
+  // Eigendrehung der Kachel um ihre eigene Blickachse: dreht den gewölbten
+  // Ausschnitt an Ort und Stelle (alle Vertices behalten ihren Radius),
+  // sodass die Fotos schräg statt schnurgerade im Raum hängen.
+  const quaternion = useMemo(
+    () =>
+      new THREE.Quaternion().setFromAxisAngle(
+        new THREE.Vector3(spec.axis[0], spec.axis[1], spec.axis[2]).normalize(),
+        spec.roll
+      ),
+    [spec.axis, spec.roll]
+  );
 
   useFrame((_, dt) => {
     if (!material.current) return;
@@ -116,6 +164,7 @@ function Tile({
   return (
     <mesh
       geometry={geometry}
+      quaternion={quaternion}
       onPointerOver={(e: ThreeEvent<PointerEvent>) => {
         e.stopPropagation();
         hovered.current = true;
@@ -173,7 +222,7 @@ function Rig({ look, paused }: { look: React.MutableRefObject<LookState>; paused
     // sonst wandert das Ziel zwischen Drücken und Loslassen weg
     if (!l.hold) l.drift += dt * 0.018;
     const targetYaw = l.mouseYaw + l.dragYaw + l.drift;
-    const targetPitch = THREE.MathUtils.clamp(l.mousePitch + l.dragPitch, -0.6, 0.6);
+    const targetPitch = THREE.MathUtils.clamp(l.mousePitch + l.dragPitch, -0.85, 0.85);
     const k = 1 - Math.exp(-dt * 3.4);
     l.yaw += (targetYaw - l.yaw) * k;
     l.pitch += (targetPitch - l.pitch) * k;
