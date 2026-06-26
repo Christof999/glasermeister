@@ -13,11 +13,11 @@ import type { LookState } from './lookState';
  * der einen umfasst. Maus/Wischen schwenkt den Blick über die Wand.
  */
 
-const FOV = 74;
+const FOV = 60; // engeres Sichtfeld → Projekte rücken näher/größer heran
 const ARC_R = 9.5; // Radius der Wölbung
 const ARC_FRONT = 5.5; // Zylinderachse vor dem Betrachter → Mitte fern, Ränder nah
 const H_HALF = 1.18; // halbe Rasterbreite (Bogenmaß)
-const FILL = 0.9; // Kachel füllt 90 % ihrer Zelle → schmale, gleichmäßige Fugen
+const FILL = 0.93; // Kachel füllt 93 % ihrer Zelle → schmale, gleichmäßige Fugen
 const ROW_RATIO = 1.12; // Kachelhöhe relativ zur Breite
 
 type TileSpec = {
