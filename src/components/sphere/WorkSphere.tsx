@@ -12,7 +12,8 @@ import { ProjectModal } from '../ProjectModal';
 import { Picture } from '../Picture';
 import { toWebp } from '../../lib/img';
 import { createLookState } from './lookState';
-import { useT } from '../../i18n';
+import { useT, useLang } from '../../i18n';
+import { useLocalizedProjects, localizeProject } from '../../i18n/content/projects';
 import './WorkSphere.css';
 
 // three.js erst laden, wenn die Sphäre tatsächlich betreten wird
@@ -227,9 +228,10 @@ function Tunnel({
 /* ----------------------------------------------- Fallback-Grid */
 
 function ProjectGrid({ onOpen }: { onOpen: (p: Project) => void }) {
+  const localized = useLocalizedProjects();
   return (
     <div className="ws__grid">
-      {projects.map((p) => (
+      {localized.map((p) => (
         <button key={p.id} type="button" className="ws-card" onClick={() => onOpen(p)} aria-haspopup="dialog">
           <Picture src={p.cover} alt={p.title} loading="lazy" decoding="async" />
           <span className="ws-card__label">
@@ -265,6 +267,8 @@ function SphereRoom({
   const hoveredRef = useRef<Project | null>(null);
   const [hovered, setHoveredState] = useState<Project | null>(null);
   const t = useT();
+  const lang = useLang();
+  const hoveredLocalized = hovered ? localizeProject(hovered, lang) : null;
 
   const setHovered = useCallback((p: Project | null) => {
     hoveredRef.current = p;
@@ -336,10 +340,10 @@ function SphereRoom({
       </button>
 
       <p className="ws-room__hud" aria-live="polite">
-        {hovered ? (
+        {hoveredLocalized ? (
           <>
-            <strong>{hovered.title}</strong>
-            <span>{hovered.category}</span>
+            <strong>{hoveredLocalized.title}</strong>
+            <span>{hoveredLocalized.category}</span>
           </>
         ) : (
           <span className="ws-room__hint">{t('ws.hint')}</span>

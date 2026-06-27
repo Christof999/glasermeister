@@ -5,15 +5,17 @@ import type { Project } from '../data/projects';
 import { Picture } from './Picture';
 import { toWebp } from '../lib/img';
 import { useT } from '../i18n';
+import { useLocalizedProject } from '../i18n/content/projects';
 import './ProjectModal.css';
 
 const FOCUSABLE =
   'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"]), input, select, textarea';
 
-export function ProjectModal({ project, onClose }: { project: Project; onClose: () => void }) {
+export function ProjectModal({ project: baseProject, onClose }: { project: Project; onClose: () => void }) {
   const [imgIndex, setImgIndex] = useState(0);
   const panelRef = useRef<HTMLElement>(null);
   const t = useT();
+  const project = useLocalizedProject(baseProject);
 
   // Der Scroll-Lock der Seite gehört dem Aufrufer (WorkSphere). Das Modal
   // kümmert sich um Escape und – für die Tastaturbedienung – um den

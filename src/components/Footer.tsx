@@ -1,11 +1,12 @@
 import { Link } from 'react-router-dom';
-import { services } from '../data/services';
 import { Logo } from './Logo';
 import { useT } from '../i18n';
+import { useServices } from '../i18n/content/services';
 import './Footer.css';
 
 export function Footer() {
   const t = useT();
+  const services = useServices();
   return (
     <footer className="site-footer">
       <div className="container">

@@ -1,22 +1,23 @@
 import { useState } from 'react';
 import { useParams, Link, Navigate } from 'react-router-dom';
-import { services, getService } from '../data/services';
 import { Seo } from '../lib/seo';
 import { PageMotion, Reveal } from '../components/PageMotion';
 import { Lightbox } from '../components/Lightbox';
 import { Picture } from '../components/Picture';
 import { useT } from '../i18n';
+import { useService, useServices } from '../i18n/content/services';
 import './Service.css';
 
 export function Service() {
   const { slug } = useParams<{ slug: string }>();
-  const service = getService(slug);
+  const service = useService(slug);
+  const allServices = useServices();
   const [lbIndex, setLbIndex] = useState<number | null>(null);
   const t = useT();
 
   if (!service) return <Navigate to="/" replace />;
 
-  const otherServices = services.filter((s) => s.slug !== service.slug).slice(0, 3);
+  const otherServices = allServices.filter((s) => s.slug !== service.slug).slice(0, 3);
   const alts = service.gallery.map((_, i) => t('srv.exampleAlt', { title: service.title, i: i + 1 }));
 
   return (

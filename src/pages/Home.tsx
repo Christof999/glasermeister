@@ -1,5 +1,4 @@
 import { Link } from 'react-router-dom';
-import { services } from '../data/services';
 import { Seo, localBusinessWithReviewsJsonLd } from '../lib/seo';
 import { PageMotion, Reveal } from '../components/PageMotion';
 import { LaserIntro } from '../components/intro/LaserIntro';
@@ -8,10 +7,12 @@ import { WorkSphere } from '../components/sphere/WorkSphere';
 import { GlassCutGame } from '../components/GlassCutGame';
 import { Reviews } from '../components/Reviews';
 import { useT } from '../i18n';
+import { useServices } from '../i18n/content/services';
 import './Home.css';
 
 export function Home() {
   const t = useT();
+  const services = useServices();
   return (
     <PageMotion>
       <Seo
