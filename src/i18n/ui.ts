@@ -46,6 +46,7 @@ export const ui = {
     en: 'Master glazier · Merkendorf · Middle Franconia',
     la: 'Vitrarius magister · Merkendorf · Franconia Media',
   },
+  'footer.by': { de: 'Website von', en: 'Website by', la: 'Situs a' },
 
   // ---- Cookie / Datenschutz-Hinweis ----
   'cookie.aria': {

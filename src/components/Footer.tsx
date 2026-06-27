@@ -53,6 +53,12 @@ export function Footer() {
         <div className="site-footer__bottom">
           <p>© {new Date().getFullYear()} der-glasermeister · Patrick Stettner</p>
           <p>{t('footer.role')}</p>
+          <p className="site-footer__credit">
+            {t('footer.by')}{' '}
+            <a href="https://soergel-design.de" target="_blank" rel="noopener noreferrer">
+              Sørgel Design
+            </a>
+          </p>
         </div>
       </div>
     </footer>
