@@ -12,14 +12,13 @@ import { ProjectModal } from '../ProjectModal';
 import { Picture } from '../Picture';
 import { toWebp } from '../../lib/img';
 import { createLookState } from './lookState';
+import { useT } from '../../i18n';
 import './WorkSphere.css';
 
 // three.js erst laden, wenn die Sphäre tatsächlich betreten wird
 const SphereScene = lazy(() =>
   import('./SphereScene').then((m) => ({ default: m.SphereScene }))
 );
-
-const TITLE = 'Meine Arbeiten entdecken';
 
 function supportsWebGL(): boolean {
   try {
@@ -55,12 +54,12 @@ function ScrollLetter({
   );
 }
 
-function ScrollTitle({ progress }: { progress: MotionValue<number> }) {
-  const words = useMemo(() => TITLE.split(' '), []);
-  const total = TITLE.replace(/ /g, '').length;
+function ScrollTitle({ progress, title }: { progress: MotionValue<number>; title: string }) {
+  const words = useMemo(() => title.split(' '), [title]);
+  const total = title.replace(/ /g, '').length;
   let letterIndex = 0;
   return (
-    <h2 id="projekte-h" className="ws__title" aria-label={TITLE}>
+    <h2 id="projekte-h" className="ws__title" aria-label={title}>
       {words.map((word) => (
         <span key={word} className="ws__word" aria-hidden="true">
           {word.split('').map((ch, i) => {
@@ -265,6 +264,7 @@ function SphereRoom({
   } | null>(null);
   const hoveredRef = useRef<Project | null>(null);
   const [hovered, setHoveredState] = useState<Project | null>(null);
+  const t = useT();
 
   const setHovered = useCallback((p: Project | null) => {
     hoveredRef.current = p;
@@ -307,7 +307,7 @@ function SphereRoom({
       className={`ws-room ${hovered ? 'ws-room--hover' : ''} ${frozen ? 'ws-room--frozen' : ''}`}
       role="dialog"
       aria-modal="true"
-      aria-label="Meine Arbeiten – begehbarer 3D-Raum"
+      aria-label={t('ws.roomAria')}
       onPointerDown={(e) => {
         if (frozen) return;
         drag.current = {
@@ -332,7 +332,7 @@ function SphereRoom({
       <div className="ws-room__vignette" aria-hidden="true" />
 
       <button type="button" className="ws-room__exit" onClick={onExit}>
-        exit the sphere
+        {t('ws.exit')}
       </button>
 
       <p className="ws-room__hud" aria-live="polite">
@@ -342,9 +342,7 @@ function SphereRoom({
             <span>{hovered.category}</span>
           </>
         ) : (
-          <span className="ws-room__hint">
-            Umsehen: Maus bewegen oder wischen · Projekt antippen für Details
-          </span>
+          <span className="ws-room__hint">{t('ws.hint')}</span>
         )}
       </p>
 
@@ -364,6 +362,7 @@ export function WorkSphere() {
   const [inSphere, setInSphere] = useState(false);
   const [tunnel, setTunnel] = useState<null | 'enter' | 'exit'>(null);
   const [active, setActive] = useState<Project | null>(null);
+  const t = useT();
 
   useEffect(() => setWebgl(supportsWebGL()), []);
   const fallback = !!reduced || !webgl;
@@ -414,11 +413,9 @@ export function WorkSphere() {
     return (
       <section className="ws ws--simple section" id="projekte" aria-labelledby="projekte-h">
         <div className="container ws__head">
-          <span className="eyebrow">Projekte</span>
-          <h2 id="projekte-h">{TITLE}</h2>
-          <p className="lead">
-            Jedes Projekt ein Unikat – tippen Sie ein Bild an und lesen Sie, wie es entstanden ist.
-          </p>
+          <span className="eyebrow">{t('ws.eyebrow')}</span>
+          <h2 id="projekte-h">{t('ws.title')}</h2>
+          <p className="lead">{t('ws.simpleLead')}</p>
         </div>
         <ProjectGrid onOpen={setActive} />
         <AnimatePresence>
@@ -431,13 +428,13 @@ export function WorkSphere() {
   return (
     <section className="ws" id="projekte" ref={sectionRef} aria-labelledby="projekte-h">
       <div className="ws__sticky">
-        <span className="eyebrow">Projekte</span>
-        <ScrollTitle progress={scrollYProgress} />
+        <span className="eyebrow">{t('ws.eyebrow')}</span>
+        <ScrollTitle progress={scrollYProgress} title={t('ws.title')} />
         <motion.div className="ws__cta" style={{ opacity: ctaOpacity, y: ctaY }}>
-          <p>{projects.length} Projekte, ein Raum – mittendrin statt nur davor.</p>
+          <p>{t('ws.ctaText', { n: projects.length })}</p>
           <button type="button" className="ws__enter" onClick={enter}>
             <span className="ws__enter-dot" aria-hidden="true" />
-            enter the sphere
+            {t('ws.enter')}
           </button>
         </motion.div>
       </div>

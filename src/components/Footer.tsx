@@ -1,9 +1,11 @@
 import { Link } from 'react-router-dom';
 import { services } from '../data/services';
 import { Logo } from './Logo';
+import { useT } from '../i18n';
 import './Footer.css';
 
 export function Footer() {
+  const t = useT();
   return (
     <footer className="site-footer">
       <div className="container">
@@ -12,14 +14,11 @@ export function Footer() {
             <div className="site-footer__logo">
               <Logo className="site-footer__logo-svg" title="der-glasermeister" />
             </div>
-            <p className="site-footer__claim">
-              Individuelle Glaslösungen aus Meisterhand – geplant und ausgeführt von
-              Patrick Stettner.
-            </p>
+            <p className="site-footer__claim">{t('footer.claim')}</p>
           </div>
 
           <div>
-            <h3 className="site-footer__heading">Leistungen</h3>
+            <h3 className="site-footer__heading">{t('footer.services')}</h3>
             <ul>
               {services.map((s) => (
                 <li key={s.slug}>
@@ -30,7 +29,7 @@ export function Footer() {
           </div>
 
           <div>
-            <h3 className="site-footer__heading">Kontakt</h3>
+            <h3 className="site-footer__heading">{t('footer.contact')}</h3>
             <address>
               <strong>der-glasermeister</strong><br />
               Patrick Stettner<br />
@@ -42,17 +41,17 @@ export function Footer() {
           </div>
 
           <div>
-            <h3 className="site-footer__heading">Rechtliches</h3>
+            <h3 className="site-footer__heading">{t('footer.legal')}</h3>
             <ul>
-              <li><Link to="/impressum">Impressum</Link></li>
-              <li><Link to="/datenschutz">Datenschutz</Link></li>
+              <li><Link to="/impressum">{t('footer.imprint')}</Link></li>
+              <li><Link to="/datenschutz">{t('footer.privacy')}</Link></li>
             </ul>
           </div>
         </div>
 
         <div className="site-footer__bottom">
           <p>© {new Date().getFullYear()} der-glasermeister · Patrick Stettner</p>
-          <p>Glasermeister · Merkendorf · Mittelfranken</p>
+          <p>{t('footer.role')}</p>
         </div>
       </div>
     </footer>

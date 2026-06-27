@@ -3,13 +3,16 @@ import { createPortal } from 'react-dom';
 import { NavLink, Link, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Logo } from './Logo';
+import { LanguageSwitcher } from './LanguageSwitcher';
+import { useT } from '../i18n';
+import type { UiKey } from '../i18n';
 import './Header.css';
 
-const navItems = [
-  { to: '/', label: 'Start', end: true },
-  { to: '/#projekt-schulstrasse', label: 'Die Story', hash: true },
-  { to: '/#projekte', label: 'Projekte', hash: true },
-  { to: '/kontakt', label: 'Kontakt' },
+const navItems: { to: string; label: UiKey; end?: boolean; hash?: boolean }[] = [
+  { to: '/', label: 'nav.start', end: true },
+  { to: '/#projekt-schulstrasse', label: 'nav.story', hash: true },
+  { to: '/#projekte', label: 'nav.projects', hash: true },
+  { to: '/kontakt', label: 'nav.contact' },
 ];
 
 const drawerStagger = {
@@ -31,6 +34,7 @@ export function Header() {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
   const location = useLocation();
+  const t = useT();
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 8);
@@ -59,17 +63,17 @@ export function Header() {
   return (
     <header className={`site-header ${scrolled ? 'site-header--scrolled' : ''}`}>
       <div className="container site-header__inner">
-        <Link to="/" className="logo" aria-label="der-glasermeister – zur Startseite">
+        <Link to="/" className="logo" aria-label={`der-glasermeister – ${t('nav.toStart')}`}>
           <Logo className="logo__svg" />
         </Link>
 
-        <nav className="nav nav--desktop" aria-label="Hauptnavigation">
+        <nav className="nav nav--desktop" aria-label={t('nav.aria')}>
           <ul>
             {navItems.map((item) =>
               item.hash ? (
                 <li key={item.to}>
                   <Link to={item.to} className="nav__link">
-                    {item.label}
+                    {t(item.label)}
                   </Link>
                 </li>
               ) : (
@@ -81,13 +85,15 @@ export function Header() {
                       `nav__link ${isActive ? 'nav__link--active' : ''}`
                     }
                   >
-                    {item.label}
+                    {t(item.label)}
                   </NavLink>
                 </li>
               )
             )}
           </ul>
         </nav>
+
+        <LanguageSwitcher className="header-lang" />
 
         <a href="tel:+491752533137" className="header-cta" aria-label="Telefon: 0175 2533137">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
@@ -104,7 +110,7 @@ export function Header() {
         <button
           type="button"
           className="burger"
-          aria-label={open ? 'Menü schließen' : 'Menü öffnen'}
+          aria-label={open ? t('menu.close') : t('menu.open')}
           aria-expanded={open}
           aria-controls="mobile-nav"
           onClick={() => setOpen((v) => !v)}
@@ -136,7 +142,7 @@ export function Header() {
               className="drawer"
               role="dialog"
               aria-modal="true"
-              aria-label="Hauptnavigation"
+              aria-label={t('nav.aria')}
               initial={{ x: '100%' }}
               animate={{ x: 0 }}
               exit={{ x: '100%' }}
@@ -149,7 +155,7 @@ export function Header() {
                 <button
                   type="button"
                   className="drawer__close"
-                  aria-label="Menü schließen"
+                  aria-label={t('menu.close')}
                   onClick={() => setOpen(false)}
                   autoFocus
                 >
@@ -164,13 +170,13 @@ export function Header() {
                 variants={drawerStagger}
                 initial="hidden"
                 animate="visible"
-                aria-label="Mobile Navigation"
+                aria-label={t('nav.aria')}
               >
                 {navItems.map((item) => (
                   <motion.div key={item.to} className="drawer__item" variants={drawerItem}>
                     {item.hash ? (
                       <Link to={item.to} className="drawer__link" onClick={() => setOpen(false)}>
-                        <span>{item.label}</span>
+                        <span>{t(item.label)}</span>
                         <svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true" className="drawer__arrow">
                           <path d="M3 7h8M7 3l4 4-4 4" stroke="currentColor" strokeWidth="1.5" fill="none" strokeLinecap="round" strokeLinejoin="round" />
                         </svg>
@@ -183,7 +189,7 @@ export function Header() {
                           `drawer__link ${isActive ? 'drawer__link--active' : ''}`
                         }
                       >
-                        <span>{item.label}</span>
+                        <span>{t(item.label)}</span>
                         <svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true" className="drawer__arrow">
                           <path d="M3 7h8M7 3l4 4-4 4" stroke="currentColor" strokeWidth="1.5" fill="none" strokeLinecap="round" strokeLinejoin="round" />
                         </svg>
@@ -199,6 +205,7 @@ export function Header() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.45, duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
               >
+                <LanguageSwitcher className="lang-switch--drawer drawer__lang" />
                 <a href="tel:+491752533137" className="btn btn--primary drawer__cta-btn">
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
                     <path

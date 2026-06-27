@@ -1,11 +1,21 @@
 import { motion, useReducedMotion } from 'framer-motion';
 import { reviews, reviewStats, type Review } from '../data/reviews';
 import { Reveal } from './PageMotion';
+import { useT } from '../i18n';
+import type { UiKey } from '../i18n';
 import './Reviews.css';
 
+/** Relative Zeitangaben aus den Google-Reviews auf einen Übersetzungsschlüssel mappen. */
+const WHEN_KEY: Record<string, UiKey> = {
+  'vor einem Jahr': 'reviews.when.1y',
+  'vor 6 Monaten': 'reviews.when.6m',
+  'vor 2 Jahren': 'reviews.when.2y',
+};
+
 function Stars({ value, animate = false }: { value: number; animate?: boolean }) {
+  const t = useT();
   return (
-    <span className="stars" aria-label={`${value} von 5 Sternen`}>
+    <span className="stars" aria-label={t('reviews.starsAria', { v: value })}>
       {Array.from({ length: 5 }).map((_, i) => (
         <motion.svg
           key={i}
@@ -43,6 +53,8 @@ function GoogleG() {
 }
 
 function ReviewCard({ review }: { review: Review }) {
+  const t = useT();
+  const whenKey = WHEN_KEY[review.when];
   return (
     <article className="review-card">
       <header className="review-card__head">
@@ -51,7 +63,7 @@ function ReviewCard({ review }: { review: Review }) {
         </span>
         <div className="review-card__who">
           <cite>{review.author}</cite>
-          <span className="review-card__when">{review.when}</span>
+          <span className="review-card__when">{whenKey ? t(whenKey) : review.when}</span>
         </div>
         <GoogleG />
       </header>
@@ -91,6 +103,7 @@ function MarqueeRow({
 
 export function Reviews() {
   const reduced = useReducedMotion();
+  const t = useT();
   const rowA = reviews.filter((_, i) => i % 2 === 0);
   const rowB = reviews.filter((_, i) => i % 2 === 1);
 
@@ -99,25 +112,25 @@ export function Reviews() {
       <div className="container">
         <Reveal>
           <div className="reviews-header">
-            <div className="reviews-score" aria-label={`Durchschnitt ${reviewStats.ratingValue.toFixed(1)} von 5 Sternen`}>
+            <div className="reviews-score" aria-label={t('reviews.scoreAria', { v: reviewStats.ratingValue.toFixed(1) })}>
               <span className="reviews-score__value">
                 {reviewStats.ratingValue.toFixed(1).replace('.', ',')}
               </span>
               <div className="reviews-score__meta">
                 <Stars value={5} animate />
-                <span>{reviewStats.reviewCount} Bewertungen auf Google</span>
+                <span>{t('reviews.count', { n: reviewStats.reviewCount })}</span>
               </div>
             </div>
             <div className="reviews-header__text">
-              <span className="eyebrow">Bewertungen</span>
-              <h2 id="reviews-h">Was Kundinnen und Kunden sagen.</h2>
+              <span className="eyebrow">{t('reviews.eyebrow')}</span>
+              <h2 id="reviews-h">{t('reviews.heading')}</h2>
               <a
                 href="https://www.google.com/search?q=der-glasermeister+merkendorf"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="btn btn--ghost reviews-header__btn"
               >
-                Alle Bewertungen ansehen
+                {t('reviews.all')}
                 <svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true">
                   <path d="M4 2h6v6M10 2L4 8" stroke="currentColor" strokeWidth="1.5" fill="none" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>

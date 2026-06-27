@@ -7,9 +7,11 @@ import { ScrollStory } from '../components/story/ScrollStory';
 import { WorkSphere } from '../components/sphere/WorkSphere';
 import { GlassCutGame } from '../components/GlassCutGame';
 import { Reviews } from '../components/Reviews';
+import { useT } from '../i18n';
 import './Home.css';
 
 export function Home() {
+  const t = useT();
   return (
     <PageMotion>
       <Seo
@@ -33,7 +35,7 @@ export function Home() {
         <div className="container">
           <Reveal>
             <div className="quiet-services__row">
-              <h2 id="leistungen-h">Außerdem aus Meisterhand</h2>
+              <h2 id="leistungen-h">{t('home.servicesHeading')}</h2>
               <ul className="quiet-services__list">
                 {services.map((s) => (
                   <li key={s.slug}>
@@ -58,14 +60,11 @@ export function Home() {
       <section className="section cta-section" aria-labelledby="cta-h">
         <div className="container cta-section__inner">
           <Reveal>
-            <h2 id="cta-h">Ihr Projekt beginnt mit einem Maßband.</h2>
-            <p className="lead">
-              Ein kurzer Anruf reicht meist, um zu sagen, ob und wie sich Ihre
-              Vorstellung umsetzen lässt – das Aufmaß übernehme ich.
-            </p>
+            <h2 id="cta-h">{t('cta.heading')}</h2>
+            <p className="lead">{t('cta.lead')}</p>
             <div className="hero__actions">
               <a href="tel:+491752533137" className="btn btn--primary">0175 2533137</a>
-              <Link to="/kontakt" className="btn btn--ghost">Kontakt</Link>
+              <Link to="/kontakt" className="btn btn--ghost">{t('nav.contact')}</Link>
             </div>
           </Reveal>
         </div>

@@ -165,6 +165,17 @@
 .burger__line--b { opacity: 0; }
 .burger__line--c { transform: translateY(-7px) rotate(-45deg); }
 
+/* Sprach-Umschalter: im Desktop-Header rechts neben der Navigation,
+   auf dem Handy im Drawer (siehe .drawer__lang). */
+.header-lang { display: none; }
+@media (min-width: 960px) {
+  .header-lang { display: inline-flex; }
+}
+.drawer__lang {
+  align-self: flex-start;
+  margin-bottom: 18px;
+}
+
 /* Mobile drawer */
 .drawer-backdrop {
   position: fixed;

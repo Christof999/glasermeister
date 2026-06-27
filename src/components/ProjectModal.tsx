@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import type { Project } from '../data/projects';
 import { Picture } from './Picture';
 import { toWebp } from '../lib/img';
+import { useT } from '../i18n';
 import './ProjectModal.css';
 
 const FOCUSABLE =
@@ -12,6 +13,7 @@ const FOCUSABLE =
 export function ProjectModal({ project, onClose }: { project: Project; onClose: () => void }) {
   const [imgIndex, setImgIndex] = useState(0);
   const panelRef = useRef<HTMLElement>(null);
+  const t = useT();
 
   // Der Scroll-Lock der Seite gehört dem Aufrufer (WorkSphere). Das Modal
   // kümmert sich um Escape und – für die Tastaturbedienung – um den
@@ -71,7 +73,7 @@ export function ProjectModal({ project, onClose }: { project: Project; onClose: 
         transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
         onClick={(e) => e.stopPropagation()}
       >
-        <button type="button" className="fp-modal__close" onClick={onClose} aria-label="Schließen" autoFocus>
+        <button type="button" className="fp-modal__close" onClick={onClose} aria-label={t('modal.close')} autoFocus>
           <svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true">
             <path d="M4 4l12 12M16 4L4 16" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
           </svg>
@@ -84,14 +86,14 @@ export function ProjectModal({ project, onClose }: { project: Project; onClose: 
               className="fp-modal__img"
               key={project.images[imgIndex]}
               src={project.images[imgIndex]}
-              alt={`${project.title} – Bild ${imgIndex + 1} von ${project.images.length}`}
+              alt={t('modal.imgAlt', { title: project.title, i: imgIndex + 1, n: project.images.length })}
               initial={{ opacity: 0.4 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.3 }}
             />
           </picture>
           {project.images.length > 1 && (
-            <div className="fp-modal__thumbs" role="tablist" aria-label="Projektbilder">
+            <div className="fp-modal__thumbs" role="tablist" aria-label={t('modal.thumbsAria')}>
               {project.images.map((src, i) => (
                 <button
                   key={src}
@@ -128,7 +130,7 @@ export function ProjectModal({ project, onClose }: { project: Project; onClose: 
           </div>
 
           <a href="tel:+491752533137" className="btn btn--primary fp-modal__cta">
-            Ähnliches Projekt? 0175 2533137
+            {t('modal.ctaPre')} 0175 2533137
           </a>
         </div>
       </motion.article>

@@ -5,17 +5,19 @@ import { Seo } from '../lib/seo';
 import { PageMotion, Reveal } from '../components/PageMotion';
 import { Lightbox } from '../components/Lightbox';
 import { Picture } from '../components/Picture';
+import { useT } from '../i18n';
 import './Service.css';
 
 export function Service() {
   const { slug } = useParams<{ slug: string }>();
   const service = getService(slug);
   const [lbIndex, setLbIndex] = useState<number | null>(null);
+  const t = useT();
 
   if (!service) return <Navigate to="/" replace />;
 
   const otherServices = services.filter((s) => s.slug !== service.slug).slice(0, 3);
-  const alts = service.gallery.map((_, i) => `${service.title} – Beispiel ${i + 1}`);
+  const alts = service.gallery.map((_, i) => t('srv.exampleAlt', { title: service.title, i: i + 1 }));
 
   return (
     <PageMotion>
@@ -48,9 +50,9 @@ export function Service() {
             <svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true">
               <path d="M9 3L5 7l4 4" stroke="currentColor" strokeWidth="1.5" fill="none" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
-            Zurück zur Übersicht
+            {t('srv.back')}
           </Link>
-          <span className="eyebrow">Leistung</span>
+          <span className="eyebrow">{t('srv.eyebrow')}</span>
           <h1>{service.title}</h1>
           <p className="lead">{service.intro}</p>
         </div>
@@ -67,8 +69,8 @@ export function Service() {
           </Reveal>
 
           <Reveal delay={0.1}>
-            <aside className="service-bullets" aria-label="Eckpunkte">
-              <h2>Eckpunkte</h2>
+            <aside className="service-bullets" aria-label={t('srv.bullets')}>
+              <h2>{t('srv.bullets')}</h2>
               <ul>
                 {service.bullets.map((b) => (
                   <li key={b}>
@@ -80,7 +82,7 @@ export function Service() {
                 ))}
               </ul>
               <Link to="/kontakt" className="btn btn--primary service-bullets__cta">
-                Angebot anfragen
+                {t('srv.cta')}
               </Link>
             </aside>
           </Reveal>
@@ -91,8 +93,8 @@ export function Service() {
         <section className="section section--tight" aria-labelledby="srv-gallery">
           <div className="container">
             <Reveal>
-              <span className="eyebrow">Eindrücke</span>
-              <h2 id="srv-gallery">Beispiele aus bereits umgesetzten Objekten</h2>
+              <span className="eyebrow">{t('srv.examplesEyebrow')}</span>
+              <h2 id="srv-gallery">{t('srv.examplesHeading')}</h2>
             </Reveal>
             <div className="service-gallery">
               {service.gallery.map((src, i) => (
@@ -101,7 +103,7 @@ export function Service() {
                     type="button"
                     className="service-gallery__item"
                     onClick={() => setLbIndex(i)}
-                    aria-label={`Bild ${i + 1} vergrößern`}
+                    aria-label={t('srv.enlargeAria', { i: i + 1 })}
                   >
                     <Picture src={src} alt={alts[i]} loading="lazy" decoding="async" />
                   </button>
@@ -115,7 +117,7 @@ export function Service() {
       <section className="section other-services" aria-labelledby="more-h">
         <div className="container">
           <Reveal>
-            <h2 id="more-h">Weitere Leistungen</h2>
+            <h2 id="more-h">{t('srv.more')}</h2>
           </Reveal>
           <div className="grid other-services__grid">
             {otherServices.map((s) => (
@@ -124,7 +126,7 @@ export function Service() {
                   <h3>{s.title}</h3>
                   <p>{s.short}</p>
                   <span className="service-card__cta">
-                    Mehr erfahren
+                    {t('srv.learnMore')}
                     <svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true">
                       <path d="M3 8h10M9 4l4 4-4 4" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                     </svg>
