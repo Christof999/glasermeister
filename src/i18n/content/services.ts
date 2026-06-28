@@ -20,7 +20,6 @@ const overlay: Record<'en' | 'la', Record<string, ServiceText>> = {
       description: [
         'Every shower is one of a kind. We measure on site, plan glass thickness, fittings and surface finish with you – and install cleanly, with no compromise on the seal.',
         'On request with clear glass, a satin-etched surface or tinted grey glass for a calm, modern look. Toughened safety glass (ESG) is standard.',
-        'By combining various colour films, an almost unlimited range of finely graded shades can be created.',
       ],
       bullets: [
         'Walk-in, corner or U-shaped solutions',
@@ -111,7 +110,6 @@ const overlay: Record<'en' | 'la', Record<string, ServiceText>> = {
       description: [
         'Unaquaeque cella unica est. In loco metimur, crassitudinem vitri, ferramenta et superficiem tecum deliberamus – et munde collocamus, sine ulla de impervietate transactione.',
         'Pro voluntate vitro claro, superficie satinata vel vitro cano tincto ad speciem quietam ac modernam. Vitrum securitatis (ESG) usitatum est.',
-        'Variis membranis coloratis coniunctis colores paene infiniti subtiliter gradati creari possunt.',
       ],
       bullets: [
         'Solutiones adeundae, angulares vel U-formes',
