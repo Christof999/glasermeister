@@ -214,9 +214,8 @@ const overlay: Record<'en' | 'la', Record<string, ProjectText>> = {
         { label: 'Edges', value: 'polished' },
       ],
       story: [
-        'Heavy timber beams form the frame for a walk-in shower here – not an aluminium profile, but solid wood that brings glass and room together. The panes of toughened safety glass sit precisely in the timber structure, the edges polished, the door swings lightly on slim fittings.',
-        'The client knew what they wanted: with a little planning, dirt-prone seals can be dispensed with entirely. Instead of rubber profiles and silicone grooves, every edge was calculated in advance – glass on wood, glass on tile, door on floor. What remains are a few clean joints you can see and maintain, rather than hidden niches where limescale and dirt stay put.',
-        'Added to that are copper fittings, an LED light line in the corner and the view through the glass door into the bright attic bathroom – a shower that fits the character of the house and still feels modern.',
+        'Heavy timber beams frame this walk-in shower – clear toughened safety glass with polished edges, fitted into wood rather than aluminium profiles.',
+        'With a little planning, dirt-prone seals can be dispensed with entirely: every edge was calculated in advance so glass, wood and tile meet without rubber profiles.',
       ],
     },
     'loft-schiebetuer': {
@@ -496,9 +495,8 @@ const overlay: Record<'en' | 'la', Record<string, ProjectText>> = {
         { label: 'Margines', value: 'politi' },
       ],
       story: [
-        'Trabes lignea graves hic compagem cellae adeundae formant – non regula aluminii, sed lignum solidum quod vitrum et conclave coniungit. Laminae ex vitro securitatis in compage lignea subtiliter insident, marginibus politis, valva leviter in ferramentis tenuibus versat.',
-        'Client sciebat quid vellet: cum aliqua dispositione sigillis sordibus obnoxiis omnino carere licet. Pro regulis gummosis et sulcis siliconatis quaeque ora ante computata est – vitrum super lignum, vitrum super tessellam, valva super solum. Manent paucae iuncturae purae quas cernere et curare potes, non loca occulta ubi calx et sordes manent.',
-        'Accedunt ferramenta aeris, linea lucis LED in angulo et prospectus per valvam vitream in balneum clarum sub tecto – cella quae indolem domus sequitur et tamen moderna manet.',
+        'Trabes graves compagem huius cellae adeundae formant – vitrum securitatis clarum marginibus politis, in ligno insertum pro regulis aluminii.',
+        'Cum aliqua dispositione sigillis sordibus obnoxiis omnino carere licet: quaeque ora ante computata est, ut vitrum, lignum et tessella sine regulis gummosis conveniant.',
       ],
     },
     'loft-schiebetuer': {

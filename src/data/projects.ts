@@ -357,9 +357,8 @@ export const projects: Project[] = [
       { label: 'Kanten', value: 'poliert' },
     ],
     story: [
-      'Schwere Holzbalken bilden hier den Rahmen für eine Walk-in-Dusche – kein Aluminiumprofil, sondern massives Holz, das Glas und Raum zusammenführt. Die Scheiben aus Einscheibensicherheitsglas sitzen präzise in der Holzkonstruktion, die Kanten poliert, die Tür schwingt leicht auf schmalen Beschlägen.',
-      'Der Kunde wusste, was er wollte: Mit etwas Planung kann auf schmutzanfällige Dichtungen völlig verzichtet werden. Statt Gummiprofilen und Silikonrille wurde jede Kante vorab ausgerechnet – Glas auf Holz, Glas auf Fliese, Tür auf Boden. Was übrig bleibt, sind wenige saubere Fugen, die man sieht und pflegen kann, statt versteckter Nischen, in denen Kalk und Schmutz sitzen bleiben.',
-      'Dazu kommen Kupfer-Beschläge, eine LED-Lichtlinie in der Ecke und der Blick durch die Glastür ins helle Dachgeschoss – eine Dusche, die sich in den Charakter des Hauses einfügt und trotzdem modern bleibt.',
+      'Massive Holzbalken bilden den Rahmen für diese Walk-in-Dusche – klares ESG-Glas mit polierten Kanten, eingepasst in Holz statt Aluminiumprofile.',
+      'Mit etwas Planung kann auf schmutzanfällige Dichtungen völlig verzichtet werden: Jede Kante wurde vorab ausgerechnet, damit Glas, Holz und Fliese ohne Gummiprofile zusammenpassen.',
     ],
     size: 'lg',
     depth: 0.2,
