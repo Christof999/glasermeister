@@ -203,6 +203,22 @@ const overlay: Record<'en' | 'la', Record<string, ProjectText>> = {
         'Toughened safety glass with polished edges, matt black fittings, few joints: not only beautiful, but practical too – large surfaces that are quick to clean, and an entry without a trip edge.',
       ],
     },
+    'dusche-holzrahmen': {
+      title: 'Glass in a timber frame',
+      category: 'Walk-in shower · Attic',
+      teaser: 'Heavy beams hold the panes – planned without dirt-prone seals.',
+      facts: [
+        { label: 'Glass', value: 'ESG, clear – frameless' },
+        { label: 'Installation', value: 'in a solid timber frame' },
+        { label: 'Special feature', value: 'without rubber seals' },
+        { label: 'Edges', value: 'polished' },
+      ],
+      story: [
+        'Heavy timber beams form the frame for a walk-in shower here – not an aluminium profile, but solid wood that brings glass and room together. The panes of toughened safety glass sit precisely in the timber structure, the edges polished, the door swings lightly on slim fittings.',
+        'The client knew what they wanted: with a little planning, dirt-prone seals can be dispensed with entirely. Instead of rubber profiles and silicone grooves, every edge was calculated in advance – glass on wood, glass on tile, door on floor. What remains are a few clean joints you can see and maintain, rather than hidden niches where limescale and dirt stay put.',
+        'Added to that are copper fittings, an LED light line in the corner and the view through the glass door into the bright attic bathroom – a shower that fits the character of the house and still feels modern.',
+      ],
+    },
     'loft-schiebetuer': {
       title: 'Sliding door in loft style',
       category: 'Glass sliding door · Living space',
@@ -467,6 +483,22 @@ const overlay: Record<'en' | 'la', Record<string, ProjectText>> = {
       story: [
         'Tessellae amplae specie lapidis naturalis et marmoris huic balneo amplitudinem quietam dant. Cella eas non interrumpere debet – itaque ante stat lamina sine margine ex vitro claro, ad solum et sine limine.',
         'Vitrum securitatis marginibus politis, ferramenta nigra matta, paucae iuncturae: non solum pulchrum, sed etiam utile – superficies amplae celeriter purgandae, et aditus sine offensione.',
+      ],
+    },
+    'dusche-holzrahmen': {
+      title: 'Vitrum in compage lignea',
+      category: 'Cella adeunda · Sub tecto',
+      teaser: 'Trabes graves lamina tenent – disposita sine sigillis sordibus obnoxiis.',
+      facts: [
+        { label: 'Vitrum', value: 'ESG, clarum – sine margine' },
+        { label: 'Insertio', value: 'in compage lignea solida' },
+        { label: 'Insigne', value: 'sine sigillis gummosis' },
+        { label: 'Margines', value: 'politi' },
+      ],
+      story: [
+        'Trabes lignea graves hic compagem cellae adeundae formant – non regula aluminii, sed lignum solidum quod vitrum et conclave coniungit. Laminae ex vitro securitatis in compage lignea subtiliter insident, marginibus politis, valva leviter in ferramentis tenuibus versat.',
+        'Client sciebat quid vellet: cum aliqua dispositione sigillis sordibus obnoxiis omnino carere licet. Pro regulis gummosis et sulcis siliconatis quaeque ora ante computata est – vitrum super lignum, vitrum super tessellam, valva super solum. Manent paucae iuncturae purae quas cernere et curare potes, non loca occulta ubi calx et sordes manent.',
+        'Accedunt ferramenta aeris, linea lucis LED in angulo et prospectus per valvam vitream in balneum clarum sub tecto – cella quae indolem domus sequitur et tamen moderna manet.',
       ],
     },
     'loft-schiebetuer': {
