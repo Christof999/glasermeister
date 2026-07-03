@@ -46,7 +46,7 @@
 .fp-modal__media {
   position: relative;
   background: #000;
-  min-height: 320px;
+  min-height: 0;
 }
 
 .fp-modal__img {
@@ -90,6 +90,9 @@
 .fp-modal__body {
   padding: clamp(22px, 3.5vw, 44px);
   overflow-y: auto;
+  min-height: 0;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
 }
 
 .fp-modal__body h3 {

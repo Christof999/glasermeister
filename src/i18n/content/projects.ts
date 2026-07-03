@@ -203,6 +203,21 @@ const overlay: Record<'en' | 'la', Record<string, ProjectText>> = {
         'Toughened safety glass with polished edges, matt black fittings, few joints: not only beautiful, but practical too – large surfaces that are quick to clean, and an entry without a trip edge.',
       ],
     },
+    'dusche-holzrahmen': {
+      title: 'Glass in a timber frame',
+      category: 'Walk-in shower · Attic',
+      teaser: 'Heavy beams hold the panes – planned without dirt-prone seals.',
+      facts: [
+        { label: 'Glass', value: 'ESG, clear – frameless' },
+        { label: 'Installation', value: 'in a solid timber frame' },
+        { label: 'Special feature', value: 'without rubber seals' },
+        { label: 'Edges', value: 'polished' },
+      ],
+      story: [
+        'Heavy timber beams frame this walk-in shower – clear toughened safety glass with polished edges, fitted into wood rather than aluminium profiles.',
+        'With a little planning, dirt-prone seals can be dispensed with entirely: every edge was calculated in advance so glass, wood and tile meet without rubber profiles.',
+      ],
+    },
     'loft-schiebetuer': {
       title: 'Sliding door in loft style',
       category: 'Glass sliding door · Living space',
@@ -467,6 +482,21 @@ const overlay: Record<'en' | 'la', Record<string, ProjectText>> = {
       story: [
         'Tessellae amplae specie lapidis naturalis et marmoris huic balneo amplitudinem quietam dant. Cella eas non interrumpere debet – itaque ante stat lamina sine margine ex vitro claro, ad solum et sine limine.',
         'Vitrum securitatis marginibus politis, ferramenta nigra matta, paucae iuncturae: non solum pulchrum, sed etiam utile – superficies amplae celeriter purgandae, et aditus sine offensione.',
+      ],
+    },
+    'dusche-holzrahmen': {
+      title: 'Vitrum in compage lignea',
+      category: 'Cella adeunda · Sub tecto',
+      teaser: 'Trabes graves lamina tenent – disposita sine sigillis sordibus obnoxiis.',
+      facts: [
+        { label: 'Vitrum', value: 'ESG, clarum – sine margine' },
+        { label: 'Insertio', value: 'in compage lignea solida' },
+        { label: 'Insigne', value: 'sine sigillis gummosis' },
+        { label: 'Margines', value: 'politi' },
+      ],
+      story: [
+        'Trabes graves compagem huius cellae adeundae formant – vitrum securitatis clarum marginibus politis, in ligno insertum pro regulis aluminii.',
+        'Cum aliqua dispositione sigillis sordibus obnoxiis omnino carere licet: quaeque ora ante computata est, ut vitrum, lignum et tessella sine regulis gummosis conveniant.',
       ],
     },
     'loft-schiebetuer': {
