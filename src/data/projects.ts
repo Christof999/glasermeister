@@ -214,11 +214,11 @@ export const projects: Project[] = [
     facts: [
       { label: 'Glas', value: 'ESG, klar' },
       { label: 'Bauart', value: 'Eck-Duschkabine, Echtglas' },
-      { label: 'Beschläge', value: 'schwarz matt' },
+      { label: 'Beschläge', value: 'glanzverchromt' },
       { label: 'Nutzen', value: 'Modernisierung ohne Komplettsanierung' },
     ],
     story: [
-      'Nicht jedes Bad muss komplett raus, um neu zu wirken. Hier blieben Fliesen und Raum erhalten – verändert hat alles die neue Dusche: eine klare Echtglas-Ecke mit schwarzen Beschlägen, die dem vertrauten Bad einen frischen, modernen Auftritt gibt.',
+      'Nicht jedes Bad muss komplett raus, um neu zu wirken. Hier blieben Fliesen und Raum erhalten – verändert hat alles die neue Dusche: eine klare Echtglas-Ecke mit glanzverchromten Beschlägen, die dem vertrauten Bad einen frischen, modernen Auftritt gibt.',
       'Das Einscheibensicherheitsglas wird auf den Bestand eingemessen, damit die Scheiben sauber an Wand und Fliesenraster anschließen. So fügen sich Alt und Neu zu einem stimmigen Ganzen – ohne Bauschutt und wochenlange Baustelle.',
       'Niedriger Einstieg, kaum Profile, leicht zu reinigen: Die Dusche bringt den Komfort von heute ins Bad von gestern.',
     ],
@@ -323,12 +323,12 @@ export const projects: Project[] = [
     facts: [
       { label: 'Glas', value: 'ESG, klar – rahmenlos' },
       { label: 'Bauart', value: 'Walk-in, bodengleich' },
-      { label: 'Beschläge', value: 'schwarz matt' },
+      { label: 'Beschläge', value: 'ähnl. Edelstahl, PVD-beschichtet' },
       { label: 'Kanten', value: 'poliert' },
     ],
     story: [
       'Großformatige Fliesen in Naturstein- und Marmoroptik geben diesem Bad seine ruhige Großzügigkeit. Die Dusche soll sie nicht unterbrechen – also steht davor eine rahmenlose Scheibe aus klarem Glas, bodengleich und ohne Schwelle.',
-      'Einscheibensicherheitsglas mit polierten Kanten, schwarz matte Beschläge, wenige Fugen: Das ist nicht nur schön, sondern auch praktisch – große Flächen, die schnell sauber sind, und ein Einstieg ohne Stolperkante.',
+      'Einscheibensicherheitsglas mit polierten Kanten, Beschläge in Edelstahloptik (PVD-beschichtet), wenige Fugen: Das ist nicht nur schön, sondern auch praktisch – große Flächen, die schnell sauber sind, und ein Einstieg ohne Stolperkante.',
     ],
     size: 'md',
     depth: 0.35,

@@ -135,11 +135,11 @@ const overlay: Record<'en' | 'la', Record<string, ProjectText>> = {
       facts: [
         { label: 'Glass', value: 'ESG, clear' },
         { label: 'Type', value: 'corner enclosure, real glass' },
-        { label: 'Fittings', value: 'matt black' },
+        { label: 'Fittings', value: 'polished chrome' },
         { label: 'Benefit', value: 'modernisation without a full refit' },
       ],
       story: [
-        'Not every bathroom has to come out to feel new. Here the tiles and the room stayed – what changed everything was the new shower: a clear real-glass corner with black fittings that gives the familiar bathroom a fresh, modern look.',
+        'Not every bathroom has to come out to feel new. Here the tiles and the room stayed – what changed everything was the new shower: a clear real-glass corner with polished-chrome fittings that gives the familiar bathroom a fresh, modern look.',
         'The toughened safety glass is measured to the existing build so the panes meet wall and tile grid cleanly. Old and new come together into a coherent whole – without rubble and weeks of building site.',
         'Low entry, hardly any profiles, easy to clean: the shower brings today’s comfort into yesterday’s bathroom.',
       ],
@@ -195,12 +195,12 @@ const overlay: Record<'en' | 'la', Record<string, ProjectText>> = {
       facts: [
         { label: 'Glass', value: 'ESG, clear – frameless' },
         { label: 'Type', value: 'walk-in, floor-level' },
-        { label: 'Fittings', value: 'matt black' },
+        { label: 'Fittings', value: 'stainless-steel look, PVD-coated' },
         { label: 'Edges', value: 'polished' },
       ],
       story: [
         'Large-format tiles in a natural-stone and marble look give this bathroom its calm generosity. The shower should not interrupt them – so in front stands a frameless pane of clear glass, floor-level and without a threshold.',
-        'Toughened safety glass with polished edges, matt black fittings, few joints: not only beautiful, but practical too – large surfaces that are quick to clean, and an entry without a trip edge.',
+        'Toughened safety glass with polished edges, stainless-steel-look fittings (PVD-coated), few joints: not only beautiful, but practical too – large surfaces that are quick to clean, and an entry without a trip edge.',
       ],
     },
     'dusche-holzrahmen': {
@@ -416,11 +416,11 @@ const overlay: Record<'en' | 'la', Record<string, ProjectText>> = {
       facts: [
         { label: 'Vitrum', value: 'ESG, clarum' },
         { label: 'Genus', value: 'cella angularis, verum vitrum' },
-        { label: 'Ferramenta', value: 'nigra matta' },
+        { label: 'Ferramenta', value: 'chromate nitida' },
         { label: 'Utilitas', value: 'renovatio sine integra refectione' },
       ],
       story: [
-        'Non omne balneum erui debet ut novum videatur. Hic tessellae et conclave manserunt – omnia mutavit cella nova: angulus clarus ex vero vitro cum ferramentis nigris qui balneo noto speciem recentem ac modernam dat.',
+        'Non omne balneum erui debet ut novum videatur. Hic tessellae et conclave manserunt – omnia mutavit cella nova: angulus clarus ex vero vitro cum ferramentis chromatis nitidis qui balneo noto speciem recentem ac modernam dat.',
         'Vitrum securitatis ad exsistentia metitur ut laminae parieti et ordini tessellarum munde adhaereant. Vetus et novum in totum congruum coeunt – sine rudere et hebdomadibus operis.',
         'Aditus humilis, vix regulae, facile purgandum: cella commoditatem hodiernam in balneum hesternum infert.',
       ],
@@ -476,12 +476,12 @@ const overlay: Record<'en' | 'la', Record<string, ProjectText>> = {
       facts: [
         { label: 'Vitrum', value: 'ESG, clarum – sine margine' },
         { label: 'Genus', value: 'adeunda, ad solum' },
-        { label: 'Ferramenta', value: 'nigra matta' },
+        { label: 'Ferramenta', value: 'specie chalybis inoxidabilis, PVD illita' },
         { label: 'Margines', value: 'politi' },
       ],
       story: [
         'Tessellae amplae specie lapidis naturalis et marmoris huic balneo amplitudinem quietam dant. Cella eas non interrumpere debet – itaque ante stat lamina sine margine ex vitro claro, ad solum et sine limine.',
-        'Vitrum securitatis marginibus politis, ferramenta nigra matta, paucae iuncturae: non solum pulchrum, sed etiam utile – superficies amplae celeriter purgandae, et aditus sine offensione.',
+        'Vitrum securitatis marginibus politis, ferramenta specie chalybis inoxidabilis (PVD illita), paucae iuncturae: non solum pulchrum, sed etiam utile – superficies amplae celeriter purgandae, et aditus sine offensione.',
       ],
     },
     'dusche-holzrahmen': {
