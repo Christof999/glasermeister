@@ -73,6 +73,22 @@ const overlay: Record<'en' | 'la', Record<string, ProjectText>> = {
         'Here it became a statement: grey-tinted laminated safety glass on a powder-coated steel structure, fixing and drainage hidden in the façade. The grey tone takes the hardness out of the glass and softens the incoming light. Planned including structural design, installed in a single morning.',
       ],
     },
+    'vordach-edelstahl': {
+      title: 'Canopy made to measure',
+      category: 'Canopy & roofing',
+      teaser: 'Stainless-steel tube and glass, fitted exactly to the sloping house wall.',
+      facts: [
+        { label: 'Glass', value: 'roof VSG/TVG 12.76 mm clear · sides ESG 8 mm' },
+        { label: 'Structure', value: 'stainless-steel tube V2A, Ø 42.4 mm' },
+        { label: 'Holders', value: 'precision-turned stainless-steel point holders' },
+        { label: 'Edges', value: 'polished all round' },
+      ],
+      story: [
+        'A canopy that shelters without cluttering the façade: made to measure from V2A stainless-steel tube (Ø 42.4 mm), the clear glass roof resting on precision-turned point holders. The roof pane is laminated safety glass (VSG/TVG 12.76 mm) with polished edges – at the sides, 8 mm toughened glass panels with edges polished all round frame the entrance.',
+        'The side panes are secured against slipping by 12 mm bores and locking pins in the clamps – engineering you do not see, but that holds fast.',
+        'The wall beside the front door runs up to 75 mm out of true. That measure was recorded exactly during the survey so the structure meets it cleanly. At the customer’s request it also rests only on the lower step – so any later paving work can be carried out without dismantling the canopy.',
+      ],
+    },
     kuechenrueckwand: {
       title: 'Print behind glass',
       category: 'Kitchen splashback',
@@ -352,6 +368,22 @@ const overlay: Record<'en' | 'la', Record<string, ProjectText>> = {
       story: [
         'Protectum primum est quod hospites domus tangunt – et saepe ultimum de quo inter aedificandum cogitatur.',
         'Hic factum est testimonium: vitrum compactum securitatis canum tinctum super compage chalybea pulvere obducta, fixura et aquae deductio in fronte occultae. Color canus duritiem vitro adimit et lucem incidentem mitigat. Dispositum cum statica, collocatum uno mane.',
+      ],
+    },
+    'vordach-edelstahl': {
+      title: 'Protectum ad mensuram',
+      category: 'Protectum & tegmen',
+      teaser: 'Tubus ex chalybe inoxidabili et vitrum, ad parietem domus obliquum ad unguem aptata.',
+      facts: [
+        { label: 'Vitrum', value: 'tectum VSG/TVG 12,76 mm clarum · latera ESG 8 mm' },
+        { label: 'Compages', value: 'tubus ex chalybe inoxidabili V2A, Ø 42,4 mm' },
+        { label: 'Fulcra', value: 'fulcra punctalia ex chalybe subtiliter tornata' },
+        { label: 'Margines', value: 'undique politi' },
+      ],
+      story: [
+        'Protectum quod tegit neque frontem impedit: ad mensuram factum ex tubo chalybis inoxidabilis V2A (Ø 42,4 mm), tectum vitreum clarum super fulcris punctalibus subtiliter tornatis nixum. Lamina tecti est vitrum compactum securitatis (VSG/TVG 12,76 mm) marginibus politis – ad latera laminae ESG 8 mm crassae marginibus undique politis aditum cingunt.',
+        'Laminae laterales foraminibus 12 mm et clavis obicibus in retinaculis contra lapsum firmantur – ars quae non videtur, sed tuto tenet.',
+        'Paries iuxta ianuam usque ad 75 mm e perpendiculo abit. Haec mensura in dimensione ad unguem excepta est ut compages munde adhaereat. Ex voluntate domini praeterea soli gradui inferiori insistit – ita labor stratorii postea faciendus perfici potest sine protecti demolitione.',
       ],
     },
     kuechenrueckwand: {
