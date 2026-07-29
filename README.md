@@ -48,8 +48,23 @@ liefert, einfach dort ablegen und in `src/data/services.ts` referenzieren.
 Statisches Build – läuft auf jedem Webspace, Netlify, Vercel, Cloudflare Pages, …
 Wichtige Hinweise:
 
-- **SPA-Routing**: Server muss bei 404 auf `/index.html` ausliefern (Netlify/Vercel
-  machen das automatisch; bei Apache → `.htaccess` mit Fallback-Regel).
+- **SPA-Routing**: Der Server muss unbekannte Pfade auf `/index.html` ausliefern,
+  sonst antwortet er auf Direktaufrufe wie `/leistungen/glastueren` mit 404
+  (innerhalb der Seite funktionieren die Links trotzdem, weil dort der Router
+  im Browser übernimmt). Im Build ist alles vorbereitet:
+
+  | Hoster | Datei im Build | Hinweis |
+  | --- | --- | --- |
+  | Netlify, Cloudflare Pages | `_redirects` | greift automatisch |
+  | Vercel | `vercel.json` (Repo-Root) | greift automatisch |
+  | Apache-Webspace (IONOS, Strato, All-Inkl …) | `.htaccess` | **muss mit hochgeladen werden** |
+  | GitHub Pages & sonstige | `404.html` | Kopie von `index.html` |
+
+  Häufigste Ursache für 404 auf einem klassischen Webspace: Die `.htaccess` ist
+  beim Upload nicht mitgekommen – FTP-Clients blenden Dateien mit führendem
+  Punkt standardmäßig aus (FileZilla: *Server → Versteckte Dateien anzeigen*).
+  Läuft der Webspace auf nginx, muss die Regel dort gesetzt werden:
+  `location / { try_files $uri $uri/ /index.html; }`.
 - **HTTPS**: für die DSGVO-Konformität verpflichtend.
 - **Server-Logs**: idealerweise mit anonymisierter IP (z. B. via Hosting-Provider
   konfigurieren); die Datenschutzerklärung geht davon aus.

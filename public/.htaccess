@@ -1,4 +1,7 @@
-# SPA-Fallback fuer Apache: alle unbekannten Routen an index.html
+# SPA-Fallback fuer Apache: alle unbekannten Routen an index.html.
+# WICHTIG: Diese Datei muss im Web-Root des Hosters liegen. Viele FTP-Clients
+# blenden Dateien mit fuehrendem Punkt aus und laden sie nicht mit hoch – dann
+# antwortet der Server auf /leistungen/... mit 404.
 <IfModule mod_rewrite.c>
   RewriteEngine On
   RewriteBase /
@@ -6,6 +9,13 @@
   RewriteCond %{REQUEST_FILENAME} !-f
   RewriteCond %{REQUEST_FILENAME} !-d
   RewriteRule . /index.html [L]
+</IfModule>
+
+# Fallback, falls mod_rewrite auf dem Webspace nicht aktiv ist (Apache >= 2.2.16)
+<IfModule !mod_rewrite.c>
+  <IfModule mod_dir.c>
+    FallbackResource /index.html
+  </IfModule>
 </IfModule>
 
 # Caching-Header

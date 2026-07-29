@@ -33,7 +33,7 @@ export const services: Service[] = [
   },
   {
     slug: 'glastueren',
-    title: 'Glasschwingtüren & Trennwände',
+    title: 'Glastüren & Trennwände',
     short: 'Räume teilen, ohne Licht zu nehmen.',
     intro:
       'Glasschwingtüren, Pendeltüren und raumhohe Trennwände – elegant, robust und perfekt eingepasst.',

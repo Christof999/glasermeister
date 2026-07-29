@@ -31,7 +31,7 @@ const overlay: Record<'en' | 'la', Record<string, ServiceText>> = {
       ],
     },
     glastueren: {
-      title: 'Glass swing doors & partitions',
+      title: 'Glass doors & partitions',
       short: 'Divide rooms without taking the light.',
       intro:
         'Glass swing doors, double-action doors and room-height partitions – elegant, robust and perfectly fitted.',
@@ -121,7 +121,7 @@ const overlay: Record<'en' | 'la', Record<string, ServiceText>> = {
       ],
     },
     glastueren: {
-      title: 'Ostia vitrea versatilia & parietes',
+      title: 'Ostia vitrea & parietes',
       short: 'Spatia divide neque lucem aufer.',
       intro:
         'Ostia vitrea versatilia, ostia utrimque patentia et parietes ad altitudinem conclavis – elegantes, firmi, apte inserti.',
