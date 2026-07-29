@@ -50,8 +50,15 @@ export const services: Service[] = [
       'Klar, satiniert oder mit individuellen Motiven',
       'ESG / VSG nach statischer Anforderung',
     ],
-    hero: '/images/IMG_0296.jpeg',
-    gallery: ['/images/IMG_0296.jpeg', '/images/IMG_0302.jpeg'],
+    hero: '/images/glasschiebetuere/glasschiebetuere-04.jpg',
+    gallery: [
+      '/images/glastuere/glastuere-01.jpg',
+      '/images/glastuere/glastuere-03.jpg',
+      '/images/glasschiebetuere/glasschiebetuere-03.jpg',
+      '/images/glasschiebetuere/glasschiebetuere-05.jpg',
+      '/images/glasschiebetuere/glasschiebetuere-01.jpg',
+      '/images/IMG_0296.jpeg',
+    ],
   },
   {
     slug: 'vordaecher',
