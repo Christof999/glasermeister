@@ -9,6 +9,10 @@ export type LookState = {
   drift: number;
   /** true, solange eine Kachel anvisiert wird – pausiert die Eigendrehung */
   hold: boolean;
+  /** true, sobald zuletzt mit der Maus gezeigt wurde. Bei Touch bleibt nach
+   *  dem Loslassen kein Zeiger auf dem Schirm, dort darf der Hover nicht
+   *  weiter nachgeführt werden. */
+  usesMouse: boolean;
 };
 
 export function createLookState(): LookState {
@@ -21,5 +25,6 @@ export function createLookState(): LookState {
     dragPitch: 0,
     drift: 0,
     hold: false,
+    usesMouse: false,
   };
 }

@@ -52,8 +52,13 @@ export function Kontakt() {
                   Schulstr. 20<br />
                   91732 Merkendorf
                 </address>
+                {/* Adresssuche statt fest verdrahteter Koordinaten: die alten Werte
+                    (49.20 / 10.69) waren auf zwei Nachkommastellen gerundet und
+                    setzten den Marker gut 800 m neben die Schulstraße. OSM
+                    geokodiert die Anschrift jetzt selbst, der Kartenausschnitt
+                    startet direkt an der Straße. */}
                 <a
-                  href="https://www.openstreetmap.org/?mlat=49.20&mlon=10.69#map=14/49.20/10.69&query=Schulstr.+20+91732+Merkendorf"
+                  href="https://www.openstreetmap.org/search?query=Schulstra%C3%9Fe%2020%2C%2091732%20Merkendorf#map=17/49.20413/10.70113"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="kontakt-info__map"

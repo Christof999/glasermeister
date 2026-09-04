@@ -262,16 +262,13 @@ function SphereRoom({
     y: number;
     startX: number;
     startY: number;
-    project: Project | null;
   } | null>(null);
-  const hoveredRef = useRef<Project | null>(null);
   const [hovered, setHoveredState] = useState<Project | null>(null);
   const t = useT();
   const lang = useLang();
   const hoveredLocalized = hovered ? localizeProject(hovered, lang) : null;
 
   const setHovered = useCallback((p: Project | null) => {
-    hoveredRef.current = p;
     look.current.hold = !!p;
     setHoveredState(p);
   }, []);
@@ -289,6 +286,7 @@ function SphereRoom({
       return;
     }
     if (e.pointerType === 'mouse') {
+      look.current.usesMouse = true;
       const nx = e.clientX / window.innerWidth - 0.5;
       const ny = e.clientY / window.innerHeight - 0.5;
       look.current.mouseYaw = -nx * 1.7;
@@ -296,14 +294,26 @@ function SphereRoom({
     }
   };
 
-  // Tap/Klick: beim Drücken anvisierte Kachel merken, beim Loslassen
-  // öffnen – sofern sich der Zeiger kaum bewegt hat (sonst war es ein Drag).
+  // Öffnen kommt aus dem Raycast der Szene (SphereScene → Tile.onPointerUp),
+  // also von genau der Kachel, die im Moment des Loslassens unter dem Zeiger
+  // liegt. Hier wird nur noch geprüft, ob es ein Tipp und kein Schwenk war.
+  const handleSelect = useCallback(
+    (project: Project, x: number, y: number) => {
+      const d = drag.current;
+      if (!d) return;
+      const moved = Math.hypot(x - d.startX, y - d.startY);
+      if (moved < 10) setActive(project);
+    },
+    [setActive]
+  );
+
+  // Die Auswahl selbst erledigt handleSelect (Raycast aus der Szene). Der
+  // Zeiger-Handler auf dem Container beendet nur den Schwenk – und räumt bei
+  // Touch die Hervorhebung ab, weil dort nach dem Loslassen nichts mehr
+  // anvisiert ist.
   const handlePointerUp = (e: React.PointerEvent) => {
-    const d = drag.current;
     drag.current = null;
-    if (!d || frozen) return;
-    const moved = Math.hypot(e.clientX - d.startX, e.clientY - d.startY);
-    if (moved < 10 && d.project) setActive(d.project);
+    if (e.pointerType !== 'mouse') setHovered(null);
   };
 
   return (
@@ -314,13 +324,13 @@ function SphereRoom({
       aria-label={t('ws.roomAria')}
       onPointerDown={(e) => {
         if (frozen) return;
+        if (e.pointerType !== 'mouse') look.current.usesMouse = false;
         drag.current = {
           id: e.pointerId,
           x: e.clientX,
           y: e.clientY,
           startX: e.clientX,
           startY: e.clientY,
-          project: hoveredRef.current,
         };
       }}
       onPointerMove={handlePointerMove}
@@ -329,7 +339,7 @@ function SphereRoom({
       onPointerLeave={() => (drag.current = null)}
     >
       <Suspense fallback={null}>
-        <SphereScene look={look} paused={frozen} onHover={setHovered} />
+        <SphereScene look={look} paused={frozen} onHover={setHovered} onSelect={handleSelect} />
       </Suspense>
 
       <div className="ws-room__lens" aria-hidden="true" />

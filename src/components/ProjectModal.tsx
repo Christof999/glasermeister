@@ -82,6 +82,16 @@ export function ProjectModal({ project: baseProject, onClose }: { project: Proje
         </button>
 
         <div className="fp-modal__media">
+          {/* Das Foto wird vollständig gezeigt (contain). Damit die freien
+              Ränder nicht als schwarze Balken stehen, liegt dasselbe Bild
+              unscharf und abgedunkelt dahinter. */}
+          <Picture
+            className="fp-modal__backdrop"
+            src={project.images[imgIndex]}
+            alt=""
+            aria-hidden="true"
+            decoding="async"
+          />
           <picture className="pic">
             <source type="image/webp" srcSet={toWebp(project.images[imgIndex])} />
             <motion.img

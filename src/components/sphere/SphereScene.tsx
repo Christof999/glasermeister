@@ -18,20 +18,27 @@ const ARC_R = 9.5; // Radius der Wölbung
 const ARC_FRONT = 5.5; // Zylinderachse vor dem Betrachter → Mitte fern, Ränder nah
 const H_HALF = 1.18; // halbe Rasterbreite (Bogenmaß)
 const FILL = 0.93; // Kachel füllt 93 % ihrer Zelle → schmale, gleichmäßige Fugen
-const ROW_RATIO = 1.12; // Kachelhöhe relativ zur Breite
+const ROW_RATIO = 4 / 3; // Zellhöhe relativ zur Breite – entspricht dem Hochformat der Fotos
 
-type TileSpec = {
+/** Rasterzelle auf der gewölbten Wand. Die Kachel selbst wird später in diese
+ *  Zelle eingepasst – im Seitenverhältnis des jeweiligen Fotos. */
+type CellSpec = {
   key: string;
   project: Project;
   position: [number, number, number];
   quaternion: [number, number, number, number];
+  cellWidth: number;
+  cellHeight: number;
+};
+
+type TileSpec = CellSpec & {
   width: number;
   height: number;
 };
 
 /** Raster aufbauen und auf die gewölbte Wand legen. Jede Zeile wird zentriert,
  *  jede Kachel schaut den Betrachter (Ursprung) an. */
-function buildGrid(): TileSpec[] {
+function buildGrid(): CellSpec[] {
   const n = projects.length;
   const rows = Math.max(1, Math.round(Math.sqrt(n / 2))); // 18 → 3 Reihen
   const cols = Math.ceil(n / rows); // → 6 Spalten
@@ -63,41 +70,35 @@ function buildGrid(): TileSpec[] {
       project,
       position: [x, y, z],
       quaternion: [q.x, q.y, q.z, q.w],
-      width,
-      height,
+      cellWidth: width,
+      cellHeight: height,
     };
   });
 }
 
-/** Textur mittig zuschneiden, damit das Foto die Kachel ohne Verzerrung füllt. */
-function coverTexture(base: THREE.Texture, tileAspect: number): THREE.Texture {
-  const t = base.clone();
-  t.colorSpace = THREE.SRGBColorSpace;
-  t.wrapS = THREE.ClampToEdgeWrapping;
-  t.wrapT = THREE.ClampToEdgeWrapping;
-  const img = base.image as { width?: number; height?: number } | undefined;
-  const imgAspect = img && img.width && img.height ? img.width / img.height : 1;
-  if (imgAspect > tileAspect) {
-    const r = tileAspect / imgAspect;
-    t.repeat.set(r, 1);
-    t.offset.set((1 - r) / 2, 0);
-  } else {
-    const r = imgAspect / tileAspect;
-    t.repeat.set(1, r);
-    t.offset.set(0, (1 - r) / 2);
-  }
-  t.needsUpdate = true;
-  return t;
+/** Bild vollständig in seine Rasterzelle einpassen (contain). Früher wurde die
+ *  Textur mittig auf das Zellformat beschnitten – bei den überwiegend hochkant
+ *  aufgenommenen Fotos war davon nur noch ein Ausschnitt zu sehen. Jetzt bekommt
+ *  jede Kachel das Seitenverhältnis ihres Fotos, das Bild bleibt vollständig. */
+function fitToCell(cell: CellSpec, texture: THREE.Texture): TileSpec {
+  const img = texture.image as { width?: number; height?: number } | undefined;
+  const cellAspect = cell.cellWidth / cell.cellHeight;
+  const imgAspect = img && img.width && img.height ? img.width / img.height : cellAspect;
+  const width = imgAspect > cellAspect ? cell.cellWidth : cell.cellHeight * imgAspect;
+  const height = imgAspect > cellAspect ? cell.cellWidth / imgAspect : cell.cellHeight;
+  return { ...cell, width, height };
 }
 
 function Tile({
   spec,
   texture,
   onHover,
+  onSelect,
 }: {
   spec: TileSpec;
   texture: THREE.Texture;
   onHover: (p: Project | null) => void;
+  onSelect: (p: Project, x: number, y: number) => void;
 }) {
   const meshRef = useRef<THREE.Mesh>(null);
   const hovered = useRef(false);
@@ -115,10 +116,9 @@ function Tile({
     []
   );
 
-  // MeshBasicMaterial (volles Farbmanagement, Cover-Fit über die Textur) um
-  // weiche Ränder und einen Hover-Boost erweitern. vTileUv ist die rohe
-  // Plane-UV (0…1), damit der Feather exakt an den Kachelrändern sitzt –
-  // unabhängig vom Bildzuschnitt.
+  // MeshBasicMaterial (volles Farbmanagement) um weiche Ränder und einen
+  // Hover-Boost erweitern. vTileUv ist die rohe Plane-UV (0…1), damit der
+  // Feather exakt an den Kachelrändern sitzt.
   const material = useMemo(() => {
     const m = new THREE.MeshBasicMaterial({
       map: texture,
@@ -176,31 +176,58 @@ function Tile({
         hovered.current = false;
         onHover(null);
       }}
+      // Auf dem Touchgerät gibt es kein Hover vor der Berührung. Deshalb wird
+      // beim Aufsetzen des Fingers direkt hier – über den frischen Raycast der
+      // Szene – die tatsächlich getroffene Kachel gemeldet.
+      onPointerDown={(e: ThreeEvent<PointerEvent>) => {
+        e.stopPropagation();
+        hovered.current = true;
+        onHover(spec.project);
+      }}
+      // Geöffnet wird ebenfalls aus dem Raycast heraus, nicht aus einem
+      // gemerkten Hover-Zustand: Sonst öffnete ein Tipp auf dem Handy das
+      // Projekt, das zuletzt unter dem Zeiger lag – also ein anderes Bild.
+      onPointerUp={(e: ThreeEvent<PointerEvent>) => {
+        e.stopPropagation();
+        onSelect(spec.project, e.nativeEvent.clientX, e.nativeEvent.clientY);
+      }}
     />
   );
 }
 
-function Tiles({ onHover }: { onHover: (p: Project | null) => void }) {
-  const tiles = useMemo(buildGrid, []);
-  const covers = useMemo(() => projects.map((p) => p.cover), []);
+function Tiles({
+  onHover,
+  onSelect,
+}: {
+  onHover: (p: Project | null) => void;
+  onSelect: (p: Project, x: number, y: number) => void;
+}) {
+  const cells = useMemo(buildGrid, []);
   // Texturen als WebP laden (deutlich kleiner), aber weiterhin über den
   // Originalpfad referenzieren – jeder WebGL-fähige Browser kann WebP.
-  const sources = useMemo(() => covers.map(toWebp), [covers]);
-  const baseTextures = useLoader(THREE.TextureLoader, sources);
+  const sources = useMemo(() => projects.map((p) => toWebp(p.cover)), []);
+  const textures = useLoader(THREE.TextureLoader, sources);
 
-  const textures = useMemo(() => {
-    const byCover = new Map(covers.map((c, i) => [c, baseTextures[i]]));
-    return tiles.map((tile) =>
-      coverTexture(byCover.get(tile.project.cover)!, tile.width / tile.height)
-    );
-  }, [tiles, covers, baseTextures]);
-
-  useEffect(() => () => textures.forEach((t) => t.dispose()), [textures]);
+  const tiles = useMemo(() => {
+    return cells.map((cell, i) => {
+      const texture = textures[i];
+      texture.colorSpace = THREE.SRGBColorSpace;
+      texture.wrapS = THREE.ClampToEdgeWrapping;
+      texture.wrapT = THREE.ClampToEdgeWrapping;
+      return fitToCell(cell, texture);
+    });
+  }, [cells, textures]);
 
   return (
     <>
       {tiles.map((tile, i) => (
-        <Tile key={tile.key} spec={tile} texture={textures[i]} onHover={onHover} />
+        <Tile
+          key={tile.key}
+          spec={tile}
+          texture={textures[i]}
+          onHover={onHover}
+          onSelect={onSelect}
+        />
       ))}
     </>
   );
@@ -220,7 +247,9 @@ function Rig({ look, paused }: { look: React.MutableRefObject<LookState>; paused
     state.camera.rotation.set(l.pitch, l.yaw, 0, 'YXZ');
     // Hover bei jedem Frame neu auswerten: Die Kamera bewegt sich auch
     // unter einem ruhenden Zeiger, sonst veraltet der anvisierte Treffer.
-    state.events.update?.();
+    // Nur für die Maus – bei Touch liegt nach dem Loslassen kein Finger mehr
+    // auf dem Schirm, ein nachgeführter „Hover“ wäre dort ein Phantomtreffer.
+    if (l.usesMouse) state.events.update?.();
   });
   return null;
 }
@@ -229,10 +258,12 @@ export function SphereScene({
   look,
   paused,
   onHover,
+  onSelect,
 }: {
   look: React.MutableRefObject<LookState>;
   paused: boolean;
   onHover: (p: Project | null) => void;
+  onSelect: (p: Project, x: number, y: number) => void;
 }) {
   return (
     <Canvas
@@ -243,7 +274,7 @@ export function SphereScene({
       <color attach="background" args={['#040404']} />
       <Rig look={look} paused={paused} />
       <Suspense fallback={null}>
-        <Tiles onHover={onHover} />
+        <Tiles onHover={onHover} onSelect={onSelect} />
       </Suspense>
     </Canvas>
   );
